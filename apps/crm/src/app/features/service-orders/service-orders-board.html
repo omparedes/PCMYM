@@ -1,0 +1,50 @@
+<div class="p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-semibold text-surface-900">Órdenes de servicio</h1>
+    <a
+      routerLink="/service-orders/new"
+      class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+    >
+      + Nueva orden
+    </a>
+  </div>
+
+  @if (orders.isLoading()) {
+    <p class="text-surface-500 text-sm">Cargando...</p>
+  } @else if (orders.error()) {
+    <p class="text-red-600 text-sm">Error al cargar órdenes: {{ orders.error()?.message }}</p>
+  } @else {
+    <div class="flex gap-4 overflow-x-auto pb-4">
+      @for (status of statuses; track status) {
+        <div class="flex-shrink-0 w-72 bg-surface-100 rounded-lg p-3">
+          <h2 class="text-sm font-semibold text-surface-700 mb-3">
+            {{ statusLabel(status) }}
+            <span class="text-surface-400 font-normal">({{ columns().get(status)?.length ?? 0 }})</span>
+          </h2>
+
+          <div class="flex flex-col gap-2">
+            @for (order of columns().get(status); track order.id) {
+              <a
+                [routerLink]="['/service-orders', order.id]"
+                class="block rounded-md bg-white border border-surface-200 p-3 text-sm hover:shadow-sm"
+              >
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-medium text-surface-900">#{{ order.folio }}</span>
+                  <span class="text-xs text-surface-400">{{ priorityLabel(order.priority) }}</span>
+                </div>
+                <div class="text-surface-700">{{ order.customer?.name }}</div>
+                @if (order.equipment_type) {
+                  <div class="text-surface-400 text-xs mt-1">
+                    {{ order.equipment_type }} {{ order.brand }} {{ order.model }}
+                  </div>
+                }
+              </a>
+            } @empty {
+              <p class="text-xs text-surface-400">Sin órdenes</p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

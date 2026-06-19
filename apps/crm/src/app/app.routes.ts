@@ -7,10 +7,21 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login').then((m) => m.Login),
   },
   {
-    path: 'customers',
+    path: '',
     canActivate: [authGuard],
-    loadChildren: () => import('./features/customers/customers.routes').then((m) => m.customersRoutes),
+    loadComponent: () => import('./core/layout/shell').then((m) => m.Shell),
+    children: [
+      {
+        path: 'service-orders',
+        loadChildren: () =>
+          import('./features/service-orders/service-orders.routes').then((m) => m.serviceOrdersRoutes),
+      },
+      {
+        path: 'customers',
+        loadChildren: () => import('./features/customers/customers.routes').then((m) => m.customersRoutes),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'service-orders' },
+    ],
   },
-  { path: '', pathMatch: 'full', redirectTo: 'customers' },
-  { path: '**', redirectTo: 'customers' },
+  { path: '**', redirectTo: 'service-orders' },
 ];

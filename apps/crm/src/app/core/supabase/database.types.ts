@@ -122,6 +122,61 @@ export type Database = {
           },
         ]
       }
+      order_status_history: {
+        Row: {
+          business_id: string
+          changed_at: string
+          changed_by: string | null
+          from_status: string | null
+          id: string
+          note: string | null
+          service_order_id: string
+          to_status: string
+        }
+        Insert: {
+          business_id: string
+          changed_at?: string
+          changed_by?: string | null
+          from_status?: string | null
+          id?: string
+          note?: string | null
+          service_order_id: string
+          to_status: string
+        }
+        Update: {
+          business_id?: string
+          changed_at?: string
+          changed_by?: string | null
+          from_status?: string | null
+          id?: string
+          note?: string | null
+          service_order_id?: string
+          to_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_status_history_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_status_history_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           business_id: string
@@ -157,6 +212,114 @@ export type Database = {
           },
         ]
       }
+      service_order_folio_counters: {
+        Row: {
+          business_id: string
+          last_folio: number
+        }
+        Insert: {
+          business_id: string
+          last_folio?: number
+        }
+        Update: {
+          business_id?: string
+          last_folio?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_folio_counters_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_orders: {
+        Row: {
+          accessories: string | null
+          assigned_to: string | null
+          brand: string | null
+          business_id: string
+          created_at: string
+          customer_id: string
+          equipment_type: string | null
+          estimated_delivery: string | null
+          folio: number | null
+          id: string
+          initial_diagnosis: string | null
+          model: string | null
+          priority: string
+          received_at: string
+          reported_issue: string | null
+          serial_number: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          accessories?: string | null
+          assigned_to?: string | null
+          brand?: string | null
+          business_id: string
+          created_at?: string
+          customer_id: string
+          equipment_type?: string | null
+          estimated_delivery?: string | null
+          folio?: number | null
+          id?: string
+          initial_diagnosis?: string | null
+          model?: string | null
+          priority?: string
+          received_at?: string
+          reported_issue?: string | null
+          serial_number?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          accessories?: string | null
+          assigned_to?: string | null
+          brand?: string | null
+          business_id?: string
+          created_at?: string
+          customer_id?: string
+          equipment_type?: string | null
+          estimated_delivery?: string | null
+          folio?: number | null
+          id?: string
+          initial_diagnosis?: string | null
+          model?: string | null
+          priority?: string
+          received_at?: string
+          reported_issue?: string | null
+          serial_number?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_orders_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_orders_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -164,6 +327,43 @@ export type Database = {
     Functions: {
       auth_business_id: { Args: never; Returns: string }
       auth_role: { Args: never; Returns: string }
+      change_service_order_status: {
+        Args: {
+          p_new_status: string
+          p_note?: string
+          p_service_order_id: string
+        }
+        Returns: {
+          accessories: string | null
+          assigned_to: string | null
+          brand: string | null
+          business_id: string
+          created_at: string
+          customer_id: string
+          equipment_type: string | null
+          estimated_delivery: string | null
+          folio: number | null
+          id: string
+          initial_diagnosis: string | null
+          model: string | null
+          priority: string
+          received_at: string
+          reported_issue: string | null
+          serial_number: string | null
+          status: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "service_orders"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      is_valid_service_order_transition: {
+        Args: { p_from: string; p_to: string }
+        Returns: boolean
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
     }

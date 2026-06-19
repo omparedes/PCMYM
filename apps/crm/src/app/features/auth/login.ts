@@ -43,6 +43,6 @@ export class Login {
       this.errorMsg.set(error.message);
       return;
     }
-    void this.router.navigateByUrl('/customers');
+    void this.router.navigateByUrl('/service-orders');
   }
 }

@@ -1,0 +1,128 @@
+<div class="max-w-2xl mx-auto p-6">
+  <h1 class="text-2xl font-semibold text-surface-900 mb-6">Nueva orden de servicio</h1>
+
+  <form class="flex flex-col gap-4" (submit)="$event.preventDefault(); onSubmit()">
+    <div class="flex flex-col gap-1">
+      <div class="flex items-center justify-between">
+        <label for="customer_id" class="text-sm font-medium">Cliente *</label>
+        <button type="button" class="text-xs text-blue-600 hover:underline" (click)="toggleNewCustomer()">
+          {{ creatingNewCustomer() ? 'Elegir cliente existente' : '+ Crear cliente nuevo' }}
+        </button>
+      </div>
+
+      @if (creatingNewCustomer()) {
+        <div class="grid grid-cols-2 gap-3">
+          <label class="sr-only" for="new_customer_name">Nombre del cliente</label>
+          <input
+            id="new_customer_name"
+            type="text"
+            placeholder="Nombre del cliente"
+            class="rounded-md border border-surface-300 px-3 py-2 text-sm"
+            [value]="newCustomerName()"
+            (input)="newCustomerName.set(($any($event.target)).value)"
+          />
+          <label class="sr-only" for="new_customer_phone">Teléfono</label>
+          <input
+            id="new_customer_phone"
+            type="text"
+            placeholder="Teléfono (opcional)"
+            class="rounded-md border border-surface-300 px-3 py-2 text-sm"
+            [value]="newCustomerPhone()"
+            (input)="newCustomerPhone.set(($any($event.target)).value)"
+          />
+        </div>
+      } @else {
+        <select
+          id="customer_id"
+          class="rounded-md border border-surface-300 px-3 py-2 text-sm"
+          [formField]="orderForm.customer_id"
+        >
+          <option value="">Selecciona un cliente</option>
+          @for (customer of customers.value(); track customer.id) {
+            <option [value]="customer.id">{{ customer.name }}</option>
+          }
+        </select>
+      }
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="equipment_type" class="text-sm font-medium">Tipo de equipo</label>
+        <input id="equipment_type" type="text" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.equipment_type" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label for="brand" class="text-sm font-medium">Marca</label>
+        <input id="brand" type="text" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.brand" />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="model" class="text-sm font-medium">Modelo</label>
+        <input id="model" type="text" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.model" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label for="serial_number" class="text-sm font-medium">N° de serie</label>
+        <input id="serial_number" type="text" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.serial_number" />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="accessories" class="text-sm font-medium">Accesorios</label>
+      <input id="accessories" type="text" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.accessories" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="reported_issue" class="text-sm font-medium">Falla reportada por el cliente</label>
+      <textarea id="reported_issue" rows="2" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.reported_issue"></textarea>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="initial_diagnosis" class="text-sm font-medium">Diagnóstico inicial</label>
+      <textarea id="initial_diagnosis" rows="2" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.initial_diagnosis"></textarea>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="priority" class="text-sm font-medium">Prioridad</label>
+        <select id="priority" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.priority">
+          @for (option of priorityOptions; track option) {
+            <option [value]="option">{{ priorityLabels[option] }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="assigned_to" class="text-sm font-medium">Técnico asignado</label>
+        <select id="assigned_to" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.assigned_to">
+          <option value="">Sin asignar</option>
+          @for (profile of profiles.value(); track profile.id) {
+            <option [value]="profile.id">{{ profile.name }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="estimated_delivery" class="text-sm font-medium">Entrega estimada</label>
+        <input id="estimated_delivery" type="date" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.estimated_delivery" />
+      </div>
+    </div>
+
+    @if (errorMsg(); as msg) {
+      <p class="text-sm text-red-600">{{ msg }}</p>
+    }
+
+    <div class="flex gap-3 mt-2">
+      <button
+        type="submit"
+        class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        [disabled]="saving()"
+      >
+        {{ saving() ? 'Guardando...' : 'Crear orden' }}
+      </button>
+      <a routerLink="/service-orders" class="rounded-md px-4 py-2 text-sm font-medium text-surface-600 hover:bg-surface-100">
+        Cancelar
+      </a>
+    </div>
+  </form>
+</div>

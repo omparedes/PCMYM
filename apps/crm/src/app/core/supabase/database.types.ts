@@ -1,6 +1,3 @@
-// AUTO-GENERATED — do not edit by hand.
-// Regenerate after every migration: see AGENTS.md / docs/04-CONVENCIONES.md
-//   supabase gen types typescript --project-id lhbgseamumyvtatmjnjx > src/app/core/supabase/database.types.ts
 export type Json =
   | string
   | number
@@ -231,6 +228,55 @@ export type Database = {
             columns: ["business_id"]
             isOneToOne: true
             referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_order_photos: {
+        Row: {
+          business_id: string
+          id: string
+          service_order_id: string
+          storage_path: string
+          uploaded_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          business_id: string
+          id?: string
+          service_order_id: string
+          storage_path: string
+          uploaded_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          business_id?: string
+          id?: string
+          service_order_id?: string
+          storage_path?: string
+          uploaded_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_photos_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_photos_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_photos_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

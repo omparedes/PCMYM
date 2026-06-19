@@ -7,6 +7,7 @@ import type { Customer } from '../customers/customers.models';
 
 export type ServiceOrder = Database['public']['Tables']['service_orders']['Row'];
 export type OrderStatusHistoryEntry = Database['public']['Tables']['order_status_history']['Row'];
+export type ServiceOrderPhoto = Database['public']['Tables']['service_order_photos']['Row'];
 
 export type ServiceOrderStatus =
   | 'pending'

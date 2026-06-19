@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { ServiceOrdersService } from './service-orders.service';
+import { ServiceOrderPhotosService } from './service-order-photos.service';
 import { nextValidStatuses, priorityLabel, statusLabel } from './service-orders.models';
 
 @Component({
@@ -13,6 +14,7 @@ import { nextValidStatuses, priorityLabel, statusLabel } from './service-orders.
 })
 export class ServiceOrderDetail {
   private readonly service = inject(ServiceOrdersService);
+  private readonly photosService = inject(ServiceOrderPhotosService);
   private readonly route = inject(ActivatedRoute);
 
   protected readonly orderId = this.route.snapshot.paramMap.get('id')!;
@@ -30,6 +32,33 @@ export class ServiceOrderDetail {
     loader: ({ params }) => this.service.history(params.id),
     defaultValue: [],
   });
+
+  protected readonly photos = resource({
+    params: () => ({ id: this.orderId }),
+    loader: ({ params }) => this.photosService.list(params.id),
+    defaultValue: [],
+  });
+
+  protected readonly uploadingPhoto = signal(false);
+  protected readonly photoError = signal<string | null>(null);
+
+  protected async onPhotoSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.photoError.set(null);
+    this.uploadingPhoto.set(true);
+    try {
+      await this.photosService.upload(this.orderId, file);
+      this.photos.reload();
+    } catch (err) {
+      this.photoError.set(err instanceof Error ? err.message : 'Error al subir la foto');
+    } finally {
+      this.uploadingPhoto.set(false);
+      input.value = '';
+    }
+  }
 
   protected readonly nextStatuses = () => nextValidStatuses(this.order.value()?.status ?? '');
 

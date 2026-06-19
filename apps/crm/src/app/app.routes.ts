@@ -1,12 +1,16 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/auth/auth.guard';
 
-// Fase 0: solo el login placeholder. Las rutas de dominio (clientes, ordenes,
-// finanzas) se añaden en Fase 1, normalmente con carga diferida (loadComponent).
 export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./features/auth/login').then((m) => m.Login),
   },
-  { path: '', pathMatch: 'full', redirectTo: 'login' },
-  { path: '**', redirectTo: 'login' },
+  {
+    path: 'customers',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/customers/customers.routes').then((m) => m.customersRoutes),
+  },
+  { path: '', pathMatch: 'full', redirectTo: 'customers' },
+  { path: '**', redirectTo: 'customers' },
 ];

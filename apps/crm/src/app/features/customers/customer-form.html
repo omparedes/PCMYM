@@ -1,0 +1,101 @@
+<div class="max-w-2xl mx-auto p-6">
+  <h1 class="text-2xl font-semibold text-surface-900 mb-6">
+    {{ isEditMode ? 'Editar cliente' : 'Nuevo cliente' }}
+  </h1>
+
+  <form class="flex flex-col gap-4" (submit)="$event.preventDefault(); onSubmit()">
+    <div class="flex flex-col gap-1">
+      <label for="name" class="text-sm font-medium">Nombre *</label>
+      <input
+        id="name"
+        type="text"
+        class="rounded-md border border-surface-300 px-3 py-2 text-sm"
+        [formField]="customerForm.name"
+      />
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="document_type" class="text-sm font-medium">Tipo de documento</label>
+        <select
+          id="document_type"
+          class="rounded-md border border-surface-300 px-3 py-2 text-sm"
+          [formField]="customerForm.document_type"
+        >
+          <option value="">Sin especificar</option>
+          <option value="DNI">DNI</option>
+          <option value="RUC">RUC</option>
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="document_number" class="text-sm font-medium">Número de documento</label>
+        <input
+          id="document_number"
+          type="text"
+          class="rounded-md border border-surface-300 px-3 py-2 text-sm"
+          [formField]="customerForm.document_number"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="phone" class="text-sm font-medium">Teléfono</label>
+        <input
+          id="phone"
+          type="text"
+          class="rounded-md border border-surface-300 px-3 py-2 text-sm"
+          [formField]="customerForm.phone"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="email" class="text-sm font-medium">Email</label>
+        <input
+          id="email"
+          type="email"
+          class="rounded-md border border-surface-300 px-3 py-2 text-sm"
+          [formField]="customerForm.email"
+        />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="address" class="text-sm font-medium">Dirección</label>
+      <input
+        id="address"
+        type="text"
+        class="rounded-md border border-surface-300 px-3 py-2 text-sm"
+        [formField]="customerForm.address"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="notes" class="text-sm font-medium">Notas</label>
+      <textarea
+        id="notes"
+        rows="3"
+        class="rounded-md border border-surface-300 px-3 py-2 text-sm"
+        [formField]="customerForm.notes"
+      ></textarea>
+    </div>
+
+    @if (errorMsg(); as msg) {
+      <p class="text-sm text-red-600">{{ msg }}</p>
+    }
+
+    <div class="flex gap-3 mt-2">
+      <button
+        type="submit"
+        class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        [disabled]="saving()"
+      >
+        {{ saving() ? 'Guardando...' : 'Guardar' }}
+      </button>
+      <a routerLink="/customers" class="rounded-md px-4 py-2 text-sm font-medium text-surface-600 hover:bg-surface-100">
+        Cancelar
+      </a>
+    </div>
+  </form>
+</div>

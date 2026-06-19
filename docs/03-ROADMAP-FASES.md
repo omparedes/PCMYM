@@ -41,7 +41,7 @@ trigger de BD; tests/build/lint verdes; `ESTADO.md` actualizado; Oscar aprobó C
 
 ---
 
-## Fase 1.5 — Fase 1 restante (pendiente, no iniciada)
+## Fase 1.5 — Fase 1 restante *(completada)*
 **Objetivo:** completar el núcleo operativo con lo que se dejó explícitamente fuera de la Etapa 1/2
 de Fase 1 (fotos, pagos, log financiero), antes de pasar a presupuestos formales (Fase 2).
 **Entregables:**
@@ -51,9 +51,9 @@ de Fase 1 (fotos, pagos, log financiero), antes de pasar a presupuestos formales
 - **Log financiero** simple de ingreso/gasto (tabla `financial_entries`, no ligada necesariamente a
   una OS — gastos generales del negocio).
 
-**DoD:** migraciones con RLS por `business_id`; subida de fotos a Storage funcionando desde la UI
-de detalle de OS; registro de pago visible en el detalle de la OS; tests/build/lint verdes;
-`ESTADO.md` actualizado.
+**DoD (cumplido):** migraciones con RLS por `business_id`; subida de fotos a Storage funcionando
+desde la UI de detalle de OS; registro de pago visible en el detalle de la OS; tests/build/lint
+verdes; `ESTADO.md` actualizado. Oscar aprobó Checkpoints A y B.
 
 ---
 

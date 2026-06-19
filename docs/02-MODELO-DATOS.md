@@ -132,11 +132,57 @@ Se llena **por trigger de BD** al cambiar `service_orders.status` (no por la app
 historial sea a prueba de manipulación e independiente del cliente que escriba (web, MCP, futuro
 móvil). Ver migración de `service_orders` para el trigger y la validación de transiciones.
 
-## Tablas pendientes (Fase 1 restante — NO construir todavía)
-Quedan anotadas en el roadmap (`docs/03-ROADMAP-FASES.md`), fuera de esta tanda:
-- **`equipment_photos`** — fotos del equipo en Supabase Storage, ligadas a `service_orders`.
-- **`payments`** — registro de pago mínimo contra una `service_order`.
-- **`financial_entries`** — log simple de ingreso/gasto.
+## Tablas de dominio (Fase 1.5)
+
+### `service_order_photos`
+| columna           | tipo        | notas                                              |
+|---------------------|-------------|-------------------------------------------------------|
+| id                  | uuid PK     | `gen_random_uuid()`                                    |
+| business_id         | uuid        | not null, FK → businesses(id)                          |
+| service_order_id    | uuid        | not null, FK → service_orders(id)                      |
+| storage_path        | text        | not null — ruta del objeto en el bucket `service_photos` |
+| uploaded_by         | uuid        | nullable, FK → profiles(id)                             |
+| uploaded_at         | timestamptz | default now()                                           |
+
+Trigger `validate_service_order_photo` (mismo patrón que `validate_service_order`): rechaza un
+`service_order_id` que no pertenezca al `business_id` de la fila. Tabla inmutable desde el cliente
+(solo `select, insert`; sin `update`/`delete`).
+
+**Storage**: bucket `service_photos` **privado** (no público). Rutas con el patrón
+`{business_id}/{service_order_id}/{uuid}-{filename}`; las políticas RLS de `storage.objects` exigen
+que el primer segmento de la ruta coincida con `auth_business_id()` — aislamiento por tenant a nivel
+de Storage, no solo en la tabla. La UI renderiza las fotos con **signed URLs** (de corta duración),
+nunca con una URL pública sin autenticar.
+
+### `payments`
+| columna           | tipo          | notas                                                |
+|---------------------|---------------|---------------------------------------------------------|
+| id                  | uuid PK       | `gen_random_uuid()`                                     |
+| business_id         | uuid          | not null, FK → businesses(id)                           |
+| service_order_id    | uuid          | not null, FK → service_orders(id)                       |
+| amount              | numeric(10,2) | not null, check `> 0`                                   |
+| payment_method      | text          | not null, check `in ('cash', 'transfer', 'card')`        |
+| created_at          | timestamptz   | default now()                                            |
+| recorded_by         | uuid          | nullable, FK → profiles(id)                              |
+
+Trigger `validate_payment` (mismo patrón de validación cruzada). Tabla inmutable desde el cliente
+(solo `select, insert`). Cada inserción dispara `trg_payments_log_financial_entry`.
+
+### `financial_entries` (caja — inmutable, ni siquiera INSERT directo)
+| columna      | tipo          | notas                                            |
+|---------------|---------------|------------------------------------------------------|
+| id            | uuid PK       | `gen_random_uuid()`                                  |
+| business_id   | uuid          | not null, FK → businesses(id)                        |
+| entry_type    | text          | not null, check `in ('income', 'expense')`            |
+| amount        | numeric(10,2) | not null, check `> 0`                                |
+| description   | text          | not null                                              |
+| created_at    | timestamptz   | default now()                                         |
+
+**Sin GRANT de INSERT para `authenticated`** — la única vía de escritura es el trigger
+`log_payment_to_financial_entries` (`AFTER INSERT` en `payments`, `SECURITY DEFINER`), que genera
+automáticamente una entrada `income` con la descripción `"Pago de Orden #<folio>"`. Por ahora la
+tabla solo recibe `income` desde pagos; un flujo de alta manual de `expense` queda fuera de esta
+fase (evaluar en Fase 2 si hace falta).
 
 ## Notas de implementación
 - `service_role` para crear el primer `owner` de un negocio (onboarding) — RLS exige un owner

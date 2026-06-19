@@ -1,0 +1,44 @@
+# === Secretos y datos reales (PRIMER ORDEN — nunca commitear) ===
+.env
+.env.*
+!.env.example
+*.sql.gz
+*.dump
+*.bak
+# Datos reales de seed (solo datos sintéticos se versionan)
+/supabase/seed/*-real.*
+# Credenciales / claves sueltas
+*.pem
+*.key
+secrets.json
+
+# === Supabase ===
+/supabase/.branches
+/supabase/.temp
+# Config local con posibles secretos (se regenera con `supabase init`)
+/supabase/.env
+
+# === Node / Angular ===
+node_modules/
+dist/
+tmp/
+out-tsc/
+.angular/
+*.tsbuildinfo
+.npm/
+
+# === Tests / coverage ===
+coverage/
+.nyc_output/
+
+# === Editores / OS ===
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# === Logs ===
+*.log
+npm-debug.log*

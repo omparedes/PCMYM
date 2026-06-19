@@ -1,0 +1,11 @@
+# Normaliza fin de línea a LF en el repo (consistencia entre estaciones/agentes).
+* text=auto eol=lf
+
+# Binarios
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary

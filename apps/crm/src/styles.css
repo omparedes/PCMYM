@@ -1,0 +1,12 @@
+/* Orden de capas CSS: PrimeNG inyecta en la capa 'primeng'; Tailwind va en 'tailwind'.
+   Debe coincidir con cssLayer.order en providePrimeNG (app.config.ts). */
+@layer tailwind, primeng;
+
+@import "tailwindcss" layer(tailwind);
+@import "primeicons/primeicons.css";
+
+/* Integración oficial PrimeNG <-> Tailwind (variantes, colores del tema). */
+@plugin "tailwindcss-primeui";
+
+/* Modo oscuro por clase .app-dark en <html> (coincide con darkModeSelector en providePrimeNG). */
+@custom-variant dark (&:where(.app-dark, .app-dark *));

@@ -8,6 +8,18 @@ import type { Customer } from '../customers/customers.models';
 export type ServiceOrder = Database['public']['Tables']['service_orders']['Row'];
 export type OrderStatusHistoryEntry = Database['public']['Tables']['order_status_history']['Row'];
 export type ServiceOrderPhoto = Database['public']['Tables']['service_order_photos']['Row'];
+export type Payment = Database['public']['Tables']['payments']['Row'];
+export type PaymentMethod = 'cash' | 'transfer' | 'card';
+
+export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
+  cash: 'Efectivo',
+  transfer: 'Transferencia',
+  card: 'Tarjeta',
+};
+
+export function paymentMethodLabel(method: string): string {
+  return PAYMENT_METHOD_LABELS[method as PaymentMethod] ?? method;
+}
 
 export type ServiceOrderStatus =
   | 'pending'

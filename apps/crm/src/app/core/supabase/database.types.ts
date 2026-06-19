@@ -119,6 +119,41 @@ export type Database = {
           },
         ]
       }
+      financial_entries: {
+        Row: {
+          amount: number
+          business_id: string
+          created_at: string
+          description: string
+          entry_type: string
+          id: string
+        }
+        Insert: {
+          amount: number
+          business_id: string
+          created_at?: string
+          description: string
+          entry_type: string
+          id?: string
+        }
+        Update: {
+          amount?: number
+          business_id?: string
+          created_at?: string
+          description?: string
+          entry_type?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_entries_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_status_history: {
         Row: {
           business_id: string
@@ -167,6 +202,58 @@ export type Database = {
           },
           {
             foreignKeyName: "order_status_history_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          business_id: string
+          created_at: string
+          id: string
+          payment_method: string
+          recorded_by: string | null
+          service_order_id: string
+        }
+        Insert: {
+          amount: number
+          business_id: string
+          created_at?: string
+          id?: string
+          payment_method: string
+          recorded_by?: string | null
+          service_order_id: string
+        }
+        Update: {
+          amount?: number
+          business_id?: string
+          created_at?: string
+          id?: string
+          payment_method?: string
+          recorded_by?: string | null
+          service_order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_service_order_id_fkey"
             columns: ["service_order_id"]
             isOneToOne: false
             referencedRelation: "service_orders"

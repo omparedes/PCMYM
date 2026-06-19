@@ -20,6 +20,10 @@ export const routes: Routes = [
         path: 'customers',
         loadChildren: () => import('./features/customers/customers.routes').then((m) => m.customersRoutes),
       },
+      {
+        path: 'finance',
+        loadChildren: () => import('./features/finance/finance.routes').then((m) => m.financeRoutes),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'service-orders' },
     ],
   },

@@ -6,7 +6,7 @@ Regla global de DoD: una fase **no se cierra** sin (1) tests verdes, (2) migraci
 
 ---
 
-## Fase 0 — Bootstrap *(sesión actual)*
+## Fase 0 — Bootstrap *(completada)*
 **Objetivo:** cimientos del proyecto, sin funcionalidades.
 **Entregables:**
 - Estructura del workspace (`apps/`, `supabase/`, `automation/`, `docs/`).
@@ -22,20 +22,38 @@ migración base aplica en Supabase local; `ESTADO.md` actualizado; Oscar aprueba
 
 ---
 
-## Fase 1 — Núcleo operativo (MVP real)
+## Fase 1 — Núcleo operativo (MVP real) *(núcleo completado)*
 **Objetivo:** resolver el 80% del dolor y permitir registrar información desde el día uno.
-**Entregables:**
-- Módulo **Clientes** (CRUD).
+**Entregables (completados):**
+- Módulo **Clientes** (CRUD + búsqueda + archivado/soft-delete; sin borrado físico).
 - **Orden de Servicio (OS)** con máquina de estados:
-  `pendiente → en_diagnostico → en_reparacion → esperando_repuesto → listo → entregado`.
-- **Historial de transiciones** de la OS (`os_historial`).
-- **Fotos del equipo** en Supabase Storage, ligadas a la OS.
-- **Registro de pago mínimo** contra la OS.
-- **Log financiero** simple (ingreso/gasto).
+  `pending → diagnosing → repairing → waiting_parts → ready → delivered`, con `cancelled`
+  alcanzable desde cualquier estado no terminal. Validada **en Postgres** (trigger), no solo en el cliente.
+- **Historial de transiciones** de la OS (`order_status_history`), escrito únicamente por un
+  trigger `SECURITY DEFINER` — inmutable e independiente del cliente que escriba.
+- Tablero por estado, alta de OS (con creación inline de cliente) y detalle con línea de tiempo.
 
-**DoD:** migraciones de dominio con RLS por `negocio_id`; CRUD de clientes y OS funcionando con
-Signal Forms + Resource API; cambios de estado registrados en historial; subida de fotos a Storage;
-tests verdes; `ESTADO.md` actualizado.
+**DoD (cumplido):** migraciones de dominio con RLS por `business_id`; CRUD de clientes y OS
+funcionando con Signal Forms + Resource API; cambios de estado registrados en historial mediante
+trigger de BD; tests/build/lint verdes; `ESTADO.md` actualizado; Oscar aprobó Checkpoints A, B y C.
+
+**Quedó fuera de esta tanda → ver Fase 1.5 abajo.**
+
+---
+
+## Fase 1.5 — Fase 1 restante (pendiente, no iniciada)
+**Objetivo:** completar el núcleo operativo con lo que se dejó explícitamente fuera de la Etapa 1/2
+de Fase 1 (fotos, pagos, log financiero), antes de pasar a presupuestos formales (Fase 2).
+**Entregables:**
+- **Fotos del equipo** en Supabase Storage (bucket con políticas por `business_id`), ligadas a la
+  OS (probablemente una tabla `service_order_photos` con referencia al objeto de Storage).
+- **Registro de pago mínimo** contra una OS (tabla `payments`: monto, método, fecha, OS asociada).
+- **Log financiero** simple de ingreso/gasto (tabla `financial_entries`, no ligada necesariamente a
+  una OS — gastos generales del negocio).
+
+**DoD:** migraciones con RLS por `business_id`; subida de fotos a Storage funcionando desde la UI
+de detalle de OS; registro de pago visible en el detalle de la OS; tests/build/lint verdes;
+`ESTADO.md` actualizado.
 
 ---
 

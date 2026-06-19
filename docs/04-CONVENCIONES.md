@@ -5,9 +5,10 @@ Resumen duro en `AGENTS.md`. Aquí va el detalle.
 ## Idioma
 - **Documentación, comentarios de docs y `ESTADO.md`:** español.
 - **Código, identificadores, commits, mensajes de PR:** inglés.
-- **Excepción a confirmar:** los identificadores de BD del dominio se crearon en español
-  (`negocios`, `perfiles`, `negocio_id`) siguiendo los nombres literales del brief. Hay una duda
-  abierta sobre estandarizar a inglés. Ver `02-MODELO-DATOS.md` → "Dudas abiertas".
+- **Esquema de base de datos (tablas, columnas, funciones, triggers, RLS, enums):** **inglés**,
+  sin excepción. Decisión registrada en [`decisiones/0006-idioma-esquema.md`](decisiones/0006-idioma-esquema.md).
+  Los valores de enum son claves en inglés (`pending`, `repairing`...); su traducción a español
+  vive **solo en la capa de presentación de Angular**, nunca en la BD.
 
 ## Git
 - **Conventional Commits:** `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`, `perf:`,
@@ -26,12 +27,15 @@ Resumen duro en `AGENTS.md`. Aquí va el detalle.
   fatal para un producto vendible.
 
 ## Base de datos
-- **RLS-first:** toda tabla nace con `enable row level security` y políticas por `negocio_id` en la
+- **RLS-first:** toda tabla nace con `enable row level security` y políticas por `business_id` en la
   misma migración que la crea. Ninguna tabla queda con RLS abierto.
-- **Multi-tenant:** toda tabla de dominio lleva `negocio_id uuid not null references negocios(id)`.
+- **Multi-tenant:** toda tabla de dominio lleva `business_id uuid not null references businesses(id)`.
+- **GRANT explícito:** Supabase no auto-expone tablas nuevas al Data API; cada tabla necesita
+  `grant select/insert/update/delete ... to authenticated` además de sus políticas RLS.
 - **Migraciones versionadas:** todo cambio de esquema en `supabase/migrations/`. Prohibido editar
   el esquema en el dashboard sin migración. Ver skill `supabase-migration`.
 - Cada tabla: `id uuid pk default gen_random_uuid()`, `created_at`, `updated_at timestamptz`.
+- Esquema en inglés (tablas/columnas/funciones/enums). Ver "Idioma" arriba y ADR 0006.
 
 ## Angular
 - **Signal-first:** signals para estado; `@ngrx/signals` solo si se justifica. **NgRx clásico
@@ -57,30 +61,32 @@ actualizado. Detalle por fase en `03-ROADMAP-FASES.md`.
 ---
 
 ## MCP (Model Context Protocol)
-Estado verificado en Fase 0: **solo Google Drive está conectado**. Los siguientes **se recomiendan
-pero NO están configurados** y **requieren credenciales de Oscar**. Filesystem es nativo en Claude
-Code → **no** añadir MCP de filesystem.
+Estado verificado en Fase 1: **Google Drive, Supabase y Context7 conectados.**
 
-| MCP | Para qué | Requiere | Prioridad |
-|-----|----------|----------|-----------|
-| **Supabase MCP** | Inspeccionar esquema, aplicar migraciones, consultar BD sin copy/paste | `SUPABASE_ACCESS_TOKEN` (personal access token) + project ref | Alta |
-| **GitHub MCP** | Issues, PRs, estado del repo | PAT de GitHub (`repo`) | Media |
-| **Context7** (o equivalente docs-en-vivo) | Docs actualizadas de Angular 22 / PrimeNG / Supabase (APIs post-corte) | API key (tiene tier gratis) | Alta |
-| Vercel MCP | Deploys, logs | Token Vercel | Fase posterior |
-| n8n MCP | Flujos de automatización | Credenciales n8n | Fase posterior |
+| MCP | Para qué | Estado | Notas |
+|-----|----------|--------|-------|
+| **Supabase MCP** | Inspeccionar esquema, consultar BD sin copy/paste | ✅ Conectado (`--read-only`, scoped a `project-ref=lhbgseamumyvtatmjnjx`) | Token vía `-e SUPABASE_ACCESS_TOKEN=...`. Modo read-only por seguridad; quitar el flag si se necesita que aplique migraciones directamente (no recomendado, usar `supabase db push` desde CLI). |
+| **Context7** | Docs en vivo de Angular 22 / PrimeNG / Supabase (APIs post-corte) | ✅ Conectado (tier gratis, sin API key) | Sin key hay rate-limit más bajo. Añadir API key después si se vuelve cuello de botella. |
+| **GitHub MCP** | Issues, PRs, estado del repo | No configurado | Requiere PAT de GitHub (`repo`). |
+| Vercel MCP | Deploys, logs | No configurado | Fase posterior. |
+| n8n MCP | Flujos de automatización | No configurado | Fase posterior. |
 
-### Cómo añadirlos (cuando haya credenciales)
+Filesystem es nativo en Claude Code → **no** añadir MCP de filesystem.
+
+### Comandos usados (Supabase y Context7, ya conectados)
 ```bash
-# Supabase MCP (lectura recomendada con --read-only al inicio)
-claude mcp add supabase -- npx -y @supabase/mcp-server-supabase@latest --read-only --project-ref=<ref>
-#   requiere SUPABASE_ACCESS_TOKEN en el entorno
+# Supabase MCP (read-only, scoped a este proyecto)
+claude mcp add supabase -e SUPABASE_ACCESS_TOKEN=<token> -- npx -y @supabase/mcp-server-supabase@latest --read-only --project-ref=lhbgseamumyvtatmjnjx
 
+# Context7 (docs en vivo; funciona sin key con rate-limit más bajo)
+claude mcp add context7 -- npx -y @upstash/context7-mcp@latest
+```
+
+### Pendiente (cuando haya credenciales)
+```bash
 # GitHub MCP
 claude mcp add github -- npx -y @modelcontextprotocol/server-github
 #   requiere GITHUB_PERSONAL_ACCESS_TOKEN en el entorno
-
-# Context7 (docs en vivo)
-claude mcp add context7 -- npx -y @upstash/context7-mcp@latest
 ```
 > Verifica el nombre exacto del paquete/flags al instalar; estos comandos pueden cambiar de versión.
 

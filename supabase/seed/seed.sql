@@ -1,15 +1,15 @@
--- Seed de DATOS SINTÉTICOS para desarrollo local (`npx supabase db reset`).
--- Se ejecuta como superusuario, por lo que RLS no aplica aquí.
--- NUNCA pongas datos reales de clientes en este archivo. Los datos reales van en
--- archivos `*-real.sql` (gitignored). Ver .gitignore y docs/04-CONVENCIONES.md.
+-- Synthetic seed data for local development (`npx supabase db reset`).
+-- Runs as superuser, so RLS does not apply here.
+-- NEVER put real customer data in this file. Real data goes in `*-real.sql`
+-- files (gitignored). See .gitignore and docs/04-CONVENCIONES.md.
 
--- Negocio (tenant) de demostración.
-insert into public.negocios (id, nombre, slug, activo)
+-- Demo business (tenant).
+insert into public.businesses (id, name, slug, active)
 values ('00000000-0000-0000-0000-000000000001', 'Taller Demo PCMYM', 'demo', true)
 on conflict (id) do nothing;
 
--- El perfil 'owner' requiere un usuario en auth.users. Para crear un owner de prueba:
---   1) Crea un usuario en Supabase Auth (dashboard local o `supabase` CLI).
---   2) Inserta su perfil enlazando ese auth.users.id con el negocio demo, por ejemplo:
---      insert into public.perfiles (id, negocio_id, nombre, rol)
+-- The 'owner' profile requires a user in auth.users. To create a test owner:
+--   1) Create a user in Supabase Auth (local dashboard or CLI).
+--   2) Insert their profile linking that auth.users.id with the demo business, e.g.:
+--      insert into public.profiles (id, business_id, name, role)
 --      values ('<auth-user-uuid>', '00000000-0000-0000-0000-000000000001', 'Owner Demo', 'owner');

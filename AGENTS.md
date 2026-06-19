@@ -31,10 +31,10 @@ El objetivo es que sea replicable y vendible a otros talleres.
 - Supabase local:   `npx supabase start` / `npx supabase stop`
 
 ## Convenciones duras (no negociables)
-- **Idioma:** docs y `ESTADO.md` en **español**. Código, tablas, columnas, identificadores y commits en **inglés**.
+- **Idioma:** docs y `ESTADO.md` en **español**. Código, tablas, columnas, identificadores y commits en **inglés** (esquema de BD sin excepción — ver ADR 0006; etiquetas de UI en español).
 - **Commits:** Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`...). Ver skill `commit`.
 - **Ramas:** `main` estable; trabajo en `feat/<nombre>`.
-- **Multi-tenant:** TODA tabla de dominio lleva `negocio_id uuid not null` con FK a `negocios`.
+- **Multi-tenant:** TODA tabla de dominio lleva `business_id uuid not null` con FK a `businesses`.
 - **RLS-first:** TODA tabla nace con Row Level Security **activado** y políticas por tenant desde su primera migración. Ninguna tabla queda con RLS abierto.
 - **Migraciones:** TODO cambio de esquema pasa por un archivo en `supabase/migrations/`. **Prohibido** cambiar el esquema a mano en el dashboard sin migración.
 - **Angular signal-first:** Signal Forms, signals, OnPush, standalone. **Prohibido** NgRx clásico o Reactive Forms sin un ADR que lo justifique.

@@ -6,7 +6,13 @@ description: Crea una feature CRUD signal-first en el CRM Angular 22 de PCMYM (c
 # Skill: angular-feature (patrón signal-first PCMYM)
 
 Una feature vive en `apps/crm/src/app/features/<dominio>/`. Stack: Angular 22 standalone, OnPush,
-zoneless, **Signal Forms** (`@angular/forms/signals`), **Resource API** para lectura, PrimeNG + Tailwind.
+zoneless, **Signal Forms** (`@angular/forms/signals`), **Resource API** para lectura, Tailwind
+(+ PrimeNG cuando publique soporte oficial para Angular 22 — ver ADR 0005; mientras tanto, listas y
+tablas se construyen con HTML nativo + Tailwind, no con `p-table`).
+
+**Nombres de dominio (tablas, campos, rutas) en inglés** — ver ADR 0006. Las etiquetas visibles al
+usuario (labels, botones, mensajes) van en español, normalmente en un mapa de traducción separado
+del modelo (p.ej. `STATUS_LABELS` para un enum de estado).
 
 ## Reglas
 - `ChangeDetectionStrategy.OnPush` y componentes **standalone** (sin NgModules).
@@ -16,33 +22,33 @@ zoneless, **Signal Forms** (`@angular/forms/signals`), **Resource API** para lec
 - Lectura de datos remotos con `resource()` / `httpResource()`. Escritura vía métodos del servicio.
 - Estado local con signals; estado compartido entre componentes con `signalStore` (`@ngrx/signals`)
   solo si se justifica.
-- Nombres de archivo sin sufijo de tipo (convención Angular 20+): `clientes-list.ts`, no
-  `clientes-list.component.ts`.
+- Nombres de archivo sin sufijo de tipo (convención Angular 20+): `customers-list.ts`, no
+  `customers-list.component.ts`.
 
 ## Estructura sugerida de una feature
 ```
-features/<dominio>/
-  <dominio>.service.ts     # acceso a Supabase (CRUD), tipado
-  <dominio>.models.ts      # tipos del dominio
-  <dominio>-list.ts        # listado (PrimeNG Table + Resource API)
-  <dominio>-form.ts        # alta/edición (Signal Forms)
-  <dominio>.routes.ts      # rutas de la feature (loadComponent)
+features/<domain>/
+  <domain>.service.ts     # acceso a Supabase (CRUD), tipado
+  <domain>.models.ts      # tipos del dominio (en inglés) + mapas de etiquetas en español
+  <domain>-list.ts        # listado (tabla Tailwind nativa + Resource API)
+  <domain>-form.ts        # alta/edición (Signal Forms)
+  <domain>.routes.ts      # rutas de la feature (loadComponent)
 ```
 
 ## Signal Forms (patrón verificado en Angular 22)
 ```ts
 import { form, required, email } from '@angular/forms/signals';
 
-protected readonly model = signal({ nombre: '', email: '' });
+protected readonly model = signal({ name: '', email: '' });
 protected readonly f = form(this.model, (path) => {
-  required(path.nombre);
+  required(path.name);
   email(path.email);
 });
 // Estado del form: this.f().valid(), this.f().touched(), etc.
 ```
-En el template, enlaza inputs con la directiva `FormField`:
+En el template, enlaza inputs con la directiva `FormField` (selector `[formField]`):
 ```html
-<input pInputText [formField]="f.nombre" />
+<input type="text" [formField]="f.name" />
 ```
 Importa `FormField` desde `@angular/forms/signals` en `imports` del componente.
 
@@ -52,10 +58,10 @@ import { Injectable } from '@angular/core';
 import { supabase } from '../../core/supabase/supabase.client';
 
 @Injectable({ providedIn: 'root' })
-export class ClientesService {
-  // negocio_id lo impone RLS; no hace falta filtrarlo manualmente en el cliente.
-  async list() { return supabase.from('clientes').select('*'); }
-  async create(input: NuevoCliente) { return supabase.from('clientes').insert(input).select().single(); }
+export class CustomersService {
+  // business_id lo impone RLS; no hace falta filtrarlo manualmente en el cliente.
+  async list() { return supabase.from('customers').select('*'); }
+  async create(input: NewCustomer) { return supabase.from('customers').insert(input).select().single(); }
 }
 ```
 

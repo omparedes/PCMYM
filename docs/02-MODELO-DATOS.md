@@ -184,7 +184,92 @@ automáticamente una entrada `income` con la descripción `"Pago de Orden #<foli
 tabla solo recibe `income` desde pagos; un flujo de alta manual de `expense` queda fuera de esta
 fase (evaluar en Fase 2 si hace falta).
 
+## Tablas de dominio (Fase 2)
+
+### `budgets` (presupuestos / cotizaciones)
+| columna           | tipo          | notas                                                  |
+|---------------------|---------------|-----------------------------------------------------------|
+| id                  | uuid PK       | `gen_random_uuid()`                                        |
+| business_id         | uuid          | not null, FK → businesses(id)                              |
+| folio               | int           | correlativo por negocio, igual patrón que `service_orders` |
+| service_order_id    | uuid          | not null, FK → service_orders(id)                          |
+| status              | text          | enum por check, ver máquina de estados abajo                |
+| total_amount        | numeric(10,2) | denormalizado = `sum(budget_items.quantity * unit_price)`   |
+| notes               | text          | nullable                                                     |
+| created_by          | uuid          | nullable, FK → profiles(id)                                  |
+| created_at          | timestamptz   | default now()                                                |
+| updated_at          | timestamptz   | default now()                                                |
+
+**Máquina de estados (`status`):** `draft → sent → approved | rejected`. `approved`/`rejected` son
+terminales — un presupuesto rechazado o aprobado nunca se reabre; si el taller necesita ajustar el
+precio, crea un presupuesto nuevo para la misma OS. Validada en Postgres
+(`is_valid_budget_transition`/`validate_budget`), mismo patrón que la máquina de estados de la OS.
+
+**Etiquetas UI (español):** `draft` → Borrador, `sent` → Enviado, `approved` → Aprobado, `rejected`
+→ Rechazado.
+
+Tabla sin GRANT de `delete` (se rechaza vía estado, no se borra). `update` solo cambia `status`/
+`notes` en la práctica — el cambio de estado pasa por el RPC `change_budget_status`.
+
+### `budget_items` (líneas — repuestos/mano de obra)
+| columna       | tipo          | notas                                            |
+|----------------|---------------|-------------------------------------------------------|
+| id             | uuid PK       | `gen_random_uuid()`                                    |
+| business_id    | uuid          | not null, FK → businesses(id)                          |
+| budget_id      | uuid          | not null, FK → budgets(id)                             |
+| description    | text          | not null                                                |
+| quantity       | numeric(10,2) | not null, default 1, check `> 0`                       |
+| unit_price     | numeric(10,2) | not null, check `>= 0`                                  |
+| created_at     | timestamptz   | default now()                                            |
+
+**Presupuesto congelado tras enviarse:** los ítems solo se pueden insertar/editar/eliminar
+mientras el presupuesto padre está en `draft` (trigger `validate_budget_item` /
+`validate_budget_item_delete`). Una vez `sent`, lo que vio el cliente no puede cambiar por debajo
+de una aprobación/rechazo. Cada insert/update/delete dispara `recalculate_budget_total` (`AFTER`,
+`SECURITY DEFINER`) que recalcula `budgets.total_amount` desde cero.
+
+> Nota de diseño: `validate_budget_item_delete` solo bloquea el delete si el presupuesto padre
+> **todavía existe** y no está en `draft`. Si el padre ya fue eliminado (delete en cascada desde
+> `service_orders`/`businesses`), el delete de los ítems se permite — de lo contrario un cascade
+> delete administrativo (p.ej. borrar un negocio de prueba) quedaría bloqueado permanentemente.
+
+### `budget_status_history` (trazabilidad — inmutable)
+Mismo patrón que `order_status_history`: una fila por cada creación/cambio de `status`, escrita
+únicamente por el trigger `SECURITY DEFINER` `log_budget_status_history`. Sin GRANT de escritura
+para `authenticated`.
+
+### RPCs de Fase 2
+- **`change_budget_status(p_budget_id, p_new_status)`** — `SECURITY DEFINER`, mismo shape que
+  `change_service_order_status`. Re-valida `business_id = auth_business_id()` antes de mutar; los
+  triggers de validación/historial igual se disparan sobre la tabla.
+- **`record_expense(p_amount, p_description)`** — `SECURITY DEFINER`, única vía para insertar una
+  fila `entry_type = 'expense'` en `financial_entries` (que sigue sin GRANT de INSERT para
+  `authenticated`, igual que en Fase 1.5). Resuelve `business_id` internamente vía
+  `auth_business_id()`, nunca confía en un valor que mande el cliente.
+
+## Vistas de reportes financieros (Fase 2)
+Todas creadas `with (security_invoker = true)` (Postgres 15+): la vista corre con los privilegios
+de quien la consulta, no de su dueño. Como cada tabla base ya tiene RLS por
+`business_id = auth_business_id()`, las vistas quedan automáticamente acotadas al tenant que
+consulta sin filtro adicional — y es imposible que una vista filtre datos de otro tenant aunque su
+SQL tenga un error, porque Postgres sigue aplicando el RLS de las tablas base por debajo. Todas
+devuelven `business_id` explícitamente. Con `grant select ... to authenticated`.
+
+- **`v_income_expense_daily`** — ingresos/gastos por día, últimos 90 días.
+- **`v_income_expense_monthly`** — ingresos/gastos por mes, histórico completo.
+- **`v_top_customers`** — clientes ordenados por ingresos totales (suma de `payments` vía sus OS).
+- **`v_top_equipment_types`** — `equipment_type` más atendido en `service_orders` (proxy de
+  "servicios más realizados"; no hay catálogo de servicios todavía, ver nota abajo).
+- **`v_accounts_receivable`** — saldo pendiente por OS: total del último presupuesto `approved`
+  menos lo pagado en `payments`. Solo incluye OS con saldo `> 0` y no `cancelled`.
+
+> Nota: `service_orders` no tiene un campo de "tipo de servicio" separado del equipo; `equipment_type`
+> se usa como proxy. Si se necesita un catálogo de servicios real, evaluarlo en una fase posterior
+> (probablemente Fase 6 — Inventario y catálogo).
+
 ## Notas de implementación
 - `service_role` para crear el primer `owner` de un negocio (onboarding) — RLS exige un owner
   preexistente para insertar perfiles vía `authenticated`.
 - Toda tabla nueva: usar la skill `supabase-migration` (plantilla con RLS + GRANT incluidos).
+- `database.types.ts` (Angular) se regenera con `npx supabase gen types typescript --linked`
+  contra el proyecto remoto enlazado — no se edita a mano.

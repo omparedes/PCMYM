@@ -57,11 +57,24 @@ verdes; `ESTADO.md` actualizado. Oscar aprobó Checkpoints A y B.
 
 ---
 
-## Fase 2 — Presupuestos y finanzas
+## Fase 2 — Presupuestos y finanzas *(completada)*
 **Objetivo:** formalizar presupuestos y dar visibilidad financiera.
-**Entregables:** presupuestos (aprobado/rechazado/historial); reportes vía **vistas SQL** en
-Postgres (por día/mes/año, top clientes, servicios más solicitados); cuentas por cobrar.
-**DoD:** vistas SQL versionadas; reportes consultables desde la app; tests verdes; `ESTADO.md` actualizado.
+**Entregables:**
+- **Presupuestos** (`budgets` + `budget_items`): máquina de estados `draft → sent → approved |
+  rejected`, ítems congelados tras enviarse, folio correlativo por negocio, historial inmutable
+  (`budget_status_history`).
+- **Gastos manuales**: RPC `record_expense()` (`SECURITY DEFINER`) como única vía de escritura de
+  `entry_type = 'expense'` en `financial_entries` — sigue sin GRANT de INSERT directo.
+- **Reportes vía vistas SQL** (`security_invoker`): ingresos/gastos por día y mes, top clientes,
+  equipos más atendidos, cuentas por cobrar (presupuesto aprobado − pagos).
+- **UI premium**: módulo de presupuestos integrado en el detalle de la OS (crear, ver ítems,
+  cambiar estado) y Dashboard Financiero (`/finance`) con tarjetas de resumen, gráfico de
+  ingresos vs. gastos, top clientes, equipos más atendidos, cuentas por cobrar y registro de gasto.
+
+**DoD (cumplido):** vistas SQL versionadas y consultables desde la app; migraciones con RLS por
+`business_id`; `npm run build`/`npm test`/`npm run lint` verdes; verificación E2E del backend
+(22/22 checks) contra el Supabase real con tenants sintéticos creados con `service_role` y
+limpiados al terminar (incluye aislamiento cross-tenant); `ESTADO.md` actualizado.
 
 ---
 

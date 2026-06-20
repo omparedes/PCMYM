@@ -1,128 +1,144 @@
-<div class="max-w-2xl mx-auto p-6">
-  <h1 class="text-2xl font-semibold text-surface-900 mb-6">Nueva orden de servicio</h1>
+<div class="max-w-[880px] w-full mx-auto md:p-6 p-4">
+  <a routerLink="/service-orders" class="inline-flex items-center gap-2 px-0 py-2 border-0 bg-transparent text-slate-500 font-semibold text-[13.5px] cursor-pointer mb-4 transition-colors hover:text-slate-900">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    Volver al Tablero
+  </a>
 
-  <form class="flex flex-col gap-4" (submit)="$event.preventDefault(); onSubmit()">
-    <div class="flex flex-col gap-1">
-      <div class="flex items-center justify-between">
-        <label for="customer_id" class="text-sm font-medium">Cliente *</label>
-        <button type="button" class="text-xs text-blue-600 hover:underline" (click)="toggleNewCustomer()">
-          {{ creatingNewCustomer() ? 'Elegir cliente existente' : '+ Crear cliente nuevo' }}
+  <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden">
+    <div class="px-7 py-6 border-b border-slate-100 flex items-center gap-3.5">
+      <div class="w-11 h-11 rounded-xl bg-red-600 flex items-center justify-center shrink-0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+      <div>
+        <h2 class="m-0 text-[20px] font-extrabold tracking-tight text-slate-900">Nueva orden de servicio</h2>
+        <p class="mt-1 text-[13.5px] font-medium text-slate-500">Registra un nuevo equipo para diagnóstico o reparación.</p>
+      </div>
+    </div>
+
+    <form (submit)="$event.preventDefault(); onSubmit()">
+      <div class="px-7 py-7">
+        
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-2">
+            <label for="customer_id" class="text-[13px] font-bold text-slate-700">Cliente <span class="text-red-600">*</span></label>
+            <button type="button" class="text-[12px] font-bold text-red-600 hover:text-red-700 transition-colors bg-red-50 hover:bg-red-100 px-3 py-1 rounded-full" (click)="toggleNewCustomer()">
+              {{ creatingNewCustomer() ? 'Elegir cliente existente' : '+ Crear cliente nuevo' }}
+            </button>
+          </div>
+
+          @if (creatingNewCustomer()) {
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="sr-only" for="new_customer_name">Nombre del cliente</label>
+                <input id="new_customer_name" type="text" placeholder="Nombre completo" class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" [value]="newCustomerName()" (input)="newCustomerName.set(($any($event.target)).value)" />
+              </div>
+              <div>
+                <label class="sr-only" for="new_customer_phone">Teléfono</label>
+                <input id="new_customer_phone" type="text" placeholder="Teléfono (opcional)" class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" [value]="newCustomerPhone()" (input)="newCustomerPhone.set(($any($event.target)).value)" />
+              </div>
+            </div>
+          } @else {
+            <div class="relative">
+              <select id="customer_id" [formField]="orderForm.customer_id" class="w-full py-3 pl-4 pr-10 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none appearance-none cursor-pointer transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]">
+                <option value="">Selecciona un cliente de la lista...</option>
+                @for (customer of customers.value(); track customer.id) {
+                  <option [value]="customer.id">{{ customer.name }} ({{ customer.phone || 'Sin tel.' }})</option>
+                }
+              </select>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          }
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-5 mb-6">
+          <div class="col-span-1 sm:col-span-2 text-[11px] font-black tracking-widest text-slate-400 uppercase border-b border-slate-100 pb-2 mb-2 mt-2">Detalles del Equipo</div>
+          
+          <div>
+            <label for="equipment_type" class="block text-[13px] font-bold text-slate-700 mb-2">Tipo de equipo</label>
+            <input id="equipment_type" type="text" placeholder="Ej. Laptop, PC Escritorio" class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" [formField]="orderForm.equipment_type" />
+          </div>
+          <div>
+            <label for="brand" class="block text-[13px] font-bold text-slate-700 mb-2">Marca</label>
+            <input id="brand" type="text" placeholder="Ej. Lenovo, HP, Dell" class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" [formField]="orderForm.brand" />
+          </div>
+          <div>
+            <label for="model" class="block text-[13px] font-bold text-slate-700 mb-2">Modelo</label>
+            <input id="model" type="text" placeholder="Ej. ThinkPad T480" class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" [formField]="orderForm.model" />
+          </div>
+          <div>
+            <label for="serial_number" class="block text-[13px] font-bold text-slate-700 mb-2">N° de serie</label>
+            <input id="serial_number" type="text" placeholder="S/N..." class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" [formField]="orderForm.serial_number" />
+          </div>
+          <div class="col-span-1 sm:col-span-2">
+            <label for="accessories" class="block text-[13px] font-bold text-slate-700 mb-2">Accesorios que deja el cliente</label>
+            <input id="accessories" type="text" placeholder="Cargador, funda, etc." class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" [formField]="orderForm.accessories" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-y-4 mb-6">
+          <div class="text-[11px] font-black tracking-widest text-slate-400 uppercase border-b border-slate-100 pb-2 mb-2 mt-2">Diagnóstico</div>
+          
+          <div>
+            <label for="reported_issue" class="block text-[13px] font-bold text-slate-700 mb-2">Falla reportada por el cliente</label>
+            <textarea id="reported_issue" rows="2" placeholder="Describe el problema principal..." class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none resize-y min-h-[64px] leading-relaxed transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" [formField]="orderForm.reported_issue"></textarea>
+          </div>
+          <div>
+            <label for="initial_diagnosis" class="block text-[13px] font-bold text-slate-700 mb-2">Diagnóstico inicial / Observaciones físicas</label>
+            <textarea id="initial_diagnosis" rows="2" placeholder="Golpes, rayones, estado al recibir..." class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none resize-y min-h-[64px] leading-relaxed transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" [formField]="orderForm.initial_diagnosis"></textarea>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-y-4 gap-x-4 mb-2">
+          <div class="col-span-1 sm:col-span-3 text-[11px] font-black tracking-widest text-slate-400 uppercase border-b border-slate-100 pb-2 mb-2 mt-2">Planificación</div>
+          
+          <div>
+            <label for="priority" class="block text-[13px] font-bold text-slate-700 mb-2">Prioridad</label>
+            <div class="relative">
+              <select id="priority" [formField]="orderForm.priority" class="w-full py-3 pl-4 pr-10 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-bold text-slate-900 bg-white outline-none appearance-none cursor-pointer transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]">
+                @for (option of priorityOptions; track option) {
+                  <option [value]="option">{{ priorityLabels[option] }}</option>
+                }
+              </select>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+
+          <div>
+            <label for="assigned_to" class="block text-[13px] font-bold text-slate-700 mb-2">Técnico asignado</label>
+            <div class="relative">
+              <select id="assigned_to" [formField]="orderForm.assigned_to" class="w-full py-3 pl-4 pr-10 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none appearance-none cursor-pointer transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]">
+                <option value="">Sin asignar</option>
+                @for (profile of profiles.value(); track profile.id) {
+                  <option [value]="profile.id">{{ profile.name }}</option>
+                }
+              </select>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+
+          <div>
+            <label for="estimated_delivery" class="block text-[13px] font-bold text-slate-700 mb-2">Entrega estimada</label>
+            <input id="estimated_delivery" type="date" [formField]="orderForm.estimated_delivery" class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" />
+          </div>
+        </div>
+
+        @if (errorMsg(); as msg) {
+          <div class="mt-6 p-3 bg-red-50 border border-red-100 text-red-600 rounded-xl text-sm font-semibold flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+            {{ msg }}
+          </div>
+        }
+      </div>
+
+      <div class="px-7 py-5 border-t border-slate-100 bg-[#fafbfd] flex items-center justify-end gap-3 rounded-b-[22px]">
+        <a routerLink="/service-orders" class="px-5 py-3 border-[1.5px] border-slate-200 bg-white text-slate-600 rounded-xl font-bold text-[14px] cursor-pointer transition-colors hover:border-slate-300 hover:bg-slate-50">
+          Cancelar
+        </a>
+        <button type="submit" [disabled]="saving()" class="flex items-center gap-2 px-6 py-3 bg-red-600 text-white border-0 rounded-xl font-bold text-[14px] cursor-pointer shadow-[0_8px_20px_rgba(225,29,42,0.26)] transition-all duration-150 hover:-translate-y-px hover:shadow-[0_12px_26px_rgba(225,29,42,0.34)] disabled:opacity-50 disabled:cursor-not-allowed">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+          {{ saving() ? 'Guardando...' : 'Crear orden' }}
         </button>
       </div>
-
-      @if (creatingNewCustomer()) {
-        <div class="grid grid-cols-2 gap-3">
-          <label class="sr-only" for="new_customer_name">Nombre del cliente</label>
-          <input
-            id="new_customer_name"
-            type="text"
-            placeholder="Nombre del cliente"
-            class="rounded-md border border-surface-300 px-3 py-2 text-sm"
-            [value]="newCustomerName()"
-            (input)="newCustomerName.set(($any($event.target)).value)"
-          />
-          <label class="sr-only" for="new_customer_phone">Teléfono</label>
-          <input
-            id="new_customer_phone"
-            type="text"
-            placeholder="Teléfono (opcional)"
-            class="rounded-md border border-surface-300 px-3 py-2 text-sm"
-            [value]="newCustomerPhone()"
-            (input)="newCustomerPhone.set(($any($event.target)).value)"
-          />
-        </div>
-      } @else {
-        <select
-          id="customer_id"
-          class="rounded-md border border-surface-300 px-3 py-2 text-sm"
-          [formField]="orderForm.customer_id"
-        >
-          <option value="">Selecciona un cliente</option>
-          @for (customer of customers.value(); track customer.id) {
-            <option [value]="customer.id">{{ customer.name }}</option>
-          }
-        </select>
-      }
-    </div>
-
-    <div class="grid grid-cols-2 gap-4">
-      <div class="flex flex-col gap-1">
-        <label for="equipment_type" class="text-sm font-medium">Tipo de equipo</label>
-        <input id="equipment_type" type="text" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.equipment_type" />
-      </div>
-      <div class="flex flex-col gap-1">
-        <label for="brand" class="text-sm font-medium">Marca</label>
-        <input id="brand" type="text" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.brand" />
-      </div>
-    </div>
-
-    <div class="grid grid-cols-2 gap-4">
-      <div class="flex flex-col gap-1">
-        <label for="model" class="text-sm font-medium">Modelo</label>
-        <input id="model" type="text" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.model" />
-      </div>
-      <div class="flex flex-col gap-1">
-        <label for="serial_number" class="text-sm font-medium">N° de serie</label>
-        <input id="serial_number" type="text" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.serial_number" />
-      </div>
-    </div>
-
-    <div class="flex flex-col gap-1">
-      <label for="accessories" class="text-sm font-medium">Accesorios</label>
-      <input id="accessories" type="text" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.accessories" />
-    </div>
-
-    <div class="flex flex-col gap-1">
-      <label for="reported_issue" class="text-sm font-medium">Falla reportada por el cliente</label>
-      <textarea id="reported_issue" rows="2" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.reported_issue"></textarea>
-    </div>
-
-    <div class="flex flex-col gap-1">
-      <label for="initial_diagnosis" class="text-sm font-medium">Diagnóstico inicial</label>
-      <textarea id="initial_diagnosis" rows="2" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.initial_diagnosis"></textarea>
-    </div>
-
-    <div class="grid grid-cols-3 gap-4">
-      <div class="flex flex-col gap-1">
-        <label for="priority" class="text-sm font-medium">Prioridad</label>
-        <select id="priority" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.priority">
-          @for (option of priorityOptions; track option) {
-            <option [value]="option">{{ priorityLabels[option] }}</option>
-          }
-        </select>
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label for="assigned_to" class="text-sm font-medium">Técnico asignado</label>
-        <select id="assigned_to" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.assigned_to">
-          <option value="">Sin asignar</option>
-          @for (profile of profiles.value(); track profile.id) {
-            <option [value]="profile.id">{{ profile.name }}</option>
-          }
-        </select>
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label for="estimated_delivery" class="text-sm font-medium">Entrega estimada</label>
-        <input id="estimated_delivery" type="date" class="rounded-md border border-surface-300 px-3 py-2 text-sm" [formField]="orderForm.estimated_delivery" />
-      </div>
-    </div>
-
-    @if (errorMsg(); as msg) {
-      <p class="text-sm text-red-600">{{ msg }}</p>
-    }
-
-    <div class="flex gap-3 mt-2">
-      <button
-        type="submit"
-        class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-        [disabled]="saving()"
-      >
-        {{ saving() ? 'Guardando...' : 'Crear orden' }}
-      </button>
-      <a routerLink="/service-orders" class="rounded-md px-4 py-2 text-sm font-medium text-surface-600 hover:bg-surface-100">
-        Cancelar
-      </a>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>

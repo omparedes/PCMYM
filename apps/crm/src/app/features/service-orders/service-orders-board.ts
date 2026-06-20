@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, resource } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, resource, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { ServiceOrdersService } from './service-orders.service';
@@ -21,6 +21,37 @@ export class ServiceOrdersBoard {
   protected readonly statusLabel = statusLabel;
   protected readonly priorityLabel = priorityLabel;
   protected readonly statuses = ORDERED_STATUSES;
+
+  protected readonly viewMode = signal<'kanban' | 'tabs' | 'list'>(
+    (localStorage.getItem('pcmym_view_mode') as 'kanban' | 'tabs' | 'list') || 'tabs'
+  );
+  
+  protected readonly collapsedColumns = signal<Record<string, boolean>>(
+    JSON.parse(localStorage.getItem('pcmym_collapsed_cols') || '{"delivered":true,"cancelled":true}')
+  );
+  
+  protected readonly activeTab = signal<string>(
+    localStorage.getItem('pcmym_active_tab') || 'pending'
+  );
+
+  constructor() {
+    effect(() => {
+      localStorage.setItem('pcmym_view_mode', this.viewMode());
+    });
+    effect(() => {
+      localStorage.setItem('pcmym_collapsed_cols', JSON.stringify(this.collapsedColumns()));
+    });
+    effect(() => {
+      localStorage.setItem('pcmym_active_tab', this.activeTab());
+    });
+  }
+
+  protected toggleColumn(status: string) {
+    this.collapsedColumns.update((cols) => ({
+      ...cols,
+      [status]: !cols[status],
+    }));
+  }
 
   protected readonly orders = resource({
     loader: () => this.service.listActive(),

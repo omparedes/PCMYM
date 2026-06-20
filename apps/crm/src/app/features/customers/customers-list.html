@@ -1,81 +1,109 @@
-<div class="max-w-5xl mx-auto p-6">
-  <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-semibold text-surface-900">Clientes</h1>
-    <a
-      routerLink="/customers/new"
-      class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-    >
-      + Nuevo cliente
-    </a>
-  </div>
+<div class="max-w-[1080px] w-full mx-auto md:p-6 p-4">
+  <div class="flex items-center gap-4 flex-wrap mb-6">
+    <h1 class="m-0 text-[21px] font-extrabold tracking-tight hidden md:block">Clientes</h1>
+    
+    <div class="relative flex items-center flex-1 min-w-[200px]">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3.5 pointer-events-none"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+      <input
+        type="search"
+        placeholder="Buscar por nombre, teléfono o documento..."
+        class="w-full py-2.5 pr-3.5 pl-10 border-[1.5px] border-slate-200 rounded-xl text-sm font-medium bg-white text-slate-900 outline-none transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.12)]"
+        [value]="searchInput()"
+        (input)="onSearchInput($event)"
+      />
+    </div>
 
-  <div class="flex flex-wrap items-center gap-3 mb-4">
-    <input
-      type="search"
-      placeholder="Buscar por nombre, teléfono o documento..."
-      class="flex-1 min-w-[16rem] rounded-md border border-surface-300 px-3 py-2 text-sm"
-      [value]="searchInput()"
-      (input)="onSearchInput($event)"
-    />
-    <label class="flex items-center gap-2 text-sm text-surface-600">
+    <label class="flex items-center gap-2 text-[13px] font-semibold text-slate-500 cursor-pointer">
       <input
         type="checkbox"
+        class="rounded border-slate-300 text-red-600 focus:ring-red-600"
         [checked]="includeArchived()"
         (change)="onIncludeArchivedChange($event)"
       />
       Mostrar archivados
     </label>
+
+    <a
+      routerLink="/customers/new"
+      class="flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-xl font-bold text-sm shadow-[0_8px_20px_rgba(225,29,42,0.26)] transition-all duration-150 hover:-translate-y-px hover:shadow-[0_12px_26px_rgba(225,29,42,0.34)] whitespace-nowrap"
+    >
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Nuevo cliente
+    </a>
   </div>
 
   @if (customers.isLoading()) {
-    <p class="text-surface-500 text-sm">Cargando...</p>
+    <p class="text-slate-500 text-sm font-medium px-2">Cargando directorio...</p>
   } @else if (customers.error()) {
-    <p class="text-red-600 text-sm">Error al cargar clientes: {{ customers.error()?.message }}</p>
+    <p class="text-red-600 text-sm font-medium px-2">Error al cargar clientes: {{ customers.error()?.message }}</p>
   } @else if (!customers.value().length) {
-    <p class="text-surface-500 text-sm">No hay clientes que coincidan con la búsqueda.</p>
+    <div class="border-2 border-dashed border-slate-200 rounded-[18px] p-8 text-center">
+      <p class="text-slate-400 font-medium">No hay clientes que coincidan con la búsqueda.</p>
+    </div>
   } @else {
-    <div class="overflow-x-auto rounded-md border border-surface-200">
-      <table class="w-full text-sm">
-        <thead class="bg-surface-50 text-left text-surface-600">
-          <tr>
-            <th class="px-4 py-2">Nombre</th>
-            <th class="px-4 py-2">Documento</th>
-            <th class="px-4 py-2">Teléfono</th>
-            <th class="px-4 py-2">Email</th>
-            <th class="px-4 py-2"></th>
-          </tr>
-        </thead>
-        <tbody>
+    <div class="bg-white border border-slate-200 rounded-[18px] overflow-x-auto shadow-[0_1px_3px_rgba(16,24,40,0.05)]">
+      <div class="min-w-[800px]">
+        <div class="grid grid-cols-[2.2fr_1.4fr_1fr_0.8fr_80px] gap-4 px-6 py-3.5 bg-slate-50 border-b border-slate-100 text-[11.5px] font-bold text-slate-400 tracking-wider uppercase">
+          <span>Cliente</span>
+          <span>Contacto</span>
+          <span>Documento</span>
+          <span></span>
+          <span>Acciones</span>
+        </div>
+        
+        <div class="flex flex-col">
           @for (customer of customers.value(); track customer.id) {
-            <tr class="border-t border-surface-100" [class.opacity-50]="customer.archived_at">
-              <td class="px-4 py-2 font-medium text-surface-900">
-                <a [routerLink]="['/customers', customer.id]" class="hover:underline">
-                  {{ customer.name }}
-                </a>
-                @if (customer.archived_at) {
-                  <span class="ml-2 text-xs text-surface-400">(archivado)</span>
-                }
-              </td>
-              <td class="px-4 py-2 text-surface-600">
+            <div class="grid grid-cols-[2.2fr_1.4fr_1fr_0.8fr_80px] gap-4 px-6 py-4 border-b border-slate-50 items-center hover:bg-[#fafbfd] transition-colors" [class.opacity-50]="customer.archived_at">
+              <a [routerLink]="['/customers', customer.id]" class="flex items-center gap-3 min-w-0 group cursor-pointer">
+                <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center text-[13px] font-black shrink-0 group-hover:bg-red-600 transition-colors">
+                  {{ customer.name.substring(0, 2).toUpperCase() }}
+                </div>
+                <div class="min-w-0">
+                  <div class="text-[14.5px] font-bold text-slate-900 truncate flex items-center gap-2">
+                    {{ customer.name }}
+                    @if (customer.archived_at) {
+                      <span class="text-[10px] font-bold bg-slate-200 text-slate-500 px-2 py-0.5 rounded-full uppercase tracking-wider">Archivado</span>
+                    }
+                  </div>
+                  <div class="text-[12.5px] font-medium text-slate-400">{{ customer.document_type || 'Cliente' }}</div>
+                </div>
+              </a>
+              
+              <div class="min-w-0">
+                <div class="text-[13.5px] font-semibold text-slate-700">{{ customer.phone || '—' }}</div>
+                <div class="text-[12.5px] text-slate-400 truncate">{{ customer.email || '—' }}</div>
+              </div>
+              
+              <div class="text-[13.5px] font-semibold text-slate-600">
                 @if (customer.document_type) {
-                  {{ documentTypeLabel(customer.document_type) }}: {{ customer.document_number }}
+                  {{ customer.document_number }}
+                } @else {
+                  —
                 }
-              </td>
-              <td class="px-4 py-2 text-surface-600">{{ customer.phone }}</td>
-              <td class="px-4 py-2 text-surface-600">{{ customer.email }}</td>
-              <td class="px-4 py-2 text-right">
+              </div>
+              
+              <div>
+                <!-- El backend en esta fase no devuelve count de órdenes, pero dejamos el espacio preparado -->
+                <span class="text-[12.5px] font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-full invisible">0</span>
+              </div>
+              
+              <div class="flex items-center justify-end">
                 <button
                   type="button"
-                  class="text-xs font-medium text-blue-600 hover:underline"
+                  class="text-[12.5px] font-bold transition-colors"
+                  [class.text-red-600]="!customer.archived_at"
+                  [class.hover:text-red-700]="!customer.archived_at"
+                  [class.text-slate-500]="customer.archived_at"
+                  [class.hover:text-slate-700]="customer.archived_at"
                   (click)="toggleArchived(customer.id, !!customer.archived_at)"
                 >
-                  {{ customer.archived_at ? 'Reactivar' : 'Archivar' }}
+                  {{ customer.archived_at ? 'Restaurar' : 'Archivar' }}
                 </button>
-              </td>
-            </tr>
+              </div>
+            </div>
           }
-        </tbody>
-      </table>
+        </div>
+      </div>
     </div>
   }
 </div>

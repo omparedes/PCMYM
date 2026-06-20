@@ -1,238 +1,307 @@
-<div class="max-w-3xl mx-auto p-6">
-  <a routerLink="/service-orders" class="text-sm text-blue-600 hover:underline">&larr; Volver al tablero</a>
+<div class="max-w-[1000px] w-full mx-auto md:p-6 p-4">
+  <a routerLink="/service-orders" class="inline-flex items-center gap-2 px-0 py-2 border-0 bg-transparent text-slate-500 font-semibold text-[13.5px] cursor-pointer mb-6 transition-colors hover:text-slate-900">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    Volver al Tablero
+  </a>
 
   @if (order.isLoading()) {
-    <p class="text-surface-500 text-sm mt-4">Cargando...</p>
+    <div class="flex items-center justify-center p-12">
+      <div class="animate-pulse flex flex-col items-center gap-3">
+        <div class="w-10 h-10 border-4 border-slate-200 border-t-red-600 rounded-full animate-spin"></div>
+        <p class="text-slate-500 font-medium text-sm">Cargando detalles...</p>
+      </div>
+    </div>
   } @else if (order.error()) {
-    <p class="text-red-600 text-sm mt-4">Error al cargar la orden: {{ order.error()?.message }}</p>
+    <div class="bg-red-50 border border-red-100 p-6 rounded-[22px] flex flex-col items-center justify-center gap-3 text-center">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div>
+        <h3 class="text-red-800 font-bold text-lg m-0">Error al cargar la orden</h3>
+        <p class="text-red-600 text-sm mt-1">{{ order.error()?.message }}</p>
+      </div>
+    </div>
   } @else if (order.value(); as o) {
-    <div class="mt-4 flex items-start justify-between">
-      <div>
-        <h1 class="text-2xl font-semibold text-surface-900">Orden #{{ o.folio }}</h1>
-        <p class="text-surface-600">{{ o.customer?.name }}</p>
+    <!-- HEADER CARD -->
+    <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] p-6 md:p-8 mb-6 flex flex-col md:flex-row md:items-start justify-between gap-6">
+      <div class="flex items-start gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-slate-900 flex items-center justify-center shrink-0 shadow-sm">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-3 mb-1">
+            <h1 class="text-3xl font-black tracking-tight text-slate-900 m-0">Orden #{{ o.folio }}</h1>
+            <span class="px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-widest border"
+                  [class.bg-slate-100]="o.status === 'pending'" [class.text-slate-600]="o.status === 'pending'" [class.border-slate-200]="o.status === 'pending'"
+                  [class.bg-slate-800]="o.status === 'diagnosing'" [class.text-white]="o.status === 'diagnosing'" [class.border-slate-800]="o.status === 'diagnosing'"
+                  [class.bg-red-600]="o.status === 'repairing'" [class.text-white]="o.status === 'repairing'" [class.border-red-600]="o.status === 'repairing'"
+                  [class.bg-yellow-100]="o.status === 'waiting_parts'" [class.text-yellow-700]="o.status === 'waiting_parts'" [class.border-yellow-200]="o.status === 'waiting_parts'"
+                  [class.bg-emerald-100]="o.status === 'ready'" [class.text-emerald-700]="o.status === 'ready'" [class.border-emerald-200]="o.status === 'ready'"
+                  [class.bg-slate-200]="o.status === 'delivered' || o.status === 'cancelled'" [class.text-slate-500]="o.status === 'delivered' || o.status === 'cancelled'" [class.border-slate-300]="o.status === 'delivered' || o.status === 'cancelled'">
+              {{ statusLabel(o.status) }}
+            </span>
+          </div>
+          <p class="text-slate-500 font-semibold flex items-center gap-2 mt-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            {{ o.customer?.name }}
+          </p>
+        </div>
       </div>
-      <div class="text-right">
-        <span class="inline-block rounded-full bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1">
-          {{ statusLabel(o.status) }}
+      <div class="flex flex-col items-start md:items-end gap-2 bg-slate-50 p-4 rounded-xl border border-slate-100">
+        <div class="text-[12px] font-bold text-slate-500 uppercase tracking-widest">Prioridad</div>
+        <span class="px-3 py-1 rounded-full text-[12px] font-bold"
+              [class.bg-red-100]="o.priority === 'urgent'" [class.text-red-700]="o.priority === 'urgent'"
+              [class.bg-orange-100]="o.priority === 'high'" [class.text-orange-700]="o.priority === 'high'"
+              [class.bg-slate-200]="o.priority === 'normal'" [class.text-slate-700]="o.priority === 'normal'"
+              [class.bg-slate-100]="o.priority === 'low'" [class.text-slate-500]="o.priority === 'low'">
+          {{ priorityLabel(o.priority) }}
         </span>
-        <p class="text-xs text-surface-400 mt-1">Prioridad: {{ priorityLabel(o.priority) }}</p>
       </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 mt-6 text-sm">
-      <div>
-        <h3 class="font-medium text-surface-700 mb-1">Equipo</h3>
-        <p class="text-surface-600">
-          {{ o.equipment_type }} {{ o.brand }} {{ o.model }}
-          @if (o.serial_number) {<span class="text-surface-400">· S/N {{ o.serial_number }}</span>}
-        </p>
-        @if (o.accessories) {
-          <p class="text-surface-400 text-xs mt-1">Accesorios: {{ o.accessories }}</p>
-        }
-      </div>
-      <div>
-        <h3 class="font-medium text-surface-700 mb-1">Fechas</h3>
-        <p class="text-surface-600">Recibido: {{ o.received_at | date: 'short' }}</p>
-        @if (o.estimated_delivery) {
-          <p class="text-surface-600">Entrega estimada: {{ o.estimated_delivery | date: 'mediumDate' }}</p>
-        }
-      </div>
-    </div>
-
-    @if (o.reported_issue) {
-      <div class="mt-4 text-sm">
-        <h3 class="font-medium text-surface-700 mb-1">Falla reportada</h3>
-        <p class="text-surface-600">{{ o.reported_issue }}</p>
-      </div>
-    }
-
-    @if (o.initial_diagnosis) {
-      <div class="mt-4 text-sm">
-        <h3 class="font-medium text-surface-700 mb-1">Diagnóstico inicial</h3>
-        <p class="text-surface-600">{{ o.initial_diagnosis }}</p>
-      </div>
-    }
-
-    <div class="mt-8 border-t border-surface-200 pt-6">
-      <h2 class="text-lg font-semibold text-surface-900 mb-3">Galería / Fotos del equipo</h2>
-
-      <label
-        class="inline-flex items-center rounded-md bg-surface-100 px-4 py-2 text-sm font-medium text-surface-700 hover:bg-surface-200 cursor-pointer w-fit"
-        [class.opacity-50]="uploadingPhoto()"
-      >
-        {{ uploadingPhoto() ? 'Subiendo...' : 'Subir foto' }}
-        <input
-          type="file"
-          accept="image/*"
-          class="hidden"
-          [disabled]="uploadingPhoto()"
-          (change)="onPhotoSelected($event)"
-        />
-      </label>
-
-      @if (photoError(); as msg) {
-        <p class="text-sm text-red-600 mt-2">{{ msg }}</p>
-      }
-
-      @if (photos.isLoading()) {
-        <p class="text-sm text-surface-400 mt-3">Cargando fotos...</p>
-      } @else if (photos.value().length === 0) {
-        <p class="text-sm text-surface-400 mt-3">Aún no hay fotos de este equipo.</p>
-      } @else {
-        <div class="grid grid-cols-3 gap-3 mt-3">
-          @for (photo of photos.value(); track photo.id) {
-            <img
-              [src]="photo.url"
-              alt="Foto del equipo"
-              class="rounded-md aspect-square object-cover border border-surface-200 w-full"
-            />
-          }
-        </div>
-      }
-    </div>
-
-    <div class="mt-8 border-t border-surface-200 pt-6">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-lg font-semibold text-surface-900">Pagos</h2>
-        <p class="text-sm text-surface-600">
-          Total pagado: <span class="font-semibold text-surface-900">S/ {{ totalPaid() | number: '1.2-2' }}</span>
-        </p>
-      </div>
-
-      <button
-        type="button"
-        class="rounded-md bg-surface-100 px-4 py-2 text-sm font-medium text-surface-700 hover:bg-surface-200 w-fit"
-        (click)="togglePaymentForm()"
-      >
-        {{ showPaymentForm() ? 'Cancelar' : 'Registrar pago' }}
-      </button>
-
-      @if (showPaymentForm()) {
-        <form
-          class="flex flex-col gap-3 mt-3 max-w-sm"
-          (submit)="$event.preventDefault(); submitPayment()"
-        >
-          <div class="flex flex-col gap-1">
-            <label for="payment-amount" class="text-sm font-medium">Monto</label>
-            <input
-              id="payment-amount"
-              type="number"
-              step="0.01"
-              class="rounded-md border border-surface-300 px-3 py-2 text-sm"
-              [formField]="paymentForm.amount"
-            />
+    <!-- MAIN GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- LEFT COLUMN -->
+      <div class="lg:col-span-2 flex flex-col gap-6">
+        
+        <!-- INFO CARD -->
+        <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden">
+          <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <h2 class="text-[15px] font-extrabold text-slate-900 m-0">Detalles del Equipo</h2>
           </div>
-
-          <div class="flex flex-col gap-1">
-            <label for="payment-method" class="text-sm font-medium">Método de pago</label>
-            <select
-              id="payment-method"
-              class="rounded-md border border-surface-300 px-3 py-2 text-sm"
-              [formField]="paymentForm.payment_method"
-            >
-              <option value="">Selecciona...</option>
-              <option value="cash">Efectivo</option>
-              <option value="transfer">Transferencia</option>
-              <option value="card">Tarjeta</option>
-            </select>
-          </div>
-
-          @if (paymentError(); as msg) {
-            <p class="text-sm text-red-600">{{ msg }}</p>
-          }
-
-          <button
-            type="submit"
-            class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 w-fit"
-            [disabled]="savingPayment()"
-          >
-            {{ savingPayment() ? 'Guardando...' : 'Confirmar pago' }}
-          </button>
-        </form>
-      }
-
-      @if (payments.value().length > 0) {
-        <ul class="flex flex-col gap-2 mt-4 text-sm">
-          @for (payment of payments.value(); track payment.id) {
-            <li class="flex items-center justify-between rounded-md border border-surface-200 px-3 py-2">
-              <span class="text-surface-700">{{ paymentMethodLabel(payment.payment_method) }}</span>
-              <span class="text-surface-400 text-xs">{{ payment.created_at | date: 'short' }}</span>
-              <span class="font-medium text-surface-900">S/ {{ payment.amount }}</span>
-            </li>
-          }
-        </ul>
-      }
-    </div>
-
-    <div class="mt-8 border-t border-surface-200 pt-6">
-      <h2 class="text-lg font-semibold text-surface-900 mb-3">Cambiar estado</h2>
-
-      @if (nextStatuses().length === 0) {
-        <p class="text-sm text-surface-400">Esta orden está en un estado final, no admite más cambios.</p>
-      } @else {
-        <div class="flex flex-col gap-3">
-          <select
-            class="rounded-md border border-surface-300 px-3 py-2 text-sm w-fit"
-            [value]="selectedNextStatus()"
-            (change)="onSelectStatus($event)"
-          >
-            <option value="">Selecciona el nuevo estado...</option>
-            @for (status of nextStatuses(); track status) {
-              <option [value]="status">{{ statusLabel(status) }}</option>
-            }
-          </select>
-
-          <textarea
-            rows="2"
-            placeholder="Nota (opcional)"
-            class="rounded-md border border-surface-300 px-3 py-2 text-sm"
-            [value]="note()"
-            (input)="onNoteInput($event)"
-          ></textarea>
-
-          @if (errorMsg(); as msg) {
-            <p class="text-sm text-red-600">{{ msg }}</p>
-          }
-
-          <button
-            type="button"
-            class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 w-fit"
-            [disabled]="!selectedNextStatus() || changingStatus()"
-            (click)="submitStatusChange()"
-          >
-            {{ changingStatus() ? 'Guardando...' : 'Confirmar cambio de estado' }}
-          </button>
-        </div>
-      }
-    </div>
-
-    <div class="mt-8 border-t border-surface-200 pt-6">
-      <h2 class="text-lg font-semibold text-surface-900 mb-3">Línea de tiempo</h2>
-
-      @if (history.isLoading()) {
-        <p class="text-sm text-surface-400">Cargando historial...</p>
-      } @else {
-        <ol class="flex flex-col gap-4">
-          @for (entry of history.value(); track entry.id) {
-            <li class="flex gap-3">
-              <div class="w-2 h-2 mt-1.5 rounded-full bg-blue-600 flex-shrink-0"></div>
+          <div class="p-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
               <div>
-                <p class="text-sm text-surface-900">
-                  @if (entry.from_status) {
-                    {{ statusLabel(entry.from_status) }} &rarr; {{ statusLabel(entry.to_status) }}
-                  } @else {
-                    Orden creada como {{ statusLabel(entry.to_status) }}
-                  }
-                </p>
-                <p class="text-xs text-surface-400">{{ entry.changed_at | date: 'medium' }}</p>
-                @if (entry.note) {
-                  <p class="text-sm text-surface-600 mt-1">{{ entry.note }}</p>
+                <div class="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-1">Equipo</div>
+                <div class="text-[15px] font-bold text-slate-800">
+                  {{ o.equipment_type }} {{ o.brand }} {{ o.model }}
+                </div>
+                @if (o.serial_number) {<div class="text-[13px] text-slate-500 font-medium mt-1">S/N: {{ o.serial_number }}</div>}
+              </div>
+              <div>
+                <div class="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-1">Fechas</div>
+                <div class="text-[14px] font-medium text-slate-700 mb-1"><span class="font-bold text-slate-900">Recibido:</span> {{ o.received_at | date: 'medium' }}</div>
+                @if (o.estimated_delivery) {
+                  <div class="text-[14px] font-medium text-slate-700"><span class="font-bold text-slate-900">Entrega:</span> {{ o.estimated_delivery | date: 'mediumDate' }}</div>
                 }
               </div>
-            </li>
-          }
-        </ol>
-      }
+            </div>
+            
+            @if (o.accessories) {
+              <div class="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div class="text-[12px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                  Accesorios incluidos
+                </div>
+                <p class="text-[14px] text-slate-700 m-0 font-medium">{{ o.accessories }}</p>
+              </div>
+            }
+
+            @if (o.reported_issue) {
+              <div class="mb-6">
+                <div class="text-[13px] font-bold text-slate-800 mb-2 border-l-2 border-red-600 pl-3">Falla reportada</div>
+                <p class="text-[14.5px] text-slate-600 m-0 bg-white border border-slate-200 rounded-xl p-4 leading-relaxed">{{ o.reported_issue }}</p>
+              </div>
+            }
+
+            @if (o.initial_diagnosis) {
+              <div>
+                <div class="text-[13px] font-bold text-slate-800 mb-2 border-l-2 border-slate-400 pl-3">Diagnóstico Inicial</div>
+                <p class="text-[14.5px] text-slate-600 m-0 bg-white border border-slate-200 rounded-xl p-4 leading-relaxed">{{ o.initial_diagnosis }}</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- PHOTOS CARD -->
+        <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden">
+          <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              <h2 class="text-[15px] font-extrabold text-slate-900 m-0">Galería de Fotos</h2>
+            </div>
+            
+            <label class="flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg font-bold text-[12.5px] shadow-sm transition-all duration-200 hover:bg-slate-800 hover:shadow-md cursor-pointer" [class.opacity-50]="uploadingPhoto()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              {{ uploadingPhoto() ? 'Subiendo...' : 'Agregar Foto' }}
+              <input type="file" accept="image/*" class="hidden" [disabled]="uploadingPhoto()" (change)="onPhotoSelected($event)" />
+            </label>
+          </div>
+          <div class="p-6">
+            @if (photoError(); as msg) {
+              <div class="p-3 bg-red-50 text-red-600 rounded-xl text-sm font-semibold mb-4">{{ msg }}</div>
+            }
+
+            @if (photos.isLoading()) {
+              <div class="flex items-center gap-3 text-slate-500 font-medium text-sm p-4 bg-slate-50 rounded-xl">
+                <div class="w-4 h-4 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin"></div> Cargando fotos...
+              </div>
+            } @else if (photos.value().length === 0) {
+              <div class="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center flex flex-col items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                <p class="text-[14px] font-bold text-slate-400 m-0">No hay fotos registradas de este equipo.</p>
+              </div>
+            } @else {
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                @for (photo of photos.value(); track photo.id) {
+                  <div class="group relative rounded-xl overflow-hidden border border-slate-200 shadow-sm aspect-square bg-slate-100">
+                    <img [src]="photo.url" alt="Foto" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                       <a [href]="photo.url" target="_blank" class="w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white text-white hover:text-slate-900 transition-colors">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                       </a>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="flex flex-col gap-6">
+        
+        <!-- STATUS CHANGE CARD -->
+        <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden">
+          <div class="px-6 py-5 border-b border-slate-100 bg-red-50 flex items-center gap-3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <h2 class="text-[15px] font-extrabold text-red-700 m-0">Actualizar Estado</h2>
+          </div>
+          <div class="p-6">
+            @if (nextStatuses().length === 0) {
+              <p class="text-[13px] font-semibold text-slate-500 text-center bg-slate-50 p-4 rounded-xl border border-slate-100">La orden está en un estado final. Ya no admite cambios.</p>
+            } @else {
+              <div class="flex flex-col gap-4">
+                <div>
+                  <label class="block text-[12px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Nuevo estado</label>
+                  <div class="relative">
+                    <select class="w-full py-3 pl-4 pr-10 border-[1.5px] border-slate-200 rounded-xl text-[14px] font-bold text-slate-900 bg-white outline-none appearance-none cursor-pointer focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)] transition-all" [value]="selectedNextStatus()" (change)="onSelectStatus($event)">
+                      <option value="">Selecciona el estado...</option>
+                      @for (status of nextStatuses(); track status) {
+                        <option [value]="status">{{ statusLabel(status) }}</option>
+                      }
+                    </select>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"><path d="m6 9 6 6 6-6"/></svg>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[12px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Nota (Opcional)</label>
+                  <textarea rows="2" placeholder="Describe qué se hizo..." class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[13.5px] font-medium text-slate-900 bg-white outline-none resize-y min-h-[64px] focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)] transition-all" [value]="note()" (input)="onNoteInput($event)"></textarea>
+                </div>
+
+                @if (errorMsg(); as msg) {
+                  <p class="text-[13px] text-red-600 font-bold bg-red-50 p-2 rounded-lg">{{ msg }}</p>
+                }
+
+                <button type="button" class="w-full flex items-center justify-center gap-2 px-5 py-3.5 bg-red-600 text-white rounded-xl font-bold text-[14px] shadow-[0_8px_20px_rgba(225,29,42,0.26)] transition-all hover:-translate-y-px hover:shadow-[0_12px_26px_rgba(225,29,42,0.34)] disabled:opacity-50 disabled:cursor-not-allowed" [disabled]="!selectedNextStatus() || changingStatus()" (click)="submitStatusChange()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  {{ changingStatus() ? 'Procesando...' : 'Confirmar Cambio' }}
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- PAYMENTS CARD -->
+        <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden">
+          <div class="px-6 py-5 border-b border-slate-100 bg-emerald-50/50 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              <h2 class="text-[15px] font-extrabold text-emerald-800 m-0">Pagos</h2>
+            </div>
+            <div class="text-[14px] font-black text-slate-900 bg-white px-3 py-1 rounded-lg border border-slate-200 shadow-sm">
+              S/ {{ totalPaid() | number: '1.2-2' }}
+            </div>
+          </div>
+          <div class="p-6">
+            <button type="button" class="w-full flex items-center justify-center gap-2 mb-4 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-[13px] font-bold text-slate-600 hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 transition-all" (click)="togglePaymentForm()">
+              @if (showPaymentForm()) { Cancelar } @else { <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Registrar Pago }
+            </button>
+
+            @if (showPaymentForm()) {
+              <form class="flex flex-col gap-4 mb-6 bg-white border border-slate-200 p-4 rounded-xl shadow-sm" (submit)="$event.preventDefault(); submitPayment()">
+                <div>
+                  <label class="block text-[12px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Monto (S/)</label>
+                  <input type="number" step="0.01" class="w-full py-2.5 px-3 border-[1.5px] border-slate-200 rounded-lg text-[14px] font-bold text-slate-900 outline-none focus:border-emerald-500 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.13)] transition-all" [formField]="paymentForm.amount" />
+                </div>
+                <div>
+                  <label class="block text-[12px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Método</label>
+                  <div class="relative">
+                    <select class="w-full py-2.5 pl-3 pr-8 border-[1.5px] border-slate-200 rounded-lg text-[13.5px] font-bold text-slate-900 outline-none appearance-none focus:border-emerald-500 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.13)] transition-all" [formField]="paymentForm.payment_method">
+                      <option value="">Seleccionar...</option>
+                      <option value="cash">Efectivo</option>
+                      <option value="transfer">Transferencia</option>
+                      <option value="card">Tarjeta</option>
+                    </select>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"><path d="m6 9 6 6 6-6"/></svg>
+                  </div>
+                </div>
+
+                @if (paymentError(); as msg) {
+                  <p class="text-[12px] text-red-600 font-bold m-0">{{ msg }}</p>
+                }
+
+                <button type="submit" class="w-full bg-emerald-600 text-white rounded-lg py-2.5 font-bold text-[13.5px] shadow-[0_4px_14px_rgba(16,185,129,0.2)] hover:bg-emerald-700 transition-colors disabled:opacity-50" [disabled]="savingPayment()">
+                  {{ savingPayment() ? 'Procesando...' : 'Confirmar' }}
+                </button>
+              </form>
+            }
+
+            @if (payments.value().length > 0) {
+              <div class="flex flex-col gap-2">
+                @for (payment of payments.value(); track payment.id) {
+                  <div class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3">
+                    <div class="flex flex-col">
+                      <span class="text-[13px] font-bold text-slate-800">{{ paymentMethodLabel(payment.payment_method) }}</span>
+                      <span class="text-[11px] font-semibold text-slate-400">{{ payment.created_at | date: 'shortDate' }}</span>
+                    </div>
+                    <span class="font-black text-[14px] text-emerald-700 bg-emerald-100/50 px-2.5 py-1 rounded-md">S/ {{ payment.amount }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="text-[13px] font-semibold text-slate-400 text-center m-0">No hay pagos registrados.</p>
+            }
+          </div>
+        </div>
+
+        <!-- HISTORY TIMELINE -->
+        <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden">
+          <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <h2 class="text-[15px] font-extrabold text-slate-900 m-0">Historial</h2>
+          </div>
+          <div class="p-6">
+            @if (history.isLoading()) {
+              <div class="flex justify-center p-4"><div class="w-6 h-6 border-2 border-slate-200 border-t-slate-600 rounded-full animate-spin"></div></div>
+            } @else {
+              <div class="relative pl-3 border-l-2 border-slate-100 space-y-6">
+                @for (entry of history.value(); track entry.id; let first = $first) {
+                  <div class="relative">
+                    <div class="absolute -left-[23px] top-1 w-3 h-3 rounded-full border-2 border-white shadow-sm" [class.bg-slate-900]="first" [class.bg-slate-300]="!first"></div>
+                    <div class="pl-4">
+                      <p class="text-[13.5px] font-bold text-slate-800 m-0 leading-tight">
+                        @if (entry.from_status) {
+                          Cambió a <span class="text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded">{{ statusLabel(entry.to_status) }}</span>
+                        } @else {
+                          Orden recibida
+                        }
+                      </p>
+                      <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mt-1 mb-2">{{ entry.changed_at | date: 'medium' }}</p>
+                      @if (entry.note) {
+                        <p class="text-[13px] font-medium text-slate-600 bg-slate-50 border border-slate-100 p-3 rounded-xl m-0">{{ entry.note }}</p>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+      </div>
     </div>
   }
 </div>

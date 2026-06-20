@@ -1,101 +1,85 @@
-<div class="max-w-2xl mx-auto p-6">
-  <h1 class="text-2xl font-semibold text-surface-900 mb-6">
-    {{ isEditMode ? 'Editar cliente' : 'Nuevo cliente' }}
-  </h1>
+<div class="max-w-[780px] w-full mx-auto md:p-6 p-4">
+  <a routerLink="/customers" class="inline-flex items-center gap-2 px-0 py-2 border-0 bg-transparent text-slate-500 font-semibold text-[13.5px] cursor-pointer mb-4 transition-colors hover:text-slate-900">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    Volver a Clientes
+  </a>
 
-  <form class="flex flex-col gap-4" (submit)="$event.preventDefault(); onSubmit()">
-    <div class="flex flex-col gap-1">
-      <label for="name" class="text-sm font-medium">Nombre *</label>
-      <input
-        id="name"
-        type="text"
-        class="rounded-md border border-surface-300 px-3 py-2 text-sm"
-        [formField]="customerForm.name"
-      />
-    </div>
-
-    <div class="grid grid-cols-2 gap-4">
-      <div class="flex flex-col gap-1">
-        <label for="document_type" class="text-sm font-medium">Tipo de documento</label>
-        <select
-          id="document_type"
-          class="rounded-md border border-surface-300 px-3 py-2 text-sm"
-          [formField]="customerForm.document_type"
-        >
-          <option value="">Sin especificar</option>
-          <option value="DNI">DNI</option>
-          <option value="RUC">RUC</option>
-        </select>
+  <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden">
+    <div class="px-7 py-6 border-b border-slate-100 flex items-center gap-3.5">
+      <div class="w-11 h-11 rounded-xl bg-slate-900 flex items-center justify-center shrink-0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20c0-3.3 2.9-5.5 6.5-5.5s6.5 2.2 6.5 5.5"/></svg>
       </div>
-
-      <div class="flex flex-col gap-1">
-        <label for="document_number" class="text-sm font-medium">Número de documento</label>
-        <input
-          id="document_number"
-          type="text"
-          class="rounded-md border border-surface-300 px-3 py-2 text-sm"
-          [formField]="customerForm.document_number"
-        />
+      <div>
+        <h2 class="m-0 text-[20px] font-extrabold tracking-tight text-slate-900">
+          {{ isEditMode ? 'Editar cliente' : 'Nuevo cliente' }}
+        </h2>
+        <p class="mt-1 text-[13.5px] font-medium text-slate-500">Registra los datos de contacto y facturación.</p>
       </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-4">
-      <div class="flex flex-col gap-1">
-        <label for="phone" class="text-sm font-medium">Teléfono</label>
-        <input
-          id="phone"
-          type="text"
-          class="rounded-md border border-surface-300 px-3 py-2 text-sm"
-          [formField]="customerForm.phone"
-        />
+    <form (submit)="$event.preventDefault(); onSubmit()">
+      <div class="px-7 py-7">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-5">
+          <div class="md:col-span-2">
+            <label for="name" class="block text-[13px] font-bold text-slate-700 mb-2">Nombre completo / Razón social <span class="text-red-600">*</span></label>
+            <input id="name" type="text" placeholder="Ej. María González" [formField]="customerForm.name" class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" />
+          </div>
+          
+          <div>
+            <label for="phone" class="block text-[13px] font-bold text-slate-700 mb-2">Teléfono <span class="text-red-600">*</span></label>
+            <input id="phone" type="text" placeholder="+51 987 654 321" [formField]="customerForm.phone" class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" />
+          </div>
+          
+          <div>
+            <label for="email" class="block text-[13px] font-bold text-slate-700 mb-2">Correo electrónico</label>
+            <input id="email" type="email" placeholder="cliente@correo.com" [formField]="customerForm.email" class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" />
+          </div>
+          
+          <div>
+            <label for="document_type" class="block text-[13px] font-bold text-slate-700 mb-2">Tipo de documento</label>
+            <div class="relative">
+              <select id="document_type" [formField]="customerForm.document_type" class="w-full py-3 pl-4 pr-10 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none appearance-none cursor-pointer transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]">
+                <option value="">Sin especificar</option>
+                <option value="DNI">DNI</option>
+                <option value="RUC">RUC</option>
+              </select>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+          
+          <div>
+            <label for="document_number" class="block text-[13px] font-bold text-slate-700 mb-2">N° de documento</label>
+            <input id="document_number" type="text" placeholder="45123789" [formField]="customerForm.document_number" class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" />
+          </div>
+          
+          <div class="md:col-span-2">
+            <label for="address" class="block text-[13px] font-bold text-slate-700 mb-2">Dirección</label>
+            <input id="address" type="text" placeholder="Av. Principal 123, Lima" [formField]="customerForm.address" class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]" />
+          </div>
+          
+          <div class="md:col-span-2">
+            <label for="notes" class="block text-[13px] font-bold text-slate-700 mb-2">Notas internas</label>
+            <textarea id="notes" rows="3" placeholder="Información adicional sobre el cliente..." [formField]="customerForm.notes" class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none resize-y min-h-[84px] leading-relaxed transition-all duration-150 focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)]"></textarea>
+          </div>
+        </div>
+
+        @if (errorMsg(); as msg) {
+          <div class="mt-4 p-3 bg-red-50 border border-red-100 text-red-600 rounded-xl text-sm font-semibold flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+            {{ msg }}
+          </div>
+        }
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="email" class="text-sm font-medium">Email</label>
-        <input
-          id="email"
-          type="email"
-          class="rounded-md border border-surface-300 px-3 py-2 text-sm"
-          [formField]="customerForm.email"
-        />
+      <div class="px-7 py-5 border-t border-slate-100 bg-[#fafbfd] flex items-center justify-end gap-3 rounded-b-[22px]">
+        <a routerLink="/customers" class="px-5 py-3 border-[1.5px] border-slate-200 bg-white text-slate-600 rounded-xl font-bold text-[14px] cursor-pointer transition-colors hover:border-slate-300 hover:bg-slate-50">
+          Cancelar
+        </a>
+        <button type="submit" [disabled]="saving()" class="flex items-center gap-2 px-6 py-3 bg-red-600 text-white border-0 rounded-xl font-bold text-[14px] cursor-pointer shadow-[0_8px_20px_rgba(225,29,42,0.26)] transition-all duration-150 hover:-translate-y-px hover:shadow-[0_12px_26px_rgba(225,29,42,0.34)] disabled:opacity-50 disabled:cursor-not-allowed">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+          {{ saving() ? 'Guardando...' : 'Guardar cliente' }}
+        </button>
       </div>
-    </div>
-
-    <div class="flex flex-col gap-1">
-      <label for="address" class="text-sm font-medium">Dirección</label>
-      <input
-        id="address"
-        type="text"
-        class="rounded-md border border-surface-300 px-3 py-2 text-sm"
-        [formField]="customerForm.address"
-      />
-    </div>
-
-    <div class="flex flex-col gap-1">
-      <label for="notes" class="text-sm font-medium">Notas</label>
-      <textarea
-        id="notes"
-        rows="3"
-        class="rounded-md border border-surface-300 px-3 py-2 text-sm"
-        [formField]="customerForm.notes"
-      ></textarea>
-    </div>
-
-    @if (errorMsg(); as msg) {
-      <p class="text-sm text-red-600">{{ msg }}</p>
-    }
-
-    <div class="flex gap-3 mt-2">
-      <button
-        type="submit"
-        class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-        [disabled]="saving()"
-      >
-        {{ saving() ? 'Guardando...' : 'Guardar' }}
-      </button>
-      <a routerLink="/customers" class="rounded-md px-4 py-2 text-sm font-medium text-surface-600 hover:bg-surface-100">
-        Cancelar
-      </a>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>

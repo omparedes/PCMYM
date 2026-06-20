@@ -1,37 +1,90 @@
-<div class="min-h-screen bg-surface-50">
-  <nav class="bg-white border-b border-surface-200 px-6 py-3 flex items-center justify-between">
-    <div class="flex items-center gap-6">
-      <span class="font-semibold text-surface-900">PCMYM</span>
-      <a
-        routerLink="/service-orders"
-        routerLinkActive="text-blue-600 font-medium"
-        class="text-sm text-surface-600 hover:text-surface-900"
-      >
-        Órdenes
-      </a>
-      <a
-        routerLink="/customers"
-        routerLinkActive="text-blue-600 font-medium"
-        class="text-sm text-surface-600 hover:text-surface-900"
-      >
-        Clientes
-      </a>
-      <a
-        routerLink="/finance"
-        routerLinkActive="text-blue-600 font-medium"
-        class="text-sm text-surface-600 hover:text-surface-900"
-      >
-        Finanzas
-      </a>
+<div class="flex min-h-screen w-full bg-[#f6f8fb] text-slate-900 font-sans antialiased">
+  <!-- Desktop Sidebar -->
+  <aside class="hidden md:flex w-[264px] flex-col bg-white border-r border-slate-200 py-6 px-4 sticky top-0 h-screen shrink-0">
+    <div class="flex items-center gap-3 px-2 pb-6">
+      <img src="assets/isotipo.png" alt="PCMYM" class="w-10 h-10 object-contain block" />
+      <div class="leading-tight">
+        <div class="text-xl font-black tracking-tight text-slate-900">PCMYM</div>
+        <div class="text-[11px] font-bold text-slate-400 mt-1 tracking-wider uppercase">Servicio Técnico</div>
+      </div>
     </div>
-    <button
-      type="button"
-      class="text-sm text-surface-500 hover:text-surface-900"
-      (click)="signOut()"
-    >
-      Cerrar sesión
-    </button>
-  </nav>
 
-  <router-outlet />
+    <div class="text-[11px] font-bold text-slate-400 tracking-widest uppercase px-3 pb-2">Operación</div>
+    <nav class="flex flex-col gap-1">
+      <a routerLink="/service-orders"
+         routerLinkActive="bg-red-600 text-white shadow-[0_8px_18px_rgba(225,29,42,0.26)]"
+         [routerLinkActiveOptions]="{exact: false}"
+         #rlo="routerLinkActive"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-[14.5px] transition-all duration-150 text-slate-500 hover:bg-slate-50"
+         [class.hover:bg-slate-50]="!rlo.isActive">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="10" rx="1.5"/><rect x="17" y="4" width="4" height="13" rx="1.5"/></svg>
+        <span>Órdenes</span>
+      </a>
+      
+      <a routerLink="/customers"
+         routerLinkActive="bg-red-600 text-white shadow-[0_8px_18px_rgba(225,29,42,0.26)]"
+         [routerLinkActiveOptions]="{exact: false}"
+         #rlc="routerLinkActive"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-[14.5px] transition-all duration-150 text-slate-500 hover:bg-slate-50"
+         [class.hover:bg-slate-50]="!rlc.isActive">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3 2.6-5 5.5-5s5.5 2 5.5 5"/><path d="M16 6.5a3 3 0 0 1 0 5.6"/><path d="M18 19.5c0-2.2-1-3.8-2.5-4.6"/></svg>
+        <span>Clientes</span>
+      </a>
+
+      <a routerLink="/finance"
+         routerLinkActive="bg-red-600 text-white shadow-[0_8px_18px_rgba(225,29,42,0.26)]"
+         [routerLinkActiveOptions]="{exact: false}"
+         #rlf="routerLinkActive"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-[14.5px] transition-all duration-150 text-slate-500 hover:bg-slate-50"
+         [class.hover:bg-slate-50]="!rlf.isActive">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg>
+        <span>Finanzas</span>
+      </a>
+    </nav>
+
+    <div class="mt-auto border-t border-slate-100 pt-4 flex items-center gap-3 px-2">
+      <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center text-sm font-black shrink-0">AD</div>
+      <div class="leading-tight min-w-0">
+        <div class="text-[13.5px] font-bold text-slate-900 truncate">Administrador</div>
+        <div class="text-[11.5px] font-medium text-slate-400">Taller</div>
+      </div>
+      <button (click)="signOut()" class="ml-auto shrink-0 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors" title="Cerrar sesión">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0">
+    
+    <!-- Mobile Topbar -->
+    <header class="md:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-slate-200 sticky top-0 z-20">
+      <img src="assets/isotipo.png" alt="PCMYM" class="w-8 h-8 object-contain" />
+      <div class="text-[17px] font-black tracking-tight text-slate-900">PCMYM</div>
+      <button (click)="signOut()" class="ml-auto w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+      </button>
+    </header>
+
+    <!-- Page Content -->
+    <main class="flex-1 min-w-0 md:p-6 pb-24 md:pb-6">
+      <router-outlet />
+    </main>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 flex pb-safe shadow-[0_-4px_20px_rgba(16,24,40,0.06)] px-2 py-2">
+    <a routerLink="/service-orders" routerLinkActive="text-red-600" [routerLinkActiveOptions]="{exact: false}" #mbO="routerLinkActive" class="flex-1 flex flex-col items-center gap-1 p-2 transition-colors" [class.text-slate-400]="!mbO.isActive">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="10" rx="1.5"/><rect x="17" y="4" width="4" height="13" rx="1.5"/></svg>
+      <span class="text-[11px] font-bold">Órdenes</span>
+    </a>
+    <a routerLink="/customers" routerLinkActive="text-red-600" [routerLinkActiveOptions]="{exact: false}" #mbC="routerLinkActive" class="flex-1 flex flex-col items-center gap-1 p-2 transition-colors" [class.text-slate-400]="!mbC.isActive">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3 2.6-5 5.5-5s5.5 2 5.5 5"/><path d="M16 6.5a3 3 0 0 1 0 5.6"/></svg>
+      <span class="text-[11px] font-bold">Clientes</span>
+    </a>
+    <a routerLink="/finance" routerLinkActive="text-red-600" [routerLinkActiveOptions]="{exact: false}" #mbF="routerLinkActive" class="flex-1 flex flex-col items-center gap-1 p-2 transition-colors" [class.text-slate-400]="!mbF.isActive">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg>
+      <span class="text-[11px] font-bold">Finanzas</span>
+    </a>
+  </nav>
 </div>

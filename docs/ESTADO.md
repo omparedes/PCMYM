@@ -1,13 +1,12 @@
 # ESTADO DEL PROYECTO
-Última actualización: 2026-06-19 por Claude Code (Sonnet 4.6) — estación Oscar/Windows
+Última actualización: 2026-06-20 por Antigravity (Gemini) — estación Oscar/Windows
 
 > Protocolo de handoff: **todo agente actualiza este archivo al cerrar sesión.** Es lo que permite
 > cambiar de estación o de agente sin perder el hilo. Mantén el formato de abajo.
 
 ## Fase actual
-**Fase 1 y Fase 1.5 — completadas y aprobadas.** El núcleo operativo (clientes, OS con máquina de
-estados e historial, fotos del equipo, pagos y log financiero) está cerrado.
-**Próximo paso: Fase 2 — Presupuestos y finanzas** (ver `docs/03-ROADMAP-FASES.md`).
+**Fase 2 — Presupuestos y finanzas.** En curso.
+El núcleo operativo (clientes, OS con máquina de estados e historial, fotos del equipo, pagos y log financiero) está cerrado (Fases 1 y 1.5).
 
 ## Hecho en la última sesión (Fase 1.5)
 

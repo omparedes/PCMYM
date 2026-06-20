@@ -7,6 +7,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login').then((m) => m.Login),
   },
   {
+    path: 'seguimiento/:token',
+    loadComponent: () => import('./features/tracking/tracking-status').then((m) => m.TrackingStatus),
+  },
+  {
     path: '',
     canActivate: [authGuard],
     loadComponent: () => import('./core/layout/shell').then((m) => m.Shell),

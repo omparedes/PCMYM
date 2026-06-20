@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -596,6 +596,7 @@ export type Database = {
           reported_issue: string | null
           serial_number: string | null
           status: string
+          tracking_token: string
           updated_at: string
         }
         Insert: {
@@ -616,6 +617,7 @@ export type Database = {
           reported_issue?: string | null
           serial_number?: string | null
           status?: string
+          tracking_token?: string
           updated_at?: string
         }
         Update: {
@@ -636,6 +638,7 @@ export type Database = {
           reported_issue?: string | null
           serial_number?: string | null
           status?: string
+          tracking_token?: string
           updated_at?: string
         }
         Relationships: [
@@ -817,6 +820,7 @@ export type Database = {
           reported_issue: string | null
           serial_number: string | null
           status: string
+          tracking_token: string
           updated_at: string
         }
         SetofOptions: {
@@ -826,6 +830,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      get_public_tracking_info: { Args: { p_token: string }; Returns: Json }
       is_valid_budget_transition: {
         Args: { p_from: string; p_to: string }
         Returns: boolean

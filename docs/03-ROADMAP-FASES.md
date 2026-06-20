@@ -78,11 +78,11 @@ limpiados al terminar (incluye aislamiento cross-tenant); `ESTADO.md` actualizad
 
 ---
 
-## Fase 3 — Cliente y notificaciones
+## Fase 3 — Cliente y notificaciones *(completada)*
 **Objetivo:** comunicación con el cliente final.
 **Entregables:** seguimiento público por token (`/seguimiento/{uuid}`, sin login); notificaciones
 automáticas vía **n8n + WhatsApp Cloud API**; email con **Resend**.
-**DoD:** ruta pública segura (token, sin fuga de datos de otros negocios); flujos n8n documentados;
+**DoD (cumplido):** ruta pública segura desarrollada y probada, webhook a n8n configurado en Supabase;
 tests verdes; `ESTADO.md` actualizado.
 
 ---

@@ -90,6 +90,7 @@ simple según necesidad real, ver migración). RLS estándar (select/insert/upda
 | assigned_to            | uuid        | nullable, FK → profiles(id)                             |
 | received_at            | timestamptz | default now()                                            |
 | estimated_delivery     | date        | nullable                                                 |
+| tracking_token         | uuid        | default gen_random_uuid() (Fase 3: acceso público)       |
 | created_at             | timestamptz | default now()                                            |
 | updated_at             | timestamptz | default now()                                            |
 
@@ -183,6 +184,10 @@ Trigger `validate_payment` (mismo patrón de validación cruzada). Tabla inmutab
 automáticamente una entrada `income` con la descripción `"Pago de Orden #<folio>"`. Por ahora la
 tabla solo recibe `income` desde pagos; un flujo de alta manual de `expense` queda fuera de esta
 fase (evaluar en Fase 2 si hace falta).
+
+## API Pública y Webhooks (Fase 3)
+- **RPC `get_public_tracking_info(p_token uuid)`:** `SECURITY DEFINER`. Devuelve solo los datos seguros de la Orden (folio, estado, fechas, y total del presupuesto) filtrando por `tracking_token` para mostrar en la ruta pública sin exponer datos sensibles del negocio ni del cliente.
+- **Webhook de Notificaciones (n8n):** Trigger `AFTER UPDATE` en `service_orders`. Detecta cambios en `status` y usa `pg_net` para hacer un `POST` a la URL configurada en `app.settings.n8n_webhook_url`. Payload: `service_order_id, business_id, folio, from_status, to_status, customer_phone, tracking_token`.
 
 ## Tablas de dominio (Fase 2)
 

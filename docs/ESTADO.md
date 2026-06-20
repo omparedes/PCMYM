@@ -5,9 +5,20 @@
 > cambiar de estación o de agente sin perder el hilo. Mantén el formato de abajo.
 
 ## Fase actual
-**Fase 2 — Presupuestos y finanzas. Completada.** Ejecutada de forma autónoma de principio a fin
-en una sola sesión (sin checkpoints intermedios de aprobación de Oscar — instrucción explícita del
-prompt que abrió la sesión). El núcleo operativo (Fases 1 y 1.5) sigue intacto.
+**Fase 4 — Base de conocimiento.** En curso.
+Fase 3 (Cliente y notificaciones) se ejecutó con éxito (arquitectura por Claude, infraestructura por Antigravity).
+
+## Hecho en esta sesión (Fase 3)
+- **Migraciones:** 
+  - `public_tracking.sql` (Añadido `tracking_token` a `service_orders` y RPC `get_public_tracking_info` para lectura segura pública).
+  - `n8n_webhooks.sql` (Habilitado `pg_net` y trigger `AFTER UPDATE` en OS para hacer POST a URL dinámica leída desde los settings del proyecto Supabase).
+- **Angular:** Módulo de tracking público (`/seguimiento/:token`) implementado con diseño premium. Tipos regenerados (`database.types.ts`).
+- **Validación:** Push a la BD exitoso, `npm run build` sin errores.
+
+## Tareas pendientes para Oscar (Infraestructura)
+- Configurar en el editor SQL de Supabase (o CLI): `ALTER DATABASE postgres SET "app.settings.n8n_webhook_url" TO 'https://tu-n8n.url/webhook';` y luego `SELECT pg_reload_conf();` para activar el webhook real.
+- Asegurarse de que la extensión `pg_net` esté activa en el dashboard de Supabase (Settings > Database > Extensions).
+
 
 ## Hecho en esta sesión (Fase 2)
 

@@ -1,0 +1,104 @@
+<div class="min-h-screen bg-slate-50 flex items-start justify-center p-4 md:p-10">
+  <div class="max-w-[640px] w-full">
+
+    @if (info.isLoading()) {
+      <div class="flex items-center justify-center p-16">
+        <div class="animate-pulse flex flex-col items-center gap-3">
+          <div class="w-10 h-10 border-4 border-slate-200 border-t-red-600 rounded-full animate-spin"></div>
+          <p class="text-slate-500 font-medium text-sm">Buscando tu orden...</p>
+        </div>
+      </div>
+    } @else if (info.error()) {
+      <div class="bg-white border border-red-100 p-8 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] flex flex-col items-center justify-center gap-3 text-center">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div>
+          <h3 class="text-red-800 font-bold text-lg m-0">No pudimos encontrar tu orden</h3>
+          <p class="text-red-600 text-sm mt-1 m-0">{{ info.error()?.message }}</p>
+        </div>
+        <p class="text-slate-400 text-[12.5px] mt-2 m-0">Verifica que el enlace de seguimiento sea el mismo que te compartió el taller.</p>
+      </div>
+    } @else if (info.value(); as o) {
+
+      <!-- HEADER -->
+      <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] p-6 md:p-8 mb-6">
+        <div class="flex items-start gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-slate-900 flex items-center justify-center shrink-0 shadow-sm">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 m-0">{{ o.business_name }}</p>
+            <h1 class="text-2xl md:text-3xl font-black tracking-tight text-slate-900 m-0 mt-0.5">Orden #{{ o.folio }}</h1>
+            <p class="text-slate-500 font-semibold mt-1 m-0">{{ o.equipment_type }} {{ o.brand }} {{ o.model }}</p>
+          </div>
+          <span class="px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-widest border shrink-0"
+                [class.bg-slate-100]="o.status === 'pending'" [class.text-slate-600]="o.status === 'pending'" [class.border-slate-200]="o.status === 'pending'"
+                [class.bg-slate-800]="o.status === 'diagnosing'" [class.text-white]="o.status === 'diagnosing'" [class.border-slate-800]="o.status === 'diagnosing'"
+                [class.bg-red-600]="o.status === 'repairing'" [class.text-white]="o.status === 'repairing'" [class.border-red-600]="o.status === 'repairing'"
+                [class.bg-yellow-100]="o.status === 'waiting_parts'" [class.text-yellow-700]="o.status === 'waiting_parts'" [class.border-yellow-200]="o.status === 'waiting_parts'"
+                [class.bg-emerald-100]="o.status === 'ready'" [class.text-emerald-700]="o.status === 'ready'" [class.border-emerald-200]="o.status === 'ready'"
+                [class.bg-slate-200]="o.status === 'delivered' || o.status === 'cancelled'" [class.text-slate-500]="o.status === 'delivered' || o.status === 'cancelled'" [class.border-slate-300]="o.status === 'delivered' || o.status === 'cancelled'">
+            {{ statusLabel(o.status) }}
+          </span>
+        </div>
+
+        @if (o.estimated_delivery) {
+          <div class="mt-5 pt-5 border-t border-slate-100 flex items-center gap-2 text-[13.5px] font-semibold text-slate-600">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Entrega estimada: <span class="text-slate-900 font-bold">{{ o.estimated_delivery | date: 'mediumDate' }}</span>
+          </div>
+        }
+      </div>
+
+      @if (isCancelled()) {
+        <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] p-6 mb-6 flex items-center gap-3">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <p class="text-[14px] font-bold text-slate-600 m-0">Esta orden fue cancelada.</p>
+        </div>
+      } @else {
+        <!-- TIMELINE -->
+        <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden mb-6">
+          <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <h2 class="text-[15px] font-extrabold text-slate-900 m-0">Estado de tu equipo</h2>
+          </div>
+          <div class="p-6">
+            <div class="relative pl-3 border-l-2 border-slate-100 space-y-6">
+              @for (step of steps; track step) {
+                <div class="relative">
+                  <div class="absolute -left-[23px] top-0.5 w-3.5 h-3.5 rounded-full border-2 border-white shadow-sm flex items-center justify-center"
+                       [class.bg-emerald-500]="stepState(step) === 'done'"
+                       [class.bg-red-600]="stepState(step) === 'current'"
+                       [class.bg-slate-200]="stepState(step) === 'upcoming'">
+                  </div>
+                  <p class="pl-4 text-[14px] font-bold m-0 leading-tight"
+                     [class.text-slate-800]="stepState(step) !== 'upcoming'"
+                     [class.text-slate-400]="stepState(step) === 'upcoming'">
+                    {{ statusLabel(step) }}
+                    @if (stepState(step) === 'current') {
+                      <span class="ml-2 text-[10.5px] font-extrabold uppercase tracking-widest text-red-600">Actual</span>
+                    }
+                  </p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (budgetMessage(); as msg) {
+        <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden mb-6">
+          <div class="px-6 py-5 border-b border-slate-100 bg-emerald-50/50 flex items-center gap-3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6"/><path d="M9 11h6"/></svg>
+            <h2 class="text-[15px] font-extrabold text-emerald-800 m-0">Presupuesto</h2>
+          </div>
+          <div class="p-6 flex items-center justify-between gap-4">
+            <p class="text-[14px] font-semibold text-slate-700 m-0">{{ msg }}</p>
+            <span class="font-black text-[16px] text-slate-900 shrink-0">S/ {{ info.value()!.budget!.total_amount | number: '1.2-2' }}</span>
+          </div>
+        </div>
+      }
+
+      <p class="text-center text-[12px] font-semibold text-slate-400 mt-2 mb-8">{{ o.customer_name }} &middot; PCMYM</p>
+    }
+  </div>
+</div>

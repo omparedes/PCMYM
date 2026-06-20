@@ -1,0 +1,9 @@
+{
+  "outputDirectory": "dist/crm/browser",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

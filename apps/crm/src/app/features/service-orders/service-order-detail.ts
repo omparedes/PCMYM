@@ -66,6 +66,17 @@ export class ServiceOrderDetail {
   protected readonly uploadingPhoto = signal(false);
   protected readonly photoError = signal<string | null>(null);
 
+  protected readonly linkCopied = signal(false);
+
+  protected copyTrackingLink(token: string | null): void {
+    if (!token) return;
+    const url = `${window.location.origin}/seguimiento/${token}`;
+    navigator.clipboard.writeText(url).then(() => {
+      this.linkCopied.set(true);
+      setTimeout(() => this.linkCopied.set(false), 2000);
+    });
+  }
+
   protected async onPhotoSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];

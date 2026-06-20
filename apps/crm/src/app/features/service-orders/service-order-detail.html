@@ -45,15 +45,29 @@
           </p>
         </div>
       </div>
-      <div class="flex flex-col items-start md:items-end gap-2 bg-slate-50 p-4 rounded-xl border border-slate-100">
-        <div class="text-[12px] font-bold text-slate-500 uppercase tracking-widest">Prioridad</div>
-        <span class="px-3 py-1 rounded-full text-[12px] font-bold"
-              [class.bg-red-100]="o.priority === 'urgent'" [class.text-red-700]="o.priority === 'urgent'"
-              [class.bg-orange-100]="o.priority === 'high'" [class.text-orange-700]="o.priority === 'high'"
-              [class.bg-slate-200]="o.priority === 'normal'" [class.text-slate-700]="o.priority === 'normal'"
-              [class.bg-slate-100]="o.priority === 'low'" [class.text-slate-500]="o.priority === 'low'">
-          {{ priorityLabel(o.priority) }}
-        </span>
+      <div class="flex flex-col items-start md:items-end gap-3">
+        <div class="flex flex-col items-start md:items-end gap-2 bg-slate-50 p-4 rounded-xl border border-slate-100 w-full">
+          <div class="text-[12px] font-bold text-slate-500 uppercase tracking-widest">Prioridad</div>
+          <span class="px-3 py-1 rounded-full text-[12px] font-bold inline-block"
+                [class.bg-red-100]="o.priority === 'urgent'" [class.text-red-700]="o.priority === 'urgent'"
+                [class.bg-orange-100]="o.priority === 'high'" [class.text-orange-700]="o.priority === 'high'"
+                [class.bg-slate-200]="o.priority === 'normal'" [class.text-slate-700]="o.priority === 'normal'"
+                [class.bg-slate-100]="o.priority === 'low'" [class.text-slate-500]="o.priority === 'low'">
+            {{ priorityLabel(o.priority) }}
+          </span>
+        </div>
+        
+        @if (o.tracking_token) {
+          <button type="button" class="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-[12.5px] shadow-sm hover:bg-slate-800 transition-colors w-full justify-center md:w-auto" (click)="copyTrackingLink(o.tracking_token)">
+            @if (linkCopied()) {
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              ¡Copiado!
+            } @else {
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Link para el cliente
+            }
+          </button>
+        }
       </div>
     </div>
 

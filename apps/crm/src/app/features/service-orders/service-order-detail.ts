@@ -6,6 +6,8 @@ import { FormField, form, min, required } from '@angular/forms/signals';
 import { ServiceOrdersService } from './service-orders.service';
 import { ServiceOrderPhotosService } from './service-order-photos.service';
 import { PaymentsService } from './payments.service';
+import { BudgetsService } from '../budgets/budgets.service';
+import { budgetStatusLabel } from '../budgets/budgets.models';
 import { nextValidStatuses, paymentMethodLabel, priorityLabel, statusLabel } from './service-orders.models';
 import type { PaymentMethod } from './service-orders.models';
 
@@ -28,6 +30,7 @@ export class ServiceOrderDetail {
   private readonly service = inject(ServiceOrdersService);
   private readonly photosService = inject(ServiceOrderPhotosService);
   private readonly paymentsService = inject(PaymentsService);
+  private readonly budgetsService = inject(BudgetsService);
   private readonly route = inject(ActivatedRoute);
 
   protected readonly orderId = this.route.snapshot.paramMap.get('id')!;
@@ -35,6 +38,13 @@ export class ServiceOrderDetail {
   protected readonly statusLabel = statusLabel;
   protected readonly priorityLabel = priorityLabel;
   protected readonly paymentMethodLabel = paymentMethodLabel;
+  protected readonly budgetStatusLabel = budgetStatusLabel;
+
+  protected readonly budgets = resource({
+    params: () => ({ id: this.orderId }),
+    loader: ({ params }) => this.budgetsService.listByServiceOrder(params.id),
+    defaultValue: [],
+  });
 
   protected readonly order = resource({
     params: () => ({ id: this.orderId }),

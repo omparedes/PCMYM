@@ -39,6 +39,194 @@ export type Database = {
   }
   public: {
     Tables: {
+      budget_folio_counters: {
+        Row: {
+          business_id: string
+          last_folio: number
+        }
+        Insert: {
+          business_id: string
+          last_folio?: number
+        }
+        Update: {
+          business_id?: string
+          last_folio?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_folio_counters_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      budget_items: {
+        Row: {
+          budget_id: string
+          business_id: string
+          created_at: string
+          description: string
+          id: string
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          budget_id: string
+          business_id: string
+          created_at?: string
+          description: string
+          id?: string
+          quantity?: number
+          unit_price: number
+        }
+        Update: {
+          budget_id?: string
+          business_id?: string
+          created_at?: string
+          description?: string
+          id?: string
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_items_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "budget_items_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      budget_status_history: {
+        Row: {
+          budget_id: string
+          business_id: string
+          changed_at: string
+          changed_by: string | null
+          from_status: string | null
+          id: string
+          to_status: string
+        }
+        Insert: {
+          budget_id: string
+          business_id: string
+          changed_at?: string
+          changed_by?: string | null
+          from_status?: string | null
+          id?: string
+          to_status: string
+        }
+        Update: {
+          budget_id?: string
+          business_id?: string
+          changed_at?: string
+          changed_by?: string | null
+          from_status?: string | null
+          id?: string
+          to_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_status_history_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "budget_status_history_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "budget_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      budgets: {
+        Row: {
+          business_id: string
+          created_at: string
+          created_by: string | null
+          folio: number | null
+          id: string
+          notes: string | null
+          service_order_id: string
+          status: string
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          created_by?: string | null
+          folio?: number | null
+          id?: string
+          notes?: string | null
+          service_order_id: string
+          status?: string
+          total_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          created_by?: string | null
+          folio?: number | null
+          id?: string
+          notes?: string | null
+          service_order_id?: string
+          status?: string
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budgets_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "budgets_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "budgets_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "budgets_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "v_accounts_receivable"
+            referencedColumns: ["service_order_id"]
+          },
+        ]
+      }
       businesses: {
         Row: {
           active: boolean
@@ -207,6 +395,13 @@ export type Database = {
             referencedRelation: "service_orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "order_status_history_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "v_accounts_receivable"
+            referencedColumns: ["service_order_id"]
+          },
         ]
       }
       payments: {
@@ -258,6 +453,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "service_orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "v_accounts_receivable"
+            referencedColumns: ["service_order_id"]
           },
         ]
       }
@@ -360,6 +562,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "service_order_photos_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "v_accounts_receivable"
+            referencedColumns: ["service_order_id"]
+          },
+          {
             foreignKeyName: "service_order_photos_uploaded_by_fkey"
             columns: ["uploaded_by"]
             isOneToOne: false
@@ -451,15 +660,139 @@ export type Database = {
             referencedRelation: "customers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "service_orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "v_accounts_receivable"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "service_orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "v_top_customers"
+            referencedColumns: ["customer_id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      v_accounts_receivable: {
+        Row: {
+          approved_amount: number | null
+          balance_due: number | null
+          business_id: string | null
+          customer_id: string | null
+          customer_name: string | null
+          folio: number | null
+          order_status: string | null
+          service_order_id: string | null
+          total_paid: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_orders_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_income_expense_daily: {
+        Row: {
+          business_id: string | null
+          entry_date: string | null
+          total_expense: number | null
+          total_income: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_entries_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_income_expense_monthly: {
+        Row: {
+          business_id: string | null
+          entry_month: string | null
+          total_expense: number | null
+          total_income: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_entries_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_top_customers: {
+        Row: {
+          business_id: string | null
+          customer_id: string | null
+          customer_name: string | null
+          service_order_count: number | null
+          total_revenue: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_top_equipment_types: {
+        Row: {
+          business_id: string | null
+          equipment_type: string | null
+          order_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_orders_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       auth_business_id: { Args: never; Returns: string }
       auth_role: { Args: never; Returns: string }
+      change_budget_status: {
+        Args: { p_budget_id: string; p_new_status: string }
+        Returns: {
+          business_id: string
+          created_at: string
+          created_by: string | null
+          folio: number | null
+          id: string
+          notes: string | null
+          service_order_id: string
+          status: string
+          total_amount: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "budgets"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       change_service_order_status: {
         Args: {
           p_new_status: string
@@ -493,9 +826,30 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      is_valid_budget_transition: {
+        Args: { p_from: string; p_to: string }
+        Returns: boolean
+      }
       is_valid_service_order_transition: {
         Args: { p_from: string; p_to: string }
         Returns: boolean
+      }
+      record_expense: {
+        Args: { p_amount: number; p_description: string }
+        Returns: {
+          amount: number
+          business_id: string
+          created_at: string
+          description: string
+          entry_type: string
+          id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "financial_entries"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }

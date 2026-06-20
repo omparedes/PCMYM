@@ -1,0 +1,103 @@
+<div class="max-w-[880px] w-full mx-auto md:p-6 p-4">
+  <a [routerLink]="['/service-orders', serviceOrderId]" class="inline-flex items-center gap-2 px-0 py-2 border-0 bg-transparent text-slate-500 font-semibold text-[13.5px] cursor-pointer mb-4 transition-colors hover:text-slate-900">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    Volver a la Orden
+  </a>
+
+  <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden">
+    <div class="px-7 py-6 border-b border-slate-100 flex items-center gap-3.5">
+      <div class="w-11 h-11 rounded-xl bg-emerald-600 flex items-center justify-center shrink-0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6"/><path d="M9 11h6"/></svg>
+      </div>
+      <div>
+        <h2 class="m-0 text-[20px] font-extrabold tracking-tight text-slate-900">Nuevo presupuesto</h2>
+        <p class="mt-1 text-[13.5px] font-medium text-slate-500">Detalla repuestos y mano de obra para esta orden.</p>
+      </div>
+    </div>
+
+    <form (submit)="$event.preventDefault(); onSubmit()">
+      <div class="px-7 py-7">
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-3">
+            <div class="text-[11px] font-black tracking-widest text-slate-400 uppercase">Ítems del presupuesto</div>
+            <button type="button" class="flex items-center gap-1.5 text-[12px] font-bold text-emerald-700 hover:text-emerald-800 transition-colors bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-full" (click)="addRow()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Agregar ítem
+            </button>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            @for (item of items(); track $index) {
+              <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center bg-slate-50 border border-slate-100 rounded-xl p-3">
+                <input
+                  type="text"
+                  placeholder="Descripción (ej. Pantalla LCD 15.6, Mano de obra)"
+                  class="flex-1 w-full py-2.5 px-3.5 border-[1.5px] border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 bg-white outline-none focus:border-emerald-500 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.13)] transition-all"
+                  [value]="item.description"
+                  (input)="updateRow($index, 'description', ($any($event.target)).value)"
+                />
+                <div class="flex gap-2 w-full sm:w-auto">
+                  <input
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    placeholder="Cant."
+                    class="w-20 py-2.5 px-3 border-[1.5px] border-slate-200 rounded-lg text-[14px] font-bold text-slate-900 bg-white outline-none focus:border-emerald-500 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.13)] transition-all"
+                    [value]="item.quantity"
+                    (input)="updateRow($index, 'quantity', ($any($event.target)).value)"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="P. unit."
+                    class="w-28 py-2.5 px-3 border-[1.5px] border-slate-200 rounded-lg text-[14px] font-bold text-slate-900 bg-white outline-none focus:border-emerald-500 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.13)] transition-all"
+                    [value]="item.unit_price"
+                    (input)="updateRow($index, 'unit_price', ($any($event.target)).value)"
+                  />
+                  <button
+                    type="button"
+                    class="shrink-0 w-10 h-10 rounded-lg bg-white border-[1.5px] border-slate-200 text-slate-400 flex items-center justify-center hover:border-red-300 hover:text-red-600 transition-colors disabled:opacity-40"
+                    [disabled]="items().length === 1"
+                    (click)="removeRow($index)"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="flex justify-end mt-4 pt-4 border-t border-slate-100">
+            <div class="text-right">
+              <div class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Total estimado</div>
+              <div class="text-[26px] font-black text-slate-900">S/ {{ total() | number: '1.2-2' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label for="notes" class="block text-[13px] font-bold text-slate-700 mb-2">Notas (opcional)</label>
+          <textarea id="notes" rows="2" placeholder="Condiciones, plazos, garantía..." class="w-full py-3 px-4 border-[1.5px] border-slate-200 rounded-xl text-[14.5px] font-medium text-slate-900 bg-white outline-none resize-y min-h-[64px] leading-relaxed transition-all duration-150 focus:border-emerald-500 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.13)]" [value]="notes()" (input)="notes.set(($any($event.target)).value)"></textarea>
+        </div>
+
+        @if (errorMsg(); as msg) {
+          <div class="mt-6 p-3 bg-red-50 border border-red-100 text-red-600 rounded-xl text-sm font-semibold flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+            {{ msg }}
+          </div>
+        }
+      </div>
+
+      <div class="px-7 py-5 border-t border-slate-100 bg-[#fafbfd] flex items-center justify-end gap-3 rounded-b-[22px]">
+        <a [routerLink]="['/service-orders', serviceOrderId]" class="px-5 py-3 border-[1.5px] border-slate-200 bg-white text-slate-600 rounded-xl font-bold text-[14px] cursor-pointer transition-colors hover:border-slate-300 hover:bg-slate-50">
+          Cancelar
+        </a>
+        <button type="submit" [disabled]="saving()" class="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white border-0 rounded-xl font-bold text-[14px] cursor-pointer shadow-[0_8px_20px_rgba(16,185,129,0.26)] transition-all duration-150 hover:-translate-y-px hover:shadow-[0_12px_26px_rgba(16,185,129,0.34)] disabled:opacity-50 disabled:cursor-not-allowed">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+          {{ saving() ? 'Guardando...' : 'Crear presupuesto' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -13,9 +13,11 @@ Fase 3 (Cliente y notificaciones) se ejecutó con éxito (arquitectura por Claud
   - `public_tracking.sql` (Añadido `tracking_token` a `service_orders` y RPC `get_public_tracking_info` para lectura segura pública).
   - `n8n_webhooks.sql` (Habilitado `pg_net` y trigger `AFTER UPDATE` en OS para hacer POST a URL dinámica leída desde los settings del proyecto Supabase).
 - **Angular:** Módulo de tracking público (`/seguimiento/:token`) implementado con diseño premium. Tipos regenerados (`database.types.ts`).
-- **Validación:** Push a la BD exitoso, `npm run build` sin errores.
+- **UI:** Se agregó el botón "Link para el cliente" en el detalle de la OS (`service-order-detail.html`) para copiar al portapapeles.
+- **Branding:** Se integró el logotipo propio (`PCMYM_isotipo.svg`), corrigiendo el `viewBox` para eliminar márgenes vacíos y aplicándolo al favicon y a la barra de navegación.
+- **Despliegue a Vercel:** Proyecto publicado exitosamente en Vercel. Se resolvió el error 404 configurando el `outputDirectory` a `dist/crm/browser` y los rewrites de SPA a través del archivo `vercel.json`. Se inyectaron las credenciales reales (`supabaseUrl` y `supabaseAnonKey`) en `environment.ts`.
 
-## Tareas pendientes para Oscar (Infraestructura)
+## Tareas pendientes para Oscar (Infraestructura / n8n)
 - Configurar en el editor SQL de Supabase (o CLI): `ALTER DATABASE postgres SET "app.settings.n8n_webhook_url" TO 'https://tu-n8n.url/webhook';` y luego `SELECT pg_reload_conf();` para activar el webhook real.
 - Asegurarse de que la extensión `pg_net` esté activa en el dashboard de Supabase (Settings > Database > Extensions).
 

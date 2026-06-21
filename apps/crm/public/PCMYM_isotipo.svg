@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <title>PCMYM isotipo</title>
+  <path fill-rule="evenodd" fill="#16181D"
+        d="M26,41 L60,22 L94,41 L94,79 L60,98 L26,79 Z
+           M40,74 L40,46 L50,46 L60,60 L70,46 L80,46 L80,74 L70,74 L70,58 L60,72 L50,58 L50,74 Z"/>
+  <circle cx="60" cy="66" r="5.5" fill="#D7261E"/>
+</svg>

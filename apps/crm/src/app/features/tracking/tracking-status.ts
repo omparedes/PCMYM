@@ -40,6 +40,27 @@ export class TrackingStatus {
 
   protected readonly isCancelled = computed(() => this.info.value()?.status === 'cancelled');
 
+  protected readonly statusMessage = computed(() => {
+    switch (this.info.value()?.status) {
+      case 'pending':
+        return 'Recibimos tu equipo y pronto iniciaremos la revisión.';
+      case 'diagnosing':
+        return 'Estamos evaluando la falla de tu equipo.';
+      case 'repairing':
+        return 'Estamos realizando la reparación de tu equipo.';
+      case 'waiting_parts':
+        return 'Estamos a la espera del repuesto necesario para continuar.';
+      case 'ready':
+        return 'Tu equipo está listo para ser recogido.';
+      case 'delivered':
+        return 'Esta orden fue entregada. Gracias por tu confianza.';
+      case 'cancelled':
+        return 'Esta orden fue cancelada. Comunícate con el taller si tienes alguna consulta.';
+      default:
+        return '';
+    }
+  });
+
   protected stepState(step: ServiceOrderStatus): 'done' | 'current' | 'upcoming' {
     const current = this.currentStepIndex();
     if (current === -1) return 'upcoming';
@@ -56,4 +77,8 @@ export class TrackingStatus {
     if (budget.status === 'rejected') return `Tu presupuesto #${budget.folio} fue rechazado.`;
     return `Te enviamos el presupuesto #${budget.folio}, pendiente de tu respuesta.`;
   });
+
+  protected lineTotal(item: { line_total: number }): number {
+    return Number(item.line_total);
+  }
 }

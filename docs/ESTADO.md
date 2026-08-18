@@ -1,5 +1,5 @@
 # ESTADO DEL PROYECTO
-Última actualización: 2026-06-20 por Claude Code — estación Oscar/Windows
+Última actualización: 2026-08-18 por Codex — estación Oscar/Windows
 
 > Protocolo de handoff: **todo agente actualiza este archivo al cerrar sesión.** Es lo que permite
 > cambiar de estación o de agente sin perder el hilo. Mantén el formato de abajo.
@@ -7,6 +7,20 @@
 ## Fase actual
 **Fase 4 — Base de conocimiento.** En curso.
 Fase 3 (Cliente y notificaciones) se ejecutó con éxito (arquitectura por Claude, infraestructura por Antigravity).
+
+## Hecho en esta sesión (Seguimiento público — ampliación solicitada)
+- **Migración:** `20260818170000_expand_public_tracking_summary.sql` amplía el RPC público
+  `get_public_tracking_info()`. El enlace ahora devuelve el comprobante de recepción del equipo
+  (marca, modelo, serie, accesorios, observaciones y falla reportada), los ítems del último
+  presupuesto enviado/aprobado/rechazado y, solo ante presupuesto aprobado, total pagado y saldo
+  pendiente. Mantiene ocultos método de pago, personal del taller, prioridad y notas internas.
+- **Angular:** el seguimiento móvil prioriza una tarjeta visual de estado actual con un mensaje
+  contextual y fecha estimada. Las etapas quedan como tarjetas legibles debajo; luego se muestran
+  presupuesto/pagos, equipo recibido y falla reportada.
+- **Verificación local:** `npm run build`, `npm run lint` y `npm test -- --watch=false` pasaron
+  con Node 24.19.0. Bundle inicial: 728.71 kB (presupuesto de advertencia: 800 kB).
+- **Pendiente inmediato:** aplicar la nueva migración al proyecto Supabase remoto y verificar con
+  un enlace de una OS real o de prueba que tenga presupuesto aprobado y pagos.
 
 ## Hecho en esta sesión (Fase 3)
 - **Migraciones:** 

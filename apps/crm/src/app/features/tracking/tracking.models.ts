@@ -8,6 +8,16 @@ export interface PublicTrackingBudget {
   folio: number;
   status: 'sent' | 'approved' | 'rejected';
   total_amount: number;
+  items: PublicTrackingBudgetItem[];
+  total_paid: number | null;
+  balance_due: number | null;
+}
+
+export interface PublicTrackingBudgetItem {
+  description: string;
+  quantity: number;
+  unit_price: number;
+  line_total: number;
 }
 
 export interface PublicTrackingHistoryEntry {
@@ -21,6 +31,10 @@ export interface PublicTrackingInfo {
   equipment_type: string | null;
   brand: string | null;
   model: string | null;
+  serial_number: string | null;
+  accessories: string | null;
+  reported_issue: string | null;
+  initial_diagnosis: string | null;
   received_at: string;
   estimated_delivery: string | null;
   business_name: string | null;

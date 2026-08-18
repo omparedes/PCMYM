@@ -186,7 +186,7 @@ tabla solo recibe `income` desde pagos; un flujo de alta manual de `expense` que
 fase (evaluar en Fase 2 si hace falta).
 
 ## API Pública y Webhooks (Fase 3)
-- **RPC `get_public_tracking_info(p_token uuid)`:** `SECURITY DEFINER`. Devuelve solo los datos seguros de la Orden (folio, estado, fechas, y total del presupuesto) filtrando por `tracking_token` para mostrar en la ruta pública sin exponer datos sensibles del negocio ni del cliente.
+- **RPC `get_public_tracking_info(p_token uuid)`:** `SECURITY DEFINER`. Devuelve el comprobante público de una OS filtrado por `tracking_token`: identidad y recepción del equipo (tipo, marca, modelo, serie, accesorios y observaciones), falla reportada, estado, fechas, ítems y total del último presupuesto no-borrador. Cuando ese presupuesto está aprobado, incluye solo los totales de pagos y saldo; nunca métodos de pago ni quién los registró. No devuelve técnico asignado, prioridad, notas internas del historial ni datos de otras órdenes.
 - **Webhook de Notificaciones (n8n):** Trigger `AFTER UPDATE` en `service_orders`. Detecta cambios en `status` y usa `pg_net` para hacer un `POST` a la URL configurada en `app.settings.n8n_webhook_url`. Payload: `service_order_id, business_id, folio, from_status, to_status, customer_phone, tracking_token`.
 
 ## Tablas de dominio (Fase 2)

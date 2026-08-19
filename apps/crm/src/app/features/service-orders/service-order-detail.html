@@ -45,7 +45,7 @@
           </p>
         </div>
       </div>
-      <div class="flex flex-col items-start md:items-end gap-3">
+        <div class="flex flex-col items-start md:items-end gap-3">
         <div class="flex flex-col items-start md:items-end gap-2 bg-slate-50 p-4 rounded-xl border border-slate-100 w-full">
           <div class="text-[12px] font-bold text-slate-500 uppercase tracking-widest">Prioridad</div>
           <span class="px-3 py-1 rounded-full text-[12px] font-bold inline-block"
@@ -55,6 +55,20 @@
                 [class.bg-slate-100]="o.priority === 'low'" [class.text-slate-500]="o.priority === 'low'">
             {{ priorityLabel(o.priority) }}
           </span>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 w-full">
+          <div class="text-[12px] font-bold text-slate-500 uppercase tracking-widest mb-2">Tipos de trabajo</div>
+          <div class="flex flex-wrap gap-1.5">
+            @for (workType of workTypeOptions; track workType) {
+              <button type="button" (click)="toggleWorkType(workType)" [disabled]="updatingWorkTypes()" class="px-2.5 py-1.5 rounded-lg border text-[11px] font-bold disabled:opacity-50"
+                      [class.bg-violet-100]="workType === 'formatting' && workTypes().includes(workType)" [class.border-violet-300]="workType === 'formatting' && workTypes().includes(workType)" [class.text-violet-800]="workType === 'formatting'"
+                      [class.bg-sky-100]="workType === 'repair' && workTypes().includes(workType)" [class.border-sky-300]="workType === 'repair' && workTypes().includes(workType)" [class.text-sky-800]="workType === 'repair'"
+                      [class.bg-amber-100]="workType === 'parts_replacement' && workTypes().includes(workType)" [class.border-amber-300]="workType === 'parts_replacement' && workTypes().includes(workType)" [class.text-amber-800]="workType === 'parts_replacement'"
+                      [class.bg-slate-50]="!workTypes().includes(workType)" [class.border-slate-200]="!workTypes().includes(workType)">
+                {{ workTypes().includes(workType) ? '✓ ' : '' }}{{ workTypeLabel(workType) }}
+              </button>
+            }
+          </div>
         </div>
         
         @if (o.tracking_token) {

@@ -31,6 +31,19 @@ export type ServiceOrderStatus =
   | 'cancelled';
 
 export type ServiceOrderPriority = 'low' | 'normal' | 'high' | 'urgent';
+export type ServiceOrderWorkType = 'formatting' | 'repair' | 'parts_replacement';
+
+export const WORK_TYPE_LABELS: Record<ServiceOrderWorkType, string> = {
+  formatting: 'Formateo',
+  repair: 'Reparación',
+  parts_replacement: 'Cambio de repuesto',
+};
+
+export const WORK_TYPE_OPTIONS = Object.keys(WORK_TYPE_LABELS) as ServiceOrderWorkType[];
+
+export function workTypeLabel(type: string): string {
+  return WORK_TYPE_LABELS[type as ServiceOrderWorkType] ?? type;
+}
 
 export const ORDERED_STATUSES: ServiceOrderStatus[] = [
   'pending',
@@ -98,6 +111,7 @@ export interface NewServiceOrder {
   priority: ServiceOrderPriority;
   assigned_to: string | null;
   estimated_delivery: string | null;
+  work_types: ServiceOrderWorkType[];
 }
 
 export function emptyNewServiceOrder(): NewServiceOrder {
@@ -113,5 +127,6 @@ export function emptyNewServiceOrder(): NewServiceOrder {
     priority: 'normal',
     assigned_to: null,
     estimated_delivery: null,
+    work_types: [],
   };
 }

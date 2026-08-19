@@ -1,5 +1,5 @@
 # ESTADO DEL PROYECTO
-Última actualización: 2026-08-18 por Codex — estación Oscar/Windows
+Última actualización: 2026-08-19 por Codex — estación Oscar/Windows
 
 > Protocolo de handoff: **todo agente actualiza este archivo al cerrar sesión.** Es lo que permite
 > cambiar de estación o de agente sin perder el hilo. Mantén el formato de abajo.
@@ -7,6 +7,23 @@
 ## Fase actual
 **Fase 4 — Base de conocimiento.** En curso.
 Fase 3 (Cliente y notificaciones) se ejecutó con éxito (arquitectura por Claude, infraestructura por Antigravity).
+
+## Hecho en esta sesión (Tablero operativo y alta rápida)
+- **Migración:** `20260819090000_add_service_order_work_types.sql` añade `service_orders.work_types`
+  como arreglo validado con tres categorías combinables: formateo, reparación y cambio de repuesto.
+  Las órdenes existentes quedan sin clasificar y no se alteran sus datos.
+- **Tablero:** etiquetas por tipo de trabajo, borde y orden prioritaria para urgentes, antigüedad de
+  recepción, alertas de entrega, filtro por tipo y filtro de atención (urgentes, vencidas o listas
+  para entrega desde hace tres días). La lista conserva todos los estados para no ocultar órdenes
+  que necesitan cierre manual.
+- **Nueva orden:** buscador de clientes por nombre o celular, confirmación del teléfono al elegir un
+  cliente, alta inline cuando no existe, chips de accesorios, sugerencias de equipo/marca y técnico
+  actual asignado por defecto. Los tipos de trabajo también se pueden ajustar desde el detalle de
+  una OS tras el diagnóstico.
+- **Verificación local:** `npm run build`, `npm run lint` y `npm test -- --watch=false` pasaron con
+  Node 24.19.0. Bundle inicial: 728.71 kB.
+- **Pendiente inmediato:** aplicar la migración al proyecto Supabase y regenerar `database.types.ts`
+  desde el proyecto enlazado antes de publicar esta rama.
 
 ## Hecho en esta sesión (Seguimiento público — ampliación solicitada)
 - **Migración:** `20260818170000_expand_public_tracking_summary.sql` amplía el RPC público

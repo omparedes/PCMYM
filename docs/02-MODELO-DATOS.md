@@ -87,6 +87,7 @@ simple según necesidad real, ver migración). RLS estándar (select/insert/upda
 | initial_diagnosis      | text        | nullable — diagnóstico del técnico                      |
 | status                 | text        | enum por check, ver máquina de estados abajo            |
 | priority                | text        | enum: `low` \| `normal` \| `high` \| `urgent`           |
+| work_types              | text[]      | categorías múltiples: `formatting`, `repair`, `parts_replacement` |
 | assigned_to            | uuid        | nullable, FK → profiles(id)                             |
 | received_at            | timestamptz | default now()                                            |
 | estimated_delivery     | date        | nullable                                                 |
@@ -96,6 +97,10 @@ simple según necesidad real, ver migración). RLS estándar (select/insert/upda
 
 > El equipo se modela embebido en la OS por ahora (no como tabla aparte). Se normaliza a una tabla
 > `equipment` en una fase posterior si hace falta (p.ej. historial de equipos de un mismo cliente).
+
+`work_types` permite combinar las tres categorías operativas del tablero (por ejemplo, formateo y
+cambio de repuesto). No es todavía un catálogo comercial de servicios; ese catálogo se evaluará en
+Fase 6.
 
 **Máquina de estados (`status`):**
 `pending → diagnosing → repairing → waiting_parts → ready → delivered`, con `cancelled` alcanzable

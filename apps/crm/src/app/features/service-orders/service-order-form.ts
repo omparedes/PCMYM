@@ -1,23 +1,26 @@
-import { ChangeDetectionStrategy, Component, inject, resource, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, resource, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormField, form } from '@angular/forms/signals';
 
 import { ServiceOrdersService } from './service-orders.service';
-import { PRIORITY_LABELS, type ServiceOrderPriority } from './service-orders.models';
+import {
+  PRIORITY_LABELS,
+  WORK_TYPE_LABELS,
+  WORK_TYPE_OPTIONS,
+  type ServiceOrderPriority,
+  type ServiceOrderWorkType,
+} from './service-orders.models';
 import { CustomersService } from '../customers/customers.service';
+import type { Customer } from '../customers/customers.models';
+import { AuthService } from '../../core/auth/auth.service';
 import { ProfilesService } from '../../core/profiles/profiles.service';
 
-// Signal Forms' native control binding maps DOM values to plain string/number/
-// boolean — it does not accept `string | null`. So the form model here uses
-// plain strings ('' = empty) and gets converted to the nullable API model
-// (NewServiceOrder) on submit, same pattern as CustomerForm.
 interface ServiceOrderFormModel {
   customer_id: string;
   equipment_type: string;
   brand: string;
   model: string;
   serial_number: string;
-  accessories: string;
   reported_issue: string;
   initial_diagnosis: string;
   priority: ServiceOrderPriority;
@@ -27,17 +30,8 @@ interface ServiceOrderFormModel {
 
 function emptyFormModel(): ServiceOrderFormModel {
   return {
-    customer_id: '',
-    equipment_type: '',
-    brand: '',
-    model: '',
-    serial_number: '',
-    accessories: '',
-    reported_issue: '',
-    initial_diagnosis: '',
-    priority: 'normal',
-    assigned_to: '',
-    estimated_delivery: '',
+    customer_id: '', equipment_type: '', brand: '', model: '', serial_number: '',
+    reported_issue: '', initial_diagnosis: '', priority: 'normal', assigned_to: '', estimated_delivery: '',
   };
 }
 
@@ -51,63 +45,103 @@ export class ServiceOrderForm {
   private readonly service = inject(ServiceOrdersService);
   private readonly customersService = inject(CustomersService);
   private readonly profilesService = inject(ProfilesService);
+  private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
   protected readonly priorityLabels = PRIORITY_LABELS;
   protected readonly priorityOptions = Object.keys(PRIORITY_LABELS) as ServiceOrderPriority[];
+  protected readonly workTypeLabels = WORK_TYPE_LABELS;
+  protected readonly workTypeOptions = WORK_TYPE_OPTIONS;
+  protected readonly equipmentSuggestions = ['Laptop', 'PC de escritorio', 'All-in-One', 'Impresora', 'Monitor'];
+  protected readonly brandSuggestions = ['HP', 'Lenovo', 'Dell', 'Asus', 'Acer', 'Apple', 'Toshiba'];
+  protected readonly accessorySuggestions = ['Cargador', 'Mouse', 'Funda', 'Batería', 'Cable de poder', 'Adaptador'];
 
-  protected readonly customers = resource({
-    loader: () => this.customersService.list({ search: '', includeArchived: false }),
-    defaultValue: [],
-  });
-
-  protected readonly profiles = resource({
-    loader: () => this.profilesService.list(),
-    defaultValue: [],
-  });
-
-  // Toggle between picking an existing customer and creating one inline.
+  protected readonly profiles = resource({ loader: () => this.profilesService.list(), defaultValue: [] });
+  protected readonly customerSearch = signal('');
+  protected readonly selectedCustomer = signal<Customer | null>(null);
   protected readonly creatingNewCustomer = signal(false);
-  protected readonly newCustomerName = signal('');
   protected readonly newCustomerPhone = signal('');
+  protected readonly accessoryInput = signal('');
+  protected readonly accessories = signal<string[]>([]);
+  protected readonly selectedWorkTypes = signal<ServiceOrderWorkType[]>([]);
+
+  protected readonly matchingCustomers = resource({
+    params: () => ({ search: this.customerSearch().trim() }),
+    loader: ({ params }) => params.search.length > 0
+      ? this.customersService.list({ search: params.search, includeArchived: false })
+      : Promise.resolve([]),
+    defaultValue: [] as Customer[],
+  });
 
   protected readonly model = signal<ServiceOrderFormModel>(emptyFormModel());
-
-  // No validators yet: every field here is optional except customer_id, which
-  // has its own inline-create-or-select logic handled outside the form schema.
   protected readonly orderForm = form(this.model);
-
   protected readonly saving = signal(false);
   protected readonly errorMsg = signal<string | null>(null);
 
-  protected toggleNewCustomer(): void {
-    this.creatingNewCustomer.set(!this.creatingNewCustomer());
-    this.model.update((m) => ({ ...m, customer_id: '' }));
+  constructor() {
+    // The authenticated profile is the default technician; the selector remains
+    // available when another technician needs to be assigned.
+    effect(() => {
+      const userId = this.auth.session()?.user.id;
+      if (userId && !this.model().assigned_to) {
+        this.model.update((value) => ({ ...value, assigned_to: userId }));
+      }
+    });
+  }
+
+  protected selectCustomer(customer: Customer): void {
+    this.selectedCustomer.set(customer);
+    this.creatingNewCustomer.set(false);
+    this.customerSearch.set(customer.name);
+    this.model.update((value) => ({ ...value, customer_id: customer.id }));
+  }
+
+  protected clearCustomer(): void {
+    this.selectedCustomer.set(null);
+    this.customerSearch.set('');
+    this.model.update((value) => ({ ...value, customer_id: '' }));
+  }
+
+  protected createCustomerInline(): void {
+    this.clearCustomer();
+    this.creatingNewCustomer.set(true);
+  }
+
+  protected toggleWorkType(workType: ServiceOrderWorkType): void {
+    this.selectedWorkTypes.update((current) => current.includes(workType)
+      ? current.filter((item) => item !== workType)
+      : [...current, workType]);
+  }
+
+  protected addAccessory(value = this.accessoryInput()): void {
+    const accessory = value.trim();
+    if (!accessory || this.accessories().some((item) => item.toLowerCase() === accessory.toLowerCase())) return;
+    this.accessories.update((items) => [...items, accessory]);
+    this.accessoryInput.set('');
+  }
+
+  protected removeAccessory(accessory: string): void {
+    this.accessories.update((items) => items.filter((item) => item !== accessory));
   }
 
   protected async onSubmit(): Promise<void> {
     this.errorMsg.set(null);
-
     let customerId = this.model().customer_id;
 
     if (this.creatingNewCustomer()) {
-      const name = this.newCustomerName().trim();
+      const name = this.customerSearch().trim();
       if (!name) {
         this.errorMsg.set('El nombre del cliente nuevo es obligatorio');
         return;
       }
       this.saving.set(true);
       try {
-        const newCustomer = await this.customersService.create({
-          name,
-          document_type: null,
-          document_number: null,
+        const customer = await this.customersService.create({
+          name, document_type: null, document_number: null,
           phone: this.newCustomerPhone().trim() || null,
-          email: null,
-          address: null,
-          notes: null,
+          email: null, address: null, notes: null,
         });
-        customerId = newCustomer.id;
+        customerId = customer.id;
       } catch (err) {
         this.saving.set(false);
         this.errorMsg.set(err instanceof Error ? err.message : 'Error al crear el cliente');
@@ -116,7 +150,7 @@ export class ServiceOrderForm {
     }
 
     if (!customerId) {
-      this.errorMsg.set('Selecciona o crea un cliente');
+      this.errorMsg.set('Busca y selecciona un cliente, o registra uno nuevo');
       return;
     }
 
@@ -129,12 +163,13 @@ export class ServiceOrderForm {
         brand: value.brand.trim() || null,
         model: value.model.trim() || null,
         serial_number: value.serial_number.trim() || null,
-        accessories: value.accessories.trim() || null,
+        accessories: this.accessories().join(', ') || null,
         reported_issue: value.reported_issue.trim() || null,
         initial_diagnosis: value.initial_diagnosis.trim() || null,
         priority: value.priority,
         assigned_to: value.assigned_to || null,
         estimated_delivery: value.estimated_delivery || null,
+        work_types: this.selectedWorkTypes(),
       });
       await this.router.navigate(['/service-orders', order.id]);
     } catch (err) {
@@ -143,4 +178,5 @@ export class ServiceOrderForm {
       this.saving.set(false);
     }
   }
+
 }

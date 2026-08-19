@@ -63,4 +63,15 @@ export class ServiceOrdersService {
     if (error) throw error;
     return data;
   }
+
+  async updateWorkTypes(id: string, workTypes: string[]): Promise<ServiceOrder> {
+    const { data, error } = await supabase
+      .from('service_orders')
+      .update({ work_types: workTypes })
+      .eq('id', id)
+      .select('*')
+      .single();
+    if (error) throw error;
+    return data;
+  }
 }

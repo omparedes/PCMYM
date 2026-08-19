@@ -598,6 +598,7 @@ export type Database = {
           status: string
           tracking_token: string
           updated_at: string
+          work_types: string[]
         }
         Insert: {
           accessories?: string | null
@@ -619,6 +620,7 @@ export type Database = {
           status?: string
           tracking_token?: string
           updated_at?: string
+          work_types?: string[]
         }
         Update: {
           accessories?: string | null
@@ -640,6 +642,7 @@ export type Database = {
           status?: string
           tracking_token?: string
           updated_at?: string
+          work_types?: string[]
         }
         Relationships: [
           {
@@ -822,6 +825,7 @@ export type Database = {
           status: string
           tracking_token: string
           updated_at: string
+          work_types: string[]
         }
         SetofOptions: {
           from: "*"

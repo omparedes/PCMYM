@@ -8,8 +8,8 @@ import { ServiceOrderPhotosService } from './service-order-photos.service';
 import { PaymentsService } from './payments.service';
 import { BudgetsService } from '../budgets/budgets.service';
 import { budgetStatusLabel } from '../budgets/budgets.models';
-import { nextValidStatuses, paymentMethodLabel, priorityLabel, statusLabel } from './service-orders.models';
-import type { PaymentMethod } from './service-orders.models';
+import { WORK_TYPE_OPTIONS, nextValidStatuses, paymentMethodLabel, priorityLabel, statusLabel, workTypeLabel } from './service-orders.models';
+import type { PaymentMethod, ServiceOrderWorkType } from './service-orders.models';
 
 interface PaymentFormModel {
   amount: number | null;
@@ -39,6 +39,8 @@ export class ServiceOrderDetail {
   protected readonly priorityLabel = priorityLabel;
   protected readonly paymentMethodLabel = paymentMethodLabel;
   protected readonly budgetStatusLabel = budgetStatusLabel;
+  protected readonly workTypeLabel = workTypeLabel;
+  protected readonly workTypeOptions = WORK_TYPE_OPTIONS;
 
   protected readonly budgets = resource({
     params: () => ({ id: this.orderId }),
@@ -67,6 +69,30 @@ export class ServiceOrderDetail {
   protected readonly photoError = signal<string | null>(null);
 
   protected readonly linkCopied = signal(false);
+  protected readonly updatingWorkTypes = signal(false);
+
+  protected workTypes(): ServiceOrderWorkType[] {
+    return (this.order.value()?.work_types ?? []).filter((type): type is ServiceOrderWorkType =>
+      WORK_TYPE_OPTIONS.includes(type as ServiceOrderWorkType),
+    );
+  }
+
+  protected async toggleWorkType(workType: ServiceOrderWorkType): Promise<void> {
+    if (this.updatingWorkTypes()) return;
+    const current = this.workTypes();
+    const next = current.includes(workType)
+      ? current.filter((item) => item !== workType)
+      : [...current, workType];
+    this.updatingWorkTypes.set(true);
+    try {
+      await this.service.updateWorkTypes(this.orderId, next);
+      this.order.reload();
+    } catch (err) {
+      this.errorMsg.set(err instanceof Error ? err.message : 'Error al actualizar los tipos de trabajo');
+    } finally {
+      this.updatingWorkTypes.set(false);
+    }
+  }
 
   protected copyTrackingLink(token: string | null): void {
     if (!token) return;

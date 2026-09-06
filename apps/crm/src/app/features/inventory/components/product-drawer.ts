@@ -16,6 +16,7 @@ import {
   INVENTORY_CATEGORIES,
   calculateMargin,
   calculateProfit,
+  generateProductSku,
   movementReasonLabel,
 } from '../inventory.models';
 import type { Product, InventoryMovement } from '../inventory.models';
@@ -39,6 +40,16 @@ interface ProductFormModel {
   notes: string;
 }
 
+type SuggestionField = 'name' | 'brand' | 'model';
+
+interface ProductSuggestion {
+  field: SuggestionField;
+  value: string;
+  label: string;
+  detail: string;
+  product: Product | null;
+}
+
 function emptyProductForm(): ProductFormModel {
   return {
     name: '',
@@ -52,10 +63,18 @@ function emptyProductForm(): ProductFormModel {
     supplier: '',
     cost_price: 0,
     sale_price: 0,
-    initial_stock: 0,
-    min_stock: 3,
+    initial_stock: 1,
+    min_stock: 1,
     notes: '',
   };
+}
+
+function normalizeSuggestionText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
 }
 
 @Component({
@@ -91,6 +110,85 @@ export class ProductDrawerComponent {
 
   protected readonly isSaving = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly activeSuggestionField = signal<SuggestionField | null>(null);
+  protected readonly skuManuallyEdited = signal(false);
+
+  // A lightweight tenant-scoped catalog is loaded when the drawer opens. It powers
+  // keyboard-friendly suggestions without adding a new table or exposing other tenants.
+  protected readonly catalogProducts = resource({
+    params: () => ({ isOpen: this.isOpen(), mode: this.mode() }),
+    loader: async ({ params }) => {
+      if (!params.isOpen || params.mode === 'detail') return [];
+      return this.inventoryService.listProducts({ activeOnly: true });
+    },
+    defaultValue: [] as Product[],
+  });
+
+  protected readonly generatedSku = computed(() => {
+    const value = this.formModel();
+    return generateProductSku(
+      {
+        name: value.name,
+        category: value.category,
+        brand: value.brand,
+        model: value.model,
+      },
+      this.catalogProducts.value().map((product) => product.sku).filter((sku): sku is string => !!sku),
+    );
+  });
+
+  protected readonly suggestionItems = computed<ProductSuggestion[]>(() => {
+    const field = this.activeSuggestionField();
+    if (!field) return [];
+
+    const value = String(this.formModel()[field] ?? '').trim();
+    const term = normalizeSuggestionText(value);
+    if (!term) return [];
+
+    const products = this.catalogProducts.value();
+    const seen = new Set<string>();
+    const suggestions: ProductSuggestion[] = [];
+
+    for (const product of products) {
+      if (field === 'name') {
+        const searchText = normalizeSuggestionText(
+          [product.name, product.brand, product.model, product.category].filter(Boolean).join(' '),
+        );
+        if (!searchText.includes(term)) continue;
+        const key = `${product.name}|${product.brand ?? ''}|${product.model ?? ''}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        suggestions.push({
+          field,
+          value: product.name,
+          label: product.name,
+          detail: [product.brand, product.model, product.category].filter(Boolean).join(' · '),
+          product,
+        });
+      } else {
+        const candidate = field === 'brand' ? product.brand : product.model;
+        if (!candidate || !normalizeSuggestionText(candidate).includes(term)) continue;
+        const key = candidate.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        suggestions.push({
+          field,
+          value: candidate,
+          label: candidate,
+          detail: [product.name, product.brand, product.model].filter(Boolean).join(' · '),
+          product: field === 'model' ? product : null,
+        });
+      }
+    }
+
+    return suggestions
+      .sort((a, b) => {
+        const aStarts = normalizeSuggestionText(a.label).startsWith(term) ? 0 : 1;
+        const bStarts = normalizeSuggestionText(b.label).startsWith(term) ? 0 : 1;
+        return aStarts - bStarts || a.label.localeCompare(b.label);
+      })
+      .slice(0, 8);
+  });
 
   // Live profit and margin calculation
   protected readonly liveProfit = computed(() => {
@@ -142,8 +240,10 @@ export class ProductDrawerComponent {
         });
       } else {
         this.formModel.set(emptyProductForm());
+        this.skuManuallyEdited.set(false);
       }
       this.errorMessage.set(null);
+      this.activeSuggestionField.set(null);
     });
   }
 
@@ -153,6 +253,61 @@ export class ProductDrawerComponent {
 
   protected onFieldInput(field: keyof ProductFormModel, value: string | number | null): void {
     this.formModel.update((prev) => ({ ...prev, [field]: value }));
+    if (field === 'sku') this.skuManuallyEdited.set(true);
+  }
+
+  protected onSuggestionFocus(field: SuggestionField): void {
+    this.activeSuggestionField.set(field);
+  }
+
+  protected onSuggestionBlur(): void {
+    this.activeSuggestionField.set(null);
+  }
+
+  protected chooseSuggestion(event: MouseEvent, suggestion: ProductSuggestion): void {
+    event.preventDefault();
+    if (suggestion.product && suggestion.field === 'name') {
+      const product = suggestion.product;
+      this.formModel.update((previous) => ({
+        ...previous,
+        name: product.name,
+        category: product.category,
+        brand: product.brand ?? '',
+        model: product.model ?? '',
+        compatibility: product.compatibility ?? '',
+        supplier: product.supplier ?? '',
+        notes: product.notes ?? '',
+        cost_price: Number(product.cost_price),
+        sale_price: Number(product.sale_price),
+        sku: this.skuManuallyEdited() ? previous.sku : '',
+      }));
+    } else if (suggestion.product && suggestion.field === 'model') {
+      const product = suggestion.product;
+      this.formModel.update((previous) => ({
+        ...previous,
+        category: product.category,
+        brand: previous.brand || product.brand || '',
+        model: suggestion.value,
+        compatibility: product.compatibility ?? previous.compatibility,
+        supplier: product.supplier ?? previous.supplier,
+        notes: product.notes ?? previous.notes,
+        cost_price: Number(product.cost_price),
+        sale_price: Number(product.sale_price),
+        sku: this.skuManuallyEdited() ? previous.sku : '',
+      }));
+    } else {
+      this.formModel.update((previous) => ({ ...previous, [suggestion.field]: suggestion.value }));
+    }
+    this.activeSuggestionField.set(null);
+  }
+
+  protected toggleSkuEdit(): void {
+    if (this.skuManuallyEdited()) {
+      this.skuManuallyEdited.set(false);
+      return;
+    }
+    this.formModel.update((previous) => ({ ...previous, sku: this.generatedSku() }));
+    this.skuManuallyEdited.set(true);
   }
 
   protected async onSubmit(): Promise<void> {
@@ -174,7 +329,7 @@ export class ProductDrawerComponent {
           min_stock: Number(val.min_stock ?? 0),
           brand: val.brand || null,
           model: val.model || null,
-          sku: val.sku || null,
+          sku: this.skuManuallyEdited() && val.sku.trim() ? val.sku.trim() : this.generatedSku(),
           barcode: val.barcode || null,
           compatibility: val.compatibility || null,
           location: val.location || null,

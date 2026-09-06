@@ -7,6 +7,34 @@
 ## Fase actual
 **Inventario + Repuestos V1.** Completado e integrado en producción/local.
 
+## Carga inicial de inventario (Supabase remoto)
+- Se cargaron 19 productos en el negocio `Mi Taller PCMYM` (`taller-1`) mediante el RPC
+  `create_product_with_initial_stock`, con SKU internos, precios de venta redondeados y kardex
+  de inventario inicial.
+- Verificación remota: 19 productos, 58 unidades, valorización al costo S/ 700.00 y valorización
+  a precio de venta S/ 1,445.00; se registraron 19 movimientos iniciales.
+- El Logitech M90 quedó con precio de venta S/ 25.00, tal como se solicitó.
+- **Pendiente de confirmación:** las cantidades detalladas suman 58 unidades (la primera tabla
+  suma 19 aunque indica 18; la segunda suma 39). No se corrigió la diferencia para preservar
+  exactamente las cantidades por fila entregadas.
+
+## Mejora de alta rápida de productos (SKU y autocompletado)
+- Migraciones remotas aplicadas:
+  - `20260906120000_auto_product_sku_and_defaults.sql` añade generación de SKU por familia,
+    marca, modelo y variante, con sufijo automático ante colisiones; también deja los defaults
+    del RPC en stock inicial 1 y stock mínimo 1.
+  - `20260906122000_align_product_sku_tokens_and_backfill.sql` alinea el token de modelo entre
+    backend y frontend y completa SKU nulos existentes.
+- El formulario de `/inventory` genera una previsualización de SKU en tiempo real, permite edición
+  manual excepcional y usa el RPC como autoridad final de unicidad.
+- Nombre, marca y modelo ofrecen sugerencias tenant-scoped a partir del catálogo actual. Al elegir
+  un producto como referencia se copian categoría, marca, modelo, compatibilidad, proveedor,
+  notas, costo y precio de venta; stock y SKU permanecen editables/automáticos según corresponda.
+- Los defaults de nuevos productos en la UI son stock inicial 1 y stock mínimo 1. Los productos
+  existentes no cambian; solo se completó el SKU nulo del `Mouse blanco Genius DX-110` como
+  `PCMYM-MOU-GEN-DX110-WHT`.
+- Verificación local: 11 pruebas Vitest, lint y build Angular en verde. Build inicial: 742.92 kB.
+
 ## Hecho en esta sesión (Inventario + Repuestos V1)
 - **Base de datos & Supabase:**
   - Migración aplicada en remoto: `20260906080000_create_inventory_and_parts.sql`.

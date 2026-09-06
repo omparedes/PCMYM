@@ -90,6 +90,84 @@ export interface CreateProductDto {
   notes?: string | null;
 }
 
+export interface ProductSkuInput {
+  name: string;
+  category: string;
+  brand?: string | null;
+  model?: string | null;
+}
+
+/**
+ * Builds the same human-readable SKU shape used by the initial inventory load.
+ * The database repeats this logic and is the final authority for uniqueness.
+ */
+export function generateProductSku(input: ProductSkuInput, existingSkus: string[] = []): string {
+  const text = `${input.name} ${input.category} ${input.model ?? ''}`.toLowerCase();
+  const family = text.includes('mouse') || text.includes('ratón')
+    ? 'MOU'
+    : text.includes('teclado')
+      ? 'KBD'
+      : text.includes('parlante') || text.includes('speaker')
+        ? 'SPK'
+        : text.includes('estabilizador')
+          ? 'EST'
+          : text.includes('wifi') || text.includes('wi-fi')
+            ? 'WIFI'
+            : text.includes('bluetooth')
+              ? 'BT'
+              : text.includes('case') || text.includes('hdd') || text.includes('ssd')
+                ? 'CASE'
+                : text.includes('cable')
+                  ? 'CBL'
+                  : text.includes('monitor')
+                    ? 'MON'
+                    : 'PRD';
+
+  const brand = skuToken(input.brand, 'GEN', 3);
+  const model = skuModelToken(input.model) || skuToken(input.name, 'ITEM', 10);
+  const variant = skuVariantToken(`${input.name} ${input.model ?? ''}`);
+  const base = ['PCMYM', family, brand, model, variant].filter(Boolean).join('-');
+  const used = new Set(existingSkus.map((sku) => sku.toUpperCase()));
+
+  if (!used.has(base.toUpperCase())) return base;
+
+  let suffix = 2;
+  while (used.has(`${base}-${String(suffix).padStart(2, '0')}`.toUpperCase())) suffix += 1;
+  return `${base}-${String(suffix).padStart(2, '0')}`;
+}
+
+function skuToken(value: string | null | undefined, fallback: string, maxLength: number): string {
+  const token = (value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '')
+    .slice(0, maxLength);
+  return token || fallback;
+}
+
+function skuModelToken(value: string | null | undefined): string {
+  const tokens = (value ?? '').toUpperCase().match(/[A-Z0-9]+/g) ?? [];
+  const digitIndex = tokens.findIndex((token) => /\d/.test(token));
+  if (digitIndex > 0 && /^\d+$/.test(tokens[digitIndex])) {
+    return skuToken(`${tokens[digitIndex - 1]}${tokens[digitIndex]}`, '', 12);
+  }
+  return skuToken(tokens[digitIndex] ?? tokens[0], '', 12);
+}
+
+function skuVariantToken(value: string): string {
+  const normalized = value.toLowerCase();
+  const variants: [RegExp, string][] = [
+    [/\b(blanco|white)\b/, 'WHT'],
+    [/\b(negro|black)\b/, 'BLK'],
+    [/\b(rojo|red)\b/, 'RED'],
+    [/\b(celeste|azul|blue)\b/, 'BLU'],
+    [/\b(gris|gray|grey)\b/, 'GRY'],
+    [/\b(verde|green)\b/, 'GRN'],
+  ];
+  return variants.find(([pattern]) => pattern.test(normalized))?.[1] ?? '';
+}
+
 export interface UpdateProductDto {
   name: string;
   category: string;

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   calculateMargin,
   calculateProfit,
+  generateProductSku,
   movementReasonLabel,
   movementTypeLabel,
 } from './inventory.models';
@@ -43,6 +44,34 @@ describe('Inventory Domain Logic', () => {
       expect(movementReasonLabel('service_order')).toBe('Orden de servicio');
       expect(movementReasonLabel('service_return')).toBe('Devolución de orden');
       expect(movementReasonLabel('damaged')).toBe('Producto dañado / Merma');
+    });
+  });
+
+  describe('generateProductSku', () => {
+    it('builds a family, brand, model and color SKU', () => {
+      expect(
+        generateProductSku({
+          name: 'Mouse blanco',
+          category: 'Periféricos',
+          brand: 'Genius',
+          model: 'DX-110',
+        }),
+      ).toBe('PCMYM-MOU-GEN-DX110-WHT');
+    });
+
+    it('adds a two-digit suffix when the generated SKU already exists', () => {
+      expect(
+        generateProductSku(
+          { name: 'Mouse blanco', category: 'Periféricos', brand: 'Genius', model: 'DX-110' },
+          ['PCMYM-MOU-GEN-DX110-WHT', 'PCMYM-MOU-GEN-DX110-WHT-02'],
+        ),
+      ).toBe('PCMYM-MOU-GEN-DX110-WHT-03');
+    });
+
+    it('falls back to a product token when no model is provided', () => {
+      expect(
+        generateProductSku({ name: 'Cable HDMI 3 m', category: 'Periféricos' }),
+      ).toBe('PCMYM-CBL-GEN-CABLEHDMI3');
     });
   });
 });

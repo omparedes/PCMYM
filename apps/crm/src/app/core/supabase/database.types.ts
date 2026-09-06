@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -11,31 +11,6 @@ export type Database = {
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
-  }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
   }
   public: {
     Tables: {
@@ -1167,6 +1142,16 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      generate_product_sku: {
+        Args: {
+          p_brand?: string
+          p_business_id?: string
+          p_category: string
+          p_model?: string
+          p_name: string
+        }
+        Returns: string
+      }
       get_public_tracking_info: { Args: { p_token: string }; Returns: Json }
       is_valid_budget_transition: {
         Args: { p_from: string; p_to: string }
@@ -1352,9 +1337,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },

@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Orden #42 - PCMYM Servicio Técnico</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-low": "#eff4ff",
+            "on-tertiary-fixed": "#002113",
+            "on-primary": "#ffffff",
+            "background": "#f8f9ff",
+            "on-tertiary-container": "#e1ffec",
+            "tertiary-fixed": "#6ffbbe",
+            "secondary-fixed": "#dae2fd",
+            "surface-container": "#e5eeff",
+            "surface-bright": "#f8f9ff",
+            "surface-container-highest": "#d3e4fe",
+            "on-error-container": "#93000a",
+            "on-surface": "#0b1c30",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#5c647a",
+            "surface-tint": "#bf0715",
+            "primary": "#b70011",
+            "on-secondary-fixed": "#131b2e",
+            "surface-variant": "#d3e4fe",
+            "error": "#ba1a1a",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-surface-variant": "#5c403c",
+            "secondary-fixed-dim": "#bec6e0",
+            "on-secondary-fixed-variant": "#3f465c",
+            "on-primary-container": "#fff6f5",
+            "outline": "#916f6b",
+            "on-primary-fixed-variant": "#93000b",
+            "on-error": "#ffffff",
+            "tertiary-container": "#008259",
+            "surface-container-high": "#dce9ff",
+            "inverse-primary": "#ffb4ab",
+            "surface-dim": "#cbdbf5",
+            "surface-container-lowest": "#ffffff",
+            "on-background": "#0b1c30",
+            "outline-variant": "#e6bdb8",
+            "secondary-container": "#dae2fd",
+            "surface": "#f8f9ff",
+            "on-primary-fixed": "#410002",
+            "inverse-surface": "#213145",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed-variant": "#005236",
+            "secondary": "#565e74",
+            "primary-container": "#dc2626",
+            "primary-fixed": "#ffdad6",
+            "error-container": "#ffdad6",
+            "tertiary": "#006645",
+            "inverse-on-surface": "#eaf1ff",
+            "primary-fixed-dim": "#ffb4ab"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-md": "0.75rem",
+            "space-xs": "0.375rem",
+            "space-3xl": "2rem",
+            "space-2xs": "0.25rem",
+            "space-2xl": "1.5rem",
+            "card-gutter": "1rem",
+            "sidebar-width": "220px",
+            "space-lg": "1rem",
+            "space-xl": "1.25rem",
+            "space-sm": "0.5rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Inter"],
+            "body-md": ["Inter"],
+            "label-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "label-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-lg": ["Inter"]
+          },
+          "fontSize": {
+            "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "body-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "label-md": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }],
+            "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.06em", "fontWeight": "700" }],
+            "label-lg": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "letterSpacing": "-0.005em", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "headline-lg": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-toast-enter {
+      animation: slideDownToast 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes slideDownToast {
+      from {
+        opacity: 0;
+        transform: translateY(-16px) scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+  </style>
+</head>
+<body class="h-full bg-background text-on-surface antialiased flex overflow-hidden">
+<!-- ================= SIDEBAR RAIL (JSON SOURCE OF TRUTH: SideNavBar) ================= -->
+<aside class="fixed top-0 left-0 h-full w-[220px] p-4 flex flex-col justify-between overflow-y-auto bg-surface-container-lowest border-r border-surface-container shadow-sm z-40">
+<div class="flex flex-col gap-6">
+<!-- Header Brand Block -->
+<div class="flex items-center gap-3 px-1 py-1">
+<div class="w-10 h-10 rounded-xl bg-on-surface text-on-primary flex items-center justify-center font-headline-md font-extrabold tracking-tight shadow-sm">
+          P
+        </div>
+<div class="flex flex-col">
+<span class="text-headline-md font-headline-md text-on-surface font-extrabold tracking-tight">PCMYM</span>
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-secondary">SERVICIO TÉCNICO</span>
+</div>
+</div>
+<!-- Action Button CTA from JSON -->
+<button class="w-full bg-primary-container text-on-primary font-label-lg rounded-xl py-2.5 px-3 flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(220,38,38,0.35)] active:scale-[0.98] transition-all hover:brightness-105">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>+ Nuevo repuesto</span>
+</button>
+<!-- Navigation Tabs (Active: Órdenes) -->
+<nav aria-label="Navegación principal" class="flex flex-col gap-1.5">
+<!-- Órdenes: ACTIVE -->
+<a class="bg-primary-container text-on-primary font-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 shadow-sm active:scale-[0.98] transition-transform duration-100" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">build</span>
+<span>Órdenes</span>
+</a>
+<!-- Inventario: INACTIVE -->
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span>Inventario</span>
+</a>
+<!-- Clientes: INACTIVE -->
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span>Clientes</span>
+</a>
+<!-- Finanzas: INACTIVE -->
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+<span>Finanzas</span>
+</a>
+</nav>
+</div>
+<!-- Footer Controls & Technician Profile -->
+<div class="flex flex-col gap-3 pt-4 border-t border-surface-container">
+<nav class="flex flex-col gap-1">
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg rounded-xl flex items-center gap-3 px-3 py-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+<span>Ajustes</span>
+</a>
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg rounded-xl flex items-center gap-3 px-3 py-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span>Cerrar sesión</span>
+</a>
+</nav>
+<!-- Pin Profile Card -->
+<div class="flex items-center gap-3 px-2 py-2 rounded-xl bg-surface-container-low/60 border border-surface-container">
+<div class="w-8 h-8 rounded-full bg-on-surface text-on-primary flex items-center justify-center font-label-md font-bold">
+          TS
+        </div>
+<div class="flex flex-col flex-1 min-w-0">
+<span class="text-body-sm font-label-lg text-on-surface truncate">Técnico Sup.</span>
+<span class="text-label-sm text-secondary">Taller Central</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- ================= MAIN WORKSPACE CANVAS ================= -->
+<main class="ml-[220px] flex-1 flex flex-col h-screen overflow-y-auto relative bg-background">
+<!-- TOP BAR (PCMYM Workshop Navigation Header) -->
+<header class="sticky top-0 bg-surface-container-lowest/90 backdrop-blur-md z-30 px-6 py-3.5 border-b border-surface-container flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-3">
+<a class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors" href="#" title="Regresar al listado">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+</a>
+<div class="flex items-center gap-2.5">
+<h1 class="text-headline-sm font-headline-sm text-on-surface">Orden de Servicio</h1>
+<span class="text-headline-sm font-headline-sm text-primary font-bold">#42</span>
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-primary-container text-on-primary font-bold tracking-wide uppercase">URGENTE</span>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#E0F2FE] text-[#0284C7] font-semibold">Reparación</span>
+</div>
+</div>
+<!-- Quick Trailing Actions -->
+<div class="flex items-center gap-3">
+<div class="hidden sm:flex items-center gap-1.5 text-body-sm text-secondary px-3 py-1.5 bg-surface-container-low rounded-lg border border-surface-container">
+<span class="material-symbols-outlined text-[16px] text-tertiary">schedule</span>
+<span>Ingreso: 24 Oct, 09:30 AM (Hace 1 día)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<button class="p-2 text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors" title="Historial completo">
+<span class="material-symbols-outlined text-[20px]">history</span>
+</button>
+<button class="p-2 text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors" title="Imprimir comprobante técnico">
+<span class="material-symbols-outlined text-[20px]">print</span>
+</button>
+<button class="bg-primary-container text-on-primary text-label-lg font-label-lg px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-[0_4px_14px_0_rgba(220,38,38,0.35)] active:scale-[0.98] transition-all hover:brightness-105">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span>Finalizar Orden</span>
+</button>
+</div>
+</div>
+</header>
+<!-- ================= FLOATING TOAST NOTIFICATION (Esquina superior derecha) ================= -->
+<div class="fixed top-20 right-6 z-50 pointer-events-auto custom-toast-enter max-w-md w-full">
+<div class="bg-surface-container-lowest border border-[#A7F3D0] rounded-xl p-4 shadow-[0_10px_25px_-5px_rgba(15,23,42,0.12),0_8px_10px_-6px_rgba(15,23,42,0.06)] flex items-start gap-3.5 ring-1 ring-tertiary/10">
+<!-- Success Icon -->
+<div class="w-9 h-9 rounded-full bg-[#ECFDF5] text-tertiary flex items-center justify-center flex-shrink-0 border border-[#6EE7B7]">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Toast Text Content -->
+<div class="flex-1 min-w-0 pr-1">
+<div class="flex items-center justify-between">
+<h4 class="text-body-lg font-headline-sm text-on-surface leading-tight">Repuesto agregado a la orden</h4>
+<span class="text-label-sm font-label-sm text-secondary ml-2">Justo ahora</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1 leading-relaxed">
+<span class="font-semibold text-on-surface">SSD Kingston NV2 1TB</span> asignado · Stock actualizado en inventario: <span class="line-through text-secondary">8</span> → <strong class="text-tertiary font-bold">7 uds</strong>
+</p>
+</div>
+<!-- Close button -->
+<button aria-label="Cerrar notificación" class="text-secondary hover:text-on-surface p-1 rounded-lg hover:bg-surface-container-low transition-colors -mr-1 -mt-1" onclick="this.closest('.custom-toast-enter').remove()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<!-- ================= BODY CONTENT 2-COLUMN GRID ================= -->
+<div class="p-6 max-w-[1600px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- LEFT COLUMN: FICHA DEL CLIENTE Y EQUIPO (lg:col-span-5) -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<!-- Card: Información del Cliente y Equipo -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container p-5 shadow-sm">
+<div class="flex items-center justify-between pb-4 border-b border-surface-container">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-surface-container-low text-primary flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</div>
+<div>
+<span class="text-label-sm font-label-sm text-secondary uppercase tracking-wider">DATOS DEL TITULAR</span>
+<h3 class="text-body-lg font-headline-sm text-on-surface">Ficha del Cliente</h3>
+</div>
+</div>
+<button class="text-secondary hover:text-on-surface text-label-md font-label-md flex items-center gap-1 p-1 hover:bg-surface-container-low rounded">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+              Editar
+            </button>
+</div>
+<!-- Datos de Persona -->
+<div class="mt-4 space-y-3">
+<div class="flex items-start justify-between">
+<span class="text-body-sm font-label-md text-secondary">Cliente:</span>
+<span class="text-body-lg font-headline-sm text-on-surface font-bold text-right">Monica Rocio Grande Rojas</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-sm font-label-md text-secondary">DNI / RUC:</span>
+<span class="text-body-sm font-mono text-on-surface font-semibold">45892147</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-sm font-label-md text-secondary">Teléfono WhatsApp:</span>
+<a class="text-body-sm font-semibold text-[#0284C7] hover:underline flex items-center gap-1" href="tel:+51987654321">
+<span class="material-symbols-outlined text-[15px]">call</span>
+                +51 987 654 321
+              </a>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-sm font-label-md text-secondary">Email:</span>
+<span class="text-body-sm text-on-surface">monica.grande@gmail.com</span>
+</div>
+</div>
+<!-- Divider -->
+<div class="my-4 border-t border-surface-container"></div>
+<!-- Datos del Equipo Técnico -->
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-secondary">EQUIPO INGRESADO</span>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-low text-on-surface-variant font-medium">Portátil</span>
+</div>
+<div class="p-3.5 bg-surface-container-low/70 rounded-xl border border-surface-container flex items-start gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest border border-surface-container flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">laptop_mac</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="text-body-lg font-headline-sm text-on-surface">Laptop Lenovo IdeaPad 3 15IML05</h4>
+<div class="flex items-center gap-2 mt-1 text-body-sm text-secondary font-mono">
+<span>S/N: PF2M99KL</span>
+<span>·</span>
+<span>Color: Gris Platino</span>
+</div>
+</div>
+</div>
+<div class="space-y-2 pt-1">
+<div class="flex items-start gap-2">
+<span class="text-label-md font-label-md text-secondary min-w-[120px]">Falla reportada:</span>
+<span class="text-body-sm text-on-surface">Equipo no inicia Windows, pantalla azul recurrente de error de unidad inaccesible (INACCESSIBLE_BOOT_DEVICE).</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="text-label-md font-label-md text-secondary min-w-[120px]">Estado recepción:</span>
+<span class="text-body-sm text-on-surface">Carcasa con rayones superficiales leves. Cargador original incluido. Sin contraseña en BIOS.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card: Diagnóstico Técnico Aprobado -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container p-5 shadow-sm relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-[#ECFDF5] rounded-bl-full -mr-8 -mt-8 pointer-events-none"></div>
+<div class="flex items-center justify-between pb-3 border-b border-surface-container relative z-10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-[20px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+<h3 class="text-body-lg font-headline-sm text-on-surface">Diagnóstico Técnico</h3>
+</div>
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-[#ECFDF5] text-tertiary font-bold flex items-center gap-1 border border-[#A7F3D0]">
+<span class="material-symbols-outlined text-[14px]">check</span>
+              APROBADO POR CLIENTE
+            </span>
+</div>
+<div class="mt-3.5 space-y-2.5">
+<p class="text-body-sm font-body-sm text-on-surface leading-relaxed">
+              Disco mecánico original HDD 1TB presenta 452 sectores dañados irrecuperables (S.M.A.R.T. estado crítico). Se dictamina reemplazo mandatario por unidad sólida de alta velocidad M.2 NVMe de 1TB y reinstalación de sistema operativo con migración de documentos personales.
+            </p>
+<div class="p-3 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0] flex items-center justify-between text-body-sm">
+<span class="text-secondary">Técnico responsable:</span>
+<span class="font-semibold text-on-surface">Carlos Mendoza (Cert. A+)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: CONTROL OPERATIVO, REPUESTOS Y FINANZAS (lg:col-span-7) -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<!-- 1. Tarjeta Actualizar Estado -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container text-primary flex items-center justify-center font-bold flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">published_with_changes</span>
+</div>
+<div>
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-secondary">Fase Operativa</span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="w-2.5 h-2.5 rounded-full bg-[#EAB308] animate-pulse"></span>
+<span class="text-headline-sm font-headline-sm text-on-surface">En diagnóstico</span>
+<span class="text-label-sm text-secondary">(Repuesto listo para instalación)</span>
+</div>
+</div>
+</div>
+<!-- Selector rápido de cambio de fase -->
+<div class="flex items-center gap-2">
+<select class="text-label-lg font-label-lg bg-surface-container-low border border-surface-container rounded-xl px-3 py-2 text-on-surface focus:ring-1 focus:ring-primary focus:outline-none">
+<option selected="" value="diag">En diagnóstico</option>
+<option value="rep">En reparación</option>
+<option value="test">En pruebas / Control calidad</option>
+<option value="ready">Listo para entrega</option>
+</select>
+<button class="bg-on-surface text-on-primary text-label-lg font-label-lg px-3.5 py-2 rounded-xl active:scale-[0.98] transition-all hover:bg-opacity-90">
+              Actualizar
+            </button>
+</div>
+</div>
+<!-- 2. TARJETA REPUESTOS (ESTADO CON PRODUCTO AGREGADO - HIGHLIGHT) -->
+<div class="bg-surface-container-lowest rounded-xl border-2 border-[#FECACA] p-5 shadow-[0_4px_6px_-1px_rgba(15,23,42,0.06)] relative">
+<!-- Header Repuestos -->
+<div class="flex items-center justify-between pb-3.5 border-b border-surface-container">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-[#FEF2F2] text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">memory</span>
+</div>
+<div class="flex items-center gap-2">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Repuestos</h3>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-primary-container text-on-primary font-bold">1 repuesto</span>
+</div>
+</div>
+<button class="bg-surface-container-low hover:bg-surface-container text-primary font-label-lg text-label-lg px-3 py-1.5 rounded-xl border border-[#FECACA] flex items-center gap-1.5 transition-colors active:scale-[0.98]">
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+<span>+ Agregar</span>
+</button>
+</div>
+<!-- Fila de repuesto registrado (SSD Kingston NV2 1TB) -->
+<div class="mt-4 p-3.5 bg-surface-container-low/60 rounded-xl border border-surface-container flex flex-col md:flex-row md:items-center justify-between gap-3 transition-colors hover:bg-surface-container-low">
+<div class="flex items-center gap-3 min-w-0">
+<!-- NVMe Chip Icon -->
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest border border-surface-container text-primary flex items-center justify-center flex-shrink-0 shadow-xs">
+<span class="material-symbols-outlined text-[22px]">developer_board</span>
+</div>
+<div class="min-w-0">
+<h4 class="text-body-lg font-headline-sm text-on-surface truncate">SSD Kingston NV2 1TB M.2 NVMe</h4>
+<p class="text-body-sm font-body-sm text-secondary truncate">
+                  SKU: <span class="font-mono font-medium">SSD-KIN-NV2-1TB</span> · Almacén Central
+                </p>
+</div>
+</div>
+<div class="flex items-center justify-between md:justify-end gap-4 border-t md:border-t-0 pt-2 md:pt-0 border-surface-container">
+<div class="text-right">
+<span class="text-body-md font-headline-sm text-on-surface block font-bold">1 × S/ 230.00 = S/ 230.00</span>
+<span class="text-label-sm text-tertiary font-semibold">Garantía 12 meses</span>
+</div>
+<!-- Quick Action buttons: Edit & Remove -->
+<div class="flex items-center gap-1 pl-2 border-l border-surface-container">
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-lowest rounded-lg transition-colors" title="Editar cantidad o precio">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 text-primary hover:bg-[#FEE2E2] rounded-lg transition-colors" title="Quitar repuesto de la orden">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Subtle Separator -->
+<div class="my-4 border-t border-dashed border-surface-container"></div>
+<!-- Desglose total de la tarjeta repuestos -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-surface-container-lowest p-2.5 rounded-lg">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-tertiary">lock</span>
+<span class="text-label-md font-label-md text-secondary">Nota visual explicativa: <span class="text-on-surface font-semibold">Precio aplicado asegurado para esta orden</span></span>
+</div>
+<div class="text-right">
+<span class="text-label-sm uppercase tracking-wider text-secondary mr-2">SUBTOTAL:</span>
+<span class="text-headline-sm font-headline-sm text-primary font-extrabold">Total repuestos: S/ 230.00</span>
+</div>
+</div>
+</div>
+<!-- 3. Tarjeta Presupuestos (Mano de obra y servicios) -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container p-5 shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-surface-container">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">engineering</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Servicios y Mano de Obra</h3>
+</div>
+<button class="text-secondary hover:text-on-surface text-label-md font-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">add</span>
+              Agregar servicio
+            </button>
+</div>
+<div class="mt-3 divide-y divide-surface-container">
+<div class="py-2.5 flex items-center justify-between text-body-sm">
+<div>
+<span class="font-semibold text-on-surface block">Mano de obra de diagnóstico e instalación</span>
+<span class="text-secondary text-label-sm">Desmontaje, montaje de NVMe, clonación/reinstalación SO</span>
+</div>
+<span class="font-headline-sm text-on-surface font-bold text-right">S/ 80.00</span>
+</div>
+</div>
+</div>
+<!-- 4. Tarjeta Pagos & Liquidación (Actualizada) -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container p-5 shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-surface-container">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">payments</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Resumen Económico de la Orden</h3>
+</div>
+<button class="bg-surface-container-low hover:bg-surface-container text-on-surface text-label-md font-label-md px-2.5 py-1 rounded-lg border border-surface-container transition-colors">
+              + Registrar Pago
+            </button>
+</div>
+<div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Columna desglose -->
+<div class="space-y-2 text-body-sm">
+<div class="flex justify-between text-secondary">
+<span>Servicio (Mano de obra):</span>
+<span class="font-semibold text-on-surface">S/ 80.00</span>
+</div>
+<div class="flex justify-between text-secondary">
+<span>Repuestos agregados:</span>
+<span class="font-semibold text-on-surface">S/ 230.00</span>
+</div>
+<div class="pt-2 border-t border-surface-container flex justify-between font-bold text-body-lg text-on-surface">
+<span>Total Orden:</span>
+<span class="text-headline-sm text-on-surface">S/ 310.00</span>
+</div>
+</div>
+<!-- Columna estados y saldo -->
+<div class="p-3.5 bg-surface-container-low rounded-xl border border-surface-container flex flex-col justify-between">
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-secondary font-medium">A cuenta (Anticipo):</span>
+<span class="font-bold text-tertiary">S/ 50.00</span>
+</div>
+<div class="flex justify-between items-center pt-2 border-t border-surface-container/80 mt-2">
+<span class="text-body-md font-bold text-primary">Saldo pendiente:</span>
+<span class="text-headline-sm font-extrabold text-primary">S/ 260.00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 5. Tarjeta Historial y Auditoría en Tiempo Real -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container p-5 shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-surface-container">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">timelapse</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Historial de la Reparación</h3>
+</div>
+<span class="text-label-sm text-secondary">Actualizado automáticamente</span>
+</div>
+<div class="mt-4 relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-container">
+<!-- Evento reciente (Repuesto agregado) -->
+<div class="relative">
+<div class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-tertiary ring-4 ring-[#ECFDF5]"></div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-bold text-tertiary">Hace 1 min</span>
+<span class="text-label-sm text-secondary">· Modificación de Repuestos</span>
+</div>
+<p class="text-body-sm font-medium text-on-surface mt-0.5">
+                  Administrador asignó 1x SSD Kingston NV2 1TB a la reparación.
+                </p>
+</div>
+</div>
+<!-- Evento anterior: Presupuesto aceptado -->
+<div class="relative">
+<div class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-secondary ring-4 ring-background"></div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-semibold text-secondary">Hace 2 horas</span>
+<span class="text-label-sm text-secondary">· Aprobación</span>
+</div>
+<p class="text-body-sm text-secondary mt-0.5">
+                  Cliente Monica Rocio Grande aprobó el presupuesto vía llamada telefónica.
+                </p>
+</div>
+</div>
+<!-- Evento anterior: Recepción -->
+<div class="relative">
+<div class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-secondary ring-4 ring-background"></div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-semibold text-secondary">24 Oct, 09:30 AM</span>
+<span class="text-label-sm text-secondary">· Recepción de Taller</span>
+</div>
+<p class="text-body-sm text-secondary mt-0.5">
+                  Orden #42 generada por Técnico de Recepción. Anticipo recibido: S/ 50.00 en efectivo.
+                </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

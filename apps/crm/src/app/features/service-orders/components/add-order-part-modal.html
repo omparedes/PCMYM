@@ -1,0 +1,232 @@
+@if (isOpen()) {
+  <div class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="w-full max-w-[640px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- MODAL HEADER -->
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+              <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+              <line x1="6" y1="6" x2="6.01" y2="6"></line>
+              <line x1="6" y1="18" x2="6.01" y2="18"></line>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-[15px] font-extrabold text-slate-900 leading-tight">Agregar repuesto del almacén</h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Orden <span class="font-bold text-slate-700">#{{ orderFolio() }}</span> · Reserva automática en inventario
+            </p>
+          </div>
+        </div>
+        <button
+          (click)="handleClose()"
+          class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- MODAL BODY -->
+      <div class="p-6 space-y-4 max-h-[calc(85vh-130px)] overflow-y-auto">
+        <!-- BUSCADOR -->
+        <div class="relative">
+          <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            type="text"
+            [value]="searchTerm()"
+            (input)="onSearchInput($event)"
+            placeholder="Buscar por nombre, SKU, marca o compatibilidad..."
+            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[13.5px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 outline-none transition-all"
+          />
+        </div>
+
+        <!-- LISTADO DE PRODUCTOS -->
+        <div class="space-y-2 max-h-[220px] overflow-y-auto pr-1">
+          @if (products.isLoading()) {
+            <div class="flex items-center justify-center py-8 text-slate-400 text-xs font-semibold gap-2">
+              <div class="w-4 h-4 border-2 border-slate-300 border-t-red-600 rounded-full animate-spin"></div>
+              Buscando productos...
+            </div>
+          } @else if (products.value().length === 0) {
+            <div class="text-center py-8 text-xs text-slate-400 font-medium">
+              No se encontraron productos disponibles en el catálogo.
+            </div>
+          } @else {
+            @for (p of products.value(); track p.id) {
+              <div
+                role="button"
+                tabindex="0"
+                (click)="selectProduct(p)"
+                (keydown.enter)="selectProduct(p)"
+                class="p-3 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer"
+                [class.border-red-600]="selectedProduct()?.id === p.id"
+                [class.bg-red-50/40]="selectedProduct()?.id === p.id"
+                [class.shadow-xs]="selectedProduct()?.id === p.id"
+                [class.border-slate-200]="selectedProduct()?.id !== p.id"
+                [class.hover:border-slate-300]="selectedProduct()?.id !== p.id && p.current_stock > 0"
+                [class.opacity-50]="p.current_stock <= 0"
+                [class.cursor-not-allowed]="p.current_stock <= 0"
+              >
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-[13.5px] text-slate-900 truncate">{{ p.name }}</span>
+                    @if (p.current_stock > 0) {
+                      <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-emerald-50 text-emerald-700 shrink-0">
+                        {{ p.current_stock }} disponibles
+                      </span>
+                    } @else {
+                      <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-100 text-red-700 shrink-0">
+                        Agotado
+                      </span>
+                    }
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-slate-400 mt-1">
+                    <span class="font-mono">SKU: {{ p.sku }}</span>
+                    <span>•</span>
+                    <span>{{ p.category }}</span>
+                    @if (p.location) {
+                      <span>•</span>
+                      <span>Ubicación: {{ p.location }}</span>
+                    }
+                    <span>•</span>
+                    <span class="font-bold text-slate-800">S/ {{ p.sale_price | number: '1.2-2' }}</span>
+                  </div>
+                </div>
+
+                <div class="shrink-0">
+                  @if (selectedProduct()?.id === p.id) {
+                    <span class="px-2.5 py-1 bg-red-600 text-white rounded-lg text-xs font-bold flex items-center gap-1">
+                      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      Seleccionado
+                    </span>
+                  } @else if (p.current_stock > 0) {
+                    <span class="px-2.5 py-1 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg text-xs font-semibold">
+                      Elegir
+                    </span>
+                  } @else {
+                    <span class="px-2.5 py-1 bg-slate-100 text-slate-400 rounded-lg text-xs font-medium">
+                      Sin stock
+                    </span>
+                  }
+                </div>
+              </div>
+            }
+          }
+        </div>
+
+        <!-- PANEL DE CONTROL DEL PRODUCTO SELECCIONADO -->
+        @if (selectedProduct(); as prod) {
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3.5 animate-in fade-in duration-100">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+              <!-- Selector de cantidad -->
+              <div class="flex items-center gap-3">
+                <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Cantidad:</span>
+                <div class="inline-flex items-center rounded-lg border border-slate-200 bg-white shadow-xs p-0.5">
+                  <button
+                    type="button"
+                    (click)="decrementQty()"
+                    [disabled]="quantity() <= 1"
+                    class="w-7 h-7 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded transition-colors disabled:opacity-30 cursor-pointer"
+                  >
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  </button>
+                  <span class="w-8 text-center text-sm font-extrabold text-slate-900 select-none">{{ quantity() }}</span>
+                  <button
+                    type="button"
+                    (click)="incrementQty()"
+                    [disabled]="quantity() >= prod.current_stock"
+                    class="w-7 h-7 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded transition-colors disabled:opacity-30 cursor-pointer"
+                  >
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Subtotal -->
+              <div class="text-right">
+                <span class="text-[11px] text-slate-400 block">Unitario: S/ {{ prod.sale_price | number: '1.2-2' }}</span>
+                <span class="text-base font-black text-red-600">Subtotal: S/ {{ subtotal() | number: '1.2-2' }}</span>
+              </div>
+            </div>
+
+            <!-- Proyección de stock -->
+            <div class="flex items-center justify-between text-xs bg-white px-3.5 py-2 rounded-lg border border-slate-200">
+              <div class="text-slate-500">
+                Stock actual: <strong class="text-slate-800">{{ prod.current_stock }} uds</strong>
+              </div>
+              <div class="font-bold text-red-600">
+                Salida: -{{ quantity() }} uds
+              </div>
+              <div class="text-slate-700">
+                Nuevo stock: <strong class="text-emerald-700 font-extrabold">{{ projectedStock() }} uds</strong>
+              </div>
+            </div>
+
+            <!-- Notas adicionales -->
+            <div>
+              <input
+                type="text"
+                [value]="notes()"
+                (input)="onNotesInput($event)"
+                placeholder="Nota técnica (opcional, ej. instalado en bahía secundaria)"
+                class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:border-red-600 outline-none"
+              />
+            </div>
+          </div>
+        }
+
+        <!-- ERROR MESSAGE -->
+        @if (errorMessage(); as msg) {
+          <div class="p-3 bg-red-50 text-red-600 rounded-xl text-xs font-semibold flex items-center gap-2">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>{{ msg }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- MODAL FOOTER -->
+      <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3">
+        <button
+          type="button"
+          (click)="handleClose()"
+          class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 text-xs font-bold transition-colors cursor-pointer"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          (click)="submitAddPart()"
+          [disabled]="!selectedProduct() || isSubmitting() || isStockInsufficient()"
+          class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-[0_4px_14px_rgba(220,38,38,0.25)] transition-all flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+        >
+          @if (isSubmitting()) {
+            <div class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <span>Asignando...</span>
+          } @else {
+            <span>Agregar a Orden #{{ orderFolio() }} (S/ {{ subtotal() | number: '1.2-2' }})</span>
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          }
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

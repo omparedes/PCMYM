@@ -20,6 +20,16 @@
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="10" rx="1.5"/><rect x="17" y="4" width="4" height="13" rx="1.5"/></svg>
         <span>Órdenes</span>
       </a>
+
+      <a routerLink="/inventory"
+         routerLinkActive="bg-red-600 text-white shadow-[0_8px_18px_rgba(225,29,42,0.26)]"
+         [routerLinkActiveOptions]="{exact: false}"
+         #rli="routerLinkActive"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-[14.5px] transition-all duration-150 text-slate-500 hover:bg-slate-50"
+         [class.hover:bg-slate-50]="!rli.isActive">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        <span>Inventario</span>
+      </a>
       
       <a routerLink="/customers"
          routerLinkActive="bg-red-600 text-white shadow-[0_8px_18px_rgba(225,29,42,0.26)]"
@@ -77,6 +87,10 @@
     <a routerLink="/service-orders" routerLinkActive="text-red-600" [routerLinkActiveOptions]="{exact: false}" #mbO="routerLinkActive" class="flex-1 flex flex-col items-center gap-1 p-2 transition-colors" [class.text-slate-400]="!mbO.isActive">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="10" rx="1.5"/><rect x="17" y="4" width="4" height="13" rx="1.5"/></svg>
       <span class="text-[11px] font-bold">Órdenes</span>
+    </a>
+    <a routerLink="/inventory" routerLinkActive="text-red-600" [routerLinkActiveOptions]="{exact: false}" #mbI="routerLinkActive" class="flex-1 flex flex-col items-center gap-1 p-2 transition-colors" [class.text-slate-400]="!mbI.isActive">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+      <span class="text-[11px] font-bold">Inventario</span>
     </a>
     <a routerLink="/customers" routerLinkActive="text-red-600" [routerLinkActiveOptions]="{exact: false}" #mbC="routerLinkActive" class="flex-1 flex flex-col items-center gap-1 p-2 transition-colors" [class.text-slate-400]="!mbC.isActive">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3 2.6-5 5.5-5s5.5 2 5.5 5"/><path d="M16 6.5a3 3 0 0 1 0 5.6"/></svg>

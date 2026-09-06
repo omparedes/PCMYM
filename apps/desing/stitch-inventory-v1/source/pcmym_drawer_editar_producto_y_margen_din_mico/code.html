@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PCMYM - Inventario y Repuestos</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-low": "#eff4ff",
+            "on-tertiary-fixed": "#002113",
+            "on-primary": "#ffffff",
+            "background": "#f8f9ff",
+            "on-tertiary-container": "#e1ffec",
+            "tertiary-fixed": "#6ffbbe",
+            "secondary-fixed": "#dae2fd",
+            "surface-container": "#e5eeff",
+            "surface-bright": "#f8f9ff",
+            "surface-container-highest": "#d3e4fe",
+            "on-error-container": "#93000a",
+            "on-surface": "#0b1c30",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#5c647a",
+            "surface-tint": "#bf0715",
+            "primary": "#b70011",
+            "on-secondary-fixed": "#131b2e",
+            "surface-variant": "#d3e4fe",
+            "error": "#ba1a1a",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-surface-variant": "#5c403c",
+            "secondary-fixed-dim": "#bec6e0",
+            "on-secondary-fixed-variant": "#3f465c",
+            "on-primary-container": "#fff6f5",
+            "outline": "#916f6b",
+            "on-primary-fixed-variant": "#93000b",
+            "on-error": "#ffffff",
+            "tertiary-container": "#008259",
+            "surface-container-high": "#dce9ff",
+            "inverse-primary": "#ffb4ab",
+            "surface-dim": "#cbdbf5",
+            "surface-container-lowest": "#ffffff",
+            "on-background": "#0b1c30",
+            "outline-variant": "#e6bdb8",
+            "secondary-container": "#dae2fd",
+            "surface": "#f8f9ff",
+            "on-primary-fixed": "#410002",
+            "inverse-surface": "#213145",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed-variant": "#005236",
+            "secondary": "#565e74",
+            "primary-container": "#dc2626",
+            "primary-fixed": "#ffdad6",
+            "error-container": "#ffdad6",
+            "tertiary": "#006645",
+            "inverse-on-surface": "#eaf1ff",
+            "primary-fixed-dim": "#ffb4ab"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-md": "0.75rem",
+            "space-xs": "0.375rem",
+            "space-3xl": "2rem",
+            "space-2xs": "0.25rem",
+            "space-2xl": "1.5rem",
+            "card-gutter": "1rem",
+            "sidebar-width": "220px",
+            "space-lg": "1rem",
+            "space-xl": "1.25rem",
+            "space-sm": "0.5rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Inter"],
+            "body-md": ["Inter"],
+            "label-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "label-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-lg": ["Inter"]
+          },
+          "fontSize": {
+            "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "body-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "label-md": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }],
+            "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.06em", "fontWeight": "700" }],
+            "label-lg": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "letterSpacing": "-0.005em", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "headline-lg": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md antialiased overflow-x-hidden min-h-screen">
+<!-- SideNavBar Component -->
+<aside class="fixed top-0 left-0 h-screen w-[220px] flex flex-col justify-between z-40 bg-surface-container-lowest border-r border-surface-container shadow-sm p-4">
+<div class="flex flex-col gap-6">
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-8 h-8 rounded-xl bg-primary-container text-on-primary flex items-center justify-center font-headline-md text-headline-md font-extrabold shadow-sm">P</div>
+<div class="flex flex-col">
+<span class="text-headline-md font-headline-md text-on-surface font-extrabold tracking-tight">PCMYM</span>
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-secondary">SERVICIO TÉCNICO</span>
+</div>
+</div>
+<nav aria-label="Navegación principal" class="flex flex-col gap-1.5">
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="build">build</span>
+<span>Órdenes</span>
+</a>
+<a class="bg-primary-container text-on-primary font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 shadow-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="inventory_2" data-weight="fill" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span>Inventario</span>
+</a>
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="group">group</span>
+<span>Clientes</span>
+</a>
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span>Finanzas</span>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-3 pt-4 border-t border-surface-container">
+<button class="w-full bg-primary-container hover:bg-primary text-on-primary font-label-lg text-label-lg rounded-xl py-2 px-3 flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-[0.98]" type="button">
+<span>+ Nuevo repuesto</span>
+</button>
+<div class="flex flex-col gap-1">
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="settings">settings</span>
+<span>Ajustes</span>
+</a>
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="logout">logout</span>
+<span>Cerrar sesión</span>
+</a>
+</div>
+<div class="flex items-center gap-3 px-2 pt-2 border-t border-surface-container">
+<div class="w-8 h-8 rounded-full bg-inverse-surface text-inverse-on-surface flex items-center justify-center text-label-md font-label-md font-bold">TC</div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-label-lg font-label-lg text-on-surface truncate">Técnico Jefe</span>
+<span class="text-label-sm font-label-sm text-secondary truncate">Supervisor Taller</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopNavBar Component -->
+<header class="fixed top-0 right-0 left-[220px] h-16 px-6 flex items-center justify-between z-30 bg-surface-container-lowest border-b border-surface-container shadow-sm">
+<div class="flex items-center gap-6">
+<h1 class="text-headline-sm font-headline-sm font-bold text-on-surface">Inventario y Repuestos</h1>
+<div class="relative w-72">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[18px]" data-icon="search">search</span>
+<input class="w-full pl-9 pr-3 py-1.5 text-body-sm font-body-sm bg-surface-container-low border border-surface-container rounded-lg focus:outline-none focus:ring-1 focus:ring-primary text-on-surface placeholder:text-secondary" placeholder="Buscar por SKU, nombre, serie..." type="text" value="Kingston NV2"/>
+</div>
+<nav class="hidden xl:flex items-center gap-5">
+<a class="text-secondary hover:text-on-surface pb-2 text-label-lg font-label-lg transition-colors" href="#">Resumen</a>
+<a class="border-b-2 border-primary text-primary font-bold pb-2 text-label-lg font-label-lg" href="#">Productos</a>
+<a class="text-secondary hover:text-on-surface pb-2 text-label-lg font-label-lg transition-colors" href="#">Movimientos</a>
+<a class="text-secondary hover:text-on-surface pb-2 text-label-lg font-label-lg transition-colors" href="#">Stock bajo</a>
+</nav>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-secondary hover:text-on-surface transition-colors" title="Historial">
+<span class="material-symbols-outlined text-[20px]" data-icon="history">history</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-secondary hover:text-on-surface transition-colors" title="Filtros">
+<span class="material-symbols-outlined text-[20px]" data-icon="tune">tune</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-secondary hover:text-on-surface transition-colors relative" title="Notificaciones">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="w-2 h-2 rounded-full bg-primary-container absolute top-1.5 right-1.5"></span>
+</button>
+</div>
+<div class="h-6 w-px bg-surface-container"></div>
+<button class="text-secondary hover:bg-surface-container-low border border-surface-container px-3 py-1.5 rounded-xl font-label-lg text-label-lg transition-colors" type="button">
+        Ajuste rápido
+      </button>
+<button class="bg-primary-container text-on-primary font-label-lg text-label-lg rounded-xl px-3 py-1.5 shadow-sm transition-all hover:bg-primary active:scale-[0.98]" type="button">
+        + Nuevo repuesto
+      </button>
+</div>
+</header>
+<!-- Background Catálogo Content Canvas -->
+<main class="ml-[220px] pt-16 p-6 min-h-screen">
+<!-- Sub-headers & Filter chips -->
+<div class="flex flex-col gap-4 mb-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface">Catálogo Maestro</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-secondary text-label-sm font-label-sm font-bold">148 repuestos</span>
+</div>
+<!-- Segmented Controls -->
+<div class="flex items-center bg-surface-container-low p-1 rounded-xl border border-surface-container text-label-md font-label-md">
+<button class="px-3 py-1 rounded-lg bg-surface-container-lowest text-on-surface shadow-sm font-bold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]" data-icon="grid_view">grid_view</span>
+            Tarjetas
+          </button>
+<button class="px-3 py-1 rounded-lg text-secondary hover:text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]" data-icon="view_list">view_list</span>
+            Lista
+          </button>
+</div>
+</div>
+<!-- Quick category filters -->
+<div class="flex items-center gap-2 overflow-x-auto pb-1">
+<button class="px-3 py-1.5 rounded-full bg-on-surface text-on-primary text-label-sm font-label-sm font-bold">Todos</button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-lowest border border-surface-container text-secondary hover:bg-surface-container-low text-label-sm font-label-sm font-bold">Almacenamiento (SSD / HDD)</button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-lowest border border-surface-container text-secondary hover:bg-surface-container-low text-label-sm font-label-sm font-bold">Memorias RAM</button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-lowest border border-surface-container text-secondary hover:bg-surface-container-low text-label-sm font-label-sm font-bold">Pantallas &amp; Displays</button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-lowest border border-surface-container text-secondary hover:bg-surface-container-low text-label-sm font-label-sm font-bold">Baterías &amp; Cargadores</button>
+</div>
+</div>
+<!-- Product Grid Background (Underlay) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+<!-- Card 1 (Active Focused Item) -->
+<div class="bg-surface-container-lowest border-2 border-primary rounded-xl p-4 shadow-sm flex flex-col justify-between relative ring-2 ring-primary/20">
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-secondary font-bold">#SKU-NV2-1TB</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface text-label-sm font-label-sm font-bold">DISPONIBLE</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">SSD Kingston NV2 1TB PCIe 4.0 NVMe</h3>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">Componentes · Kingston</p>
+</div>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface">S/ 240.00</span>
+<span class="text-label-sm font-label-sm text-secondary line-through">S/ 230.00</span>
+</div>
+</div>
+<div class="pt-3 mt-3 border-t border-surface-container flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-secondary font-medium">Stock: <strong class="text-on-surface">8 und</strong></span>
+<span class="text-primary font-bold text-label-sm font-label-sm">Editando...</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-surface-container rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-secondary font-bold">#RAM-CRU-8GB</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface text-label-sm font-label-sm font-bold">NORMAL</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Memoria RAM Crucial 8GB DDR4 3200MHz</h3>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">Componentes · Crucial</p>
+</div>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface">S/ 115.00</span>
+</div>
+</div>
+<div class="pt-3 mt-3 border-t border-surface-container flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-secondary font-medium">Stock: <strong class="text-on-surface">14 und</strong></span>
+<span class="text-secondary text-label-sm font-label-sm">Estante A-01</span>
+</div>
+</div>
+<!-- Card 3 (Stock Alert) -->
+<div class="bg-surface-container-lowest border border-surface-container rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-secondary font-bold">#BAT-HP-HT03XL</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary text-label-sm font-label-sm font-bold">CRÍTICO</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Batería HP Pavilion HT03XL Original</h3>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">Baterías · HP</p>
+</div>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface">S/ 165.00</span>
+</div>
+</div>
+<div class="pt-3 mt-3 border-t border-surface-container flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-primary font-bold">Stock: 1 und</span>
+<span class="text-primary font-bold text-label-sm font-label-sm">¡Reponer!</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest border border-surface-container rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-secondary font-bold">#DIS-LEN-156</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface text-label-sm font-label-sm font-bold">DISPONIBLE</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Pantalla LED 15.6" Slim 30 pines FHD</h3>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">Displays · BOE</p>
+</div>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface">S/ 310.00</span>
+</div>
+</div>
+<div class="pt-3 mt-3 border-t border-surface-container flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-secondary font-medium">Stock: <strong class="text-on-surface">6 und</strong></span>
+<span class="text-secondary text-label-sm font-label-sm">Estante C-04</span>
+</div>
+</div>
+</div>
+</main>
+<!-- MODAL BACKDROP (Semitransparente) -->
+<div class="fixed inset-0 bg-inverse-surface/40 backdrop-blur-[2px] z-50 transition-opacity"></div>
+<!-- RIGHT LATERAL DRAWER (540px) -->
+<div aria-labelledby="drawer-title" aria-modal="true" class="fixed inset-y-0 right-0 w-full max-w-[540px] bg-surface-container-lowest shadow-2xl z-50 flex flex-col border-l border-surface-container" role="dialog">
+<!-- Drawer Header -->
+<div class="px-6 py-4 border-b border-surface-container flex items-start justify-between bg-surface-container-lowest">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]" data-icon="edit_note">edit_note</span>
+<h2 class="text-headline-md font-headline-md font-bold text-on-surface" id="drawer-title">Editar producto</h2>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1">SKU: SSD-KIN-NV2-1TB · Modifica detalles comerciales y técnicos</p>
+</div>
+<button aria-label="Cerrar" class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- Drawer Body (Scrollable) -->
+<div class="flex-1 overflow-y-auto p-6 space-y-6">
+<!-- Bloque 1 - Información principal -->
+<section class="space-y-3.5">
+<div class="flex items-center gap-2 border-b border-surface-container pb-1.5">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="info">info</span>
+<h3 class="text-label-lg font-label-lg text-on-surface">Información principal</h3>
+</div>
+<div class="space-y-3">
+<div>
+<label class="block text-label-md font-label-md text-secondary mb-1">Nombre del producto</label>
+<input class="w-full px-3 py-2 text-body-md font-body-md bg-surface-container-lowest border border-surface-container rounded-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none" type="text" value="SSD Kingston NV2 1TB PCIe 4.0 NVMe"/>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-label-md font-label-md text-secondary mb-1">Categoría</label>
+<div class="relative">
+<select class="w-full px-3 py-2 text-body-md font-body-md bg-surface-container-lowest border border-surface-container rounded-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none appearance-none">
+<option selected="">Componentes</option>
+<option>Almacenamiento</option>
+<option>Pantallas</option>
+<option>Baterías</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-secondary pointer-events-none text-[18px]" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-secondary mb-1">Marca</label>
+<input class="w-full px-3 py-2 text-body-md font-body-md bg-surface-container-lowest border border-surface-container rounded-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none" type="text" value="Kingston"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-label-md font-label-md text-secondary mb-1">Modelo</label>
+<input class="w-full px-3 py-2 text-body-md font-body-md bg-surface-container-lowest border border-surface-container rounded-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none" type="text" value="NV2 PCIe 4.0"/>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-secondary mb-1">Código de barras</label>
+<input class="w-full px-3 py-2 text-body-md font-body-md bg-surface-container-lowest border border-surface-container rounded-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-mono" type="text" value="740617329910"/>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-1">
+<label class="text-label-md font-label-md text-secondary">SKU (Identificador único de sistema)</label>
+<span class="text-label-sm font-label-sm text-secondary">Solo lectura</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low border border-surface-container rounded-lg px-3 py-2 text-secondary cursor-not-allowed">
+<span class="material-symbols-outlined text-[16px]" data-icon="lock">lock</span>
+<span class="font-mono text-body-md font-body-md font-semibold">SSD-KIN-NV2-1TB</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Bloque 2 - Control de Stock (REGLA DE TRAZABILIDAD OBLIGATORIA) -->
+<section class="space-y-3.5">
+<div class="flex items-center gap-2 border-b border-surface-container pb-1.5">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="inventory">inventory</span>
+<h3 class="text-label-lg font-label-lg text-on-surface">Control de Stock</h3>
+</div>
+<!-- Caja informativa fija de trazabilidad -->
+<div class="bg-surface-container-low border border-surface-container rounded-xl p-3.5 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-secondary uppercase">Stock actual disponible</span>
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-surface-container-lowest rounded-lg border border-surface-container text-on-surface shadow-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary" data-icon="lock">lock</span>
+<span class="font-headline-sm text-headline-sm font-bold">8 unidades</span>
+</div>
+</div>
+<div class="flex items-start gap-2 text-body-sm font-body-sm text-on-secondary-container bg-surface-container/60 p-2.5 rounded-lg border border-surface-container">
+<span class="material-symbols-outlined text-[18px] text-secondary shrink-0 mt-0.5" data-icon="shield">shield</span>
+<p class="leading-snug">
+              El stock actual no puede modificarse directamente desde aquí para garantizar la trazabilidad contable. Utiliza los botones de ajuste rápido.
+            </p>
+</div>
+<div class="grid grid-cols-2 gap-2 pt-1">
+<button class="flex items-center justify-center gap-1.5 px-3 py-2 bg-surface-container-lowest hover:bg-surface border border-surface-container rounded-lg text-label-lg font-label-lg text-on-surface transition-colors shadow-xs" type="button">
+<span class="material-symbols-outlined text-tertiary text-[18px]" data-icon="add_circle">add_circle</span>
+<span>+ Agregar stock</span>
+</button>
+<button class="flex items-center justify-center gap-1.5 px-3 py-2 bg-surface-container-lowest hover:bg-surface border border-surface-container rounded-lg text-label-lg font-label-lg text-on-surface transition-colors shadow-xs" type="button">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="remove_circle">remove_circle</span>
+<span>− Retirar stock</span>
+</button>
+</div>
+</div>
+<!-- Campos editables de configuración física -->
+<div class="grid grid-cols-2 gap-3 pt-1">
+<div>
+<label class="block text-label-md font-label-md text-secondary mb-1">Stock mínimo de alerta</label>
+<div class="relative">
+<input class="w-full px-3 py-2 text-body-md font-body-md bg-surface-container-lowest border border-surface-container rounded-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none" type="text" value="5 unidades"/>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-secondary text-[16px]" data-icon="notifications_active">notifications_active</span>
+</div>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-secondary mb-1">Ubicación física</label>
+<div class="relative">
+<input class="w-full px-3 py-2 text-body-md font-body-md bg-surface-container-lowest border border-surface-container rounded-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none" type="text" value="Estante B-03 / Cajón 14"/>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-secondary text-[16px]" data-icon="warehouse">warehouse</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Bloque 3 - Precios y Recálculo en Vivo -->
+<section class="space-y-3.5">
+<div class="flex items-center justify-between border-b border-surface-container pb-1.5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="payments">payments</span>
+<h3 class="text-label-lg font-label-lg text-on-surface">Precios y Recálculo en Vivo</h3>
+</div>
+<span class="text-label-sm font-label-sm bg-surface-container px-2 py-0.5 rounded-full text-secondary">Auto-calculado</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-label-md font-label-md text-secondary mb-1">Costo unitario (S/)</label>
+<div class="relative">
+<span class="absolute left-3 top-2 text-body-md font-body-md text-secondary font-bold">S/</span>
+<input class="w-full pl-8 pr-3 py-2 text-body-md font-body-md bg-surface-container-low border border-surface-container rounded-lg text-on-surface focus:outline-none cursor-default font-medium" id="input-cost" readonly="" step="0.50" type="number" value="180.00"/>
+</div>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-primary font-bold mb-1 flex items-center justify-between">
+<span>Precio de venta (S/)</span>
+<span class="text-label-sm font-label-sm text-primary font-normal">Modificado</span>
+</label>
+<div class="relative">
+<span class="absolute left-3 top-2 text-body-md font-body-md text-primary font-bold">S/</span>
+<input class="w-full pl-8 pr-3 py-2 text-body-md font-body-md bg-surface-container-lowest border-2 border-primary-container rounded-lg text-on-surface font-bold focus:outline-none focus:ring-1 focus:ring-primary shadow-xs" id="input-price" step="1.00" type="number" value="240.00"/>
+</div>
+</div>
+</div>
+<!-- Tarjeta de cálculo instantáneo de rentabilidad -->
+<div class="bg-gradient-to-br from-surface-container-lowest to-surface-container-low border border-surface-container rounded-xl p-4 shadow-xs">
+<div class="flex items-center justify-between mb-3">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">Margen y Rentabilidad estimada</span>
+<span class="text-label-sm font-label-sm bg-tertiary-fixed text-on-tertiary-fixed font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span> Rentable
+            </span>
+</div>
+<div class="grid grid-cols-2 gap-4 divide-x divide-surface-container">
+<div class="flex flex-col">
+<span class="text-label-md font-label-md text-secondary">Ganancia estimada</span>
+<div class="flex items-baseline gap-2 mt-0.5">
+<span class="text-headline-md font-headline-md font-bold text-on-surface" id="label-profit">S/ 60.00</span>
+<span class="text-label-sm font-label-sm text-secondary line-through">(antes S/ 50.00)</span>
+</div>
+</div>
+<div class="flex flex-col pl-4">
+<span class="text-label-md font-label-md text-secondary">Margen comercial</span>
+<div class="flex items-baseline gap-2 mt-0.5">
+<span class="text-headline-md font-headline-md font-bold text-tertiary" id="label-margin">+33.3%</span>
+<span class="text-label-sm font-label-sm text-secondary line-through">(antes +27.8%)</span>
+</div>
+</div>
+</div>
+<div class="mt-3 pt-3 border-t border-surface-container flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary mt-0.5" data-icon="help_outline">help_outline</span>
+<p class="text-label-sm font-label-sm text-secondary leading-snug">
+              Los cambios de precio catálogo no alteran presupuestos de órdenes de servicio ya emitidas.
+            </p>
+</div>
+</div>
+</section>
+<!-- Bloque 4 - Información adicional -->
+<section class="space-y-3.5">
+<div class="flex items-center gap-2 border-b border-surface-container pb-1.5">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="tune">tune</span>
+<h3 class="text-label-lg font-label-lg text-on-surface">Información adicional</h3>
+</div>
+<div class="space-y-3">
+<div>
+<label class="block text-label-md font-label-md text-secondary mb-1">Compatibilidad técnica</label>
+<input class="w-full px-3 py-2 text-body-md font-body-md bg-surface-container-lowest border border-surface-container rounded-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none" type="text" value="Laptops y PCs de escritorio con slot M.2 2280 NVMe"/>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-secondary mb-1">Proveedor habitual</label>
+<div class="relative">
+<input class="w-full px-3 py-2 text-body-md font-body-md bg-surface-container-lowest border border-surface-container rounded-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none" type="text" value="Deltron Perú"/>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-secondary text-[18px]" data-icon="local_shipping">local_shipping</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Drawer Footer -->
+<div class="p-4 px-6 border-t border-surface-container bg-surface-container-lowest flex items-center justify-between gap-3 shadow-lg">
+<button class="px-4 py-2 text-body-md font-body-md font-medium text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors" type="button">
+        Cancelar
+      </button>
+<div class="flex items-center gap-2">
+<button class="px-3 py-2 text-label-lg font-label-lg text-secondary hover:bg-surface-container-low rounded-xl border border-surface-container transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="history">history</span>
+<span>Ver kardex</span>
+</button>
+<button class="px-5 py-2.5 bg-primary-container hover:bg-primary text-on-primary text-label-lg font-label-lg font-bold rounded-xl shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 active:scale-[0.98] transition-all flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="save">save</span>
+<span>Guardar cambios</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Interactive Dynamic Recalculation Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const costInput = document.getElementById('input-cost');
+      const priceInput = document.getElementById('input-price');
+      const profitLabel = document.getElementById('label-profit');
+      const marginLabel = document.getElementById('label-margin');
+
+      function recalculate() {
+        const cost = parseFloat(costInput.value) || 0;
+        const price = parseFloat(priceInput.value) || 0;
+        const profit = price - cost;
+        const margin = cost > 0 ? ((profit / cost) * 100) : 0;
+
+        profitLabel.textContent = `S/ ${profit.toFixed(2)}`;
+        marginLabel.textContent = `${margin >= 0 ? '+' : ''}${margin.toFixed(1)}%`;
+
+        if (margin < 15) {
+          marginLabel.className = 'text-headline-md font-headline-md font-bold text-error';
+        } else {
+          marginLabel.className = 'text-headline-md font-headline-md font-bold text-tertiary';
+        }
+      }
+
+      priceInput.addEventListener('input', recalculate);
+    });
+  </script>
+</body></html>

@@ -6,6 +6,10 @@ import { FormField, form, min, required } from '@angular/forms/signals';
 import { ServiceOrdersService } from './service-orders.service';
 import { ServiceOrderPhotosService } from './service-order-photos.service';
 import { PaymentsService } from './payments.service';
+import { OrderPartsService } from './order-parts.service';
+import { AddOrderPartModalComponent } from './components/add-order-part-modal';
+import { EditOrderPartModalComponent } from './components/edit-order-part-modal';
+import type { ServiceOrderPartWithProduct } from '../inventory/inventory.models';
 import { BudgetsService } from '../budgets/budgets.service';
 import { budgetStatusLabel } from '../budgets/budgets.models';
 import { WORK_TYPE_OPTIONS, nextValidStatuses, paymentMethodLabel, priorityLabel, statusLabel, workTypeLabel } from './service-orders.models';
@@ -23,13 +27,21 @@ function emptyPaymentForm(): PaymentFormModel {
 @Component({
   selector: 'app-service-order-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, DatePipe, DecimalPipe, FormField],
+  imports: [
+    RouterLink,
+    DatePipe,
+    DecimalPipe,
+    FormField,
+    AddOrderPartModalComponent,
+    EditOrderPartModalComponent,
+  ],
   templateUrl: './service-order-detail.html',
 })
 export class ServiceOrderDetail {
   private readonly service = inject(ServiceOrdersService);
   private readonly photosService = inject(ServiceOrderPhotosService);
   private readonly paymentsService = inject(PaymentsService);
+  private readonly orderPartsService = inject(OrderPartsService);
   private readonly budgetsService = inject(BudgetsService);
   private readonly route = inject(ActivatedRoute);
 
@@ -200,4 +212,49 @@ export class ServiceOrderDetail {
       this.changingStatus.set(false);
     }
   }
+
+  protected readonly orderParts = resource({
+    params: () => ({ id: this.orderId }),
+    loader: ({ params }) => this.orderPartsService.listPartsByOrder(params.id),
+    defaultValue: [] as ServiceOrderPartWithProduct[],
+  });
+
+  protected readonly totalParts = computed(() =>
+    this.orderParts.value().reduce((acc, p) => acc + p.quantity * Number(p.unit_price), 0),
+  );
+
+  protected readonly isAddPartModalOpen = signal(false);
+  protected readonly isEditPartModalOpen = signal(false);
+  protected readonly editPartModalMode = signal<'edit' | 'remove'>('edit');
+  protected readonly selectedOrderPart = signal<ServiceOrderPartWithProduct | null>(null);
+
+  protected openAddPart(): void {
+    this.isAddPartModalOpen.set(true);
+  }
+
+  protected closeAddPart(): void {
+    this.isAddPartModalOpen.set(false);
+  }
+
+  protected openEditPart(part: ServiceOrderPartWithProduct): void {
+    this.selectedOrderPart.set(part);
+    this.editPartModalMode.set('edit');
+    this.isEditPartModalOpen.set(true);
+  }
+
+  protected openRemovePart(part: ServiceOrderPartWithProduct): void {
+    this.selectedOrderPart.set(part);
+    this.editPartModalMode.set('remove');
+    this.isEditPartModalOpen.set(true);
+  }
+
+  protected closeEditPart(): void {
+    this.isEditPartModalOpen.set(false);
+    this.selectedOrderPart.set(null);
+  }
+
+  protected onPartMutated(): void {
+    this.orderParts.reload();
+  }
 }
+

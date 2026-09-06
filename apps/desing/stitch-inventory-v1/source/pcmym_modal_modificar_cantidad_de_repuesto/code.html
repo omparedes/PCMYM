@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-surface" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PCMYM - Modificar Cantidad de Repuesto Asignado (Orden #42)</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Inter Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-fixed": "#ffdad6",
+            "surface-container": "#e5eeff",
+            "inverse-surface": "#213145",
+            "tertiary": "#006645",
+            "secondary": "#565e74",
+            "secondary-fixed": "#dae2fd",
+            "on-tertiary-fixed": "#002113",
+            "on-tertiary-fixed-variant": "#005236",
+            "outline-variant": "#e6bdb8",
+            "surface": "#f8f9ff",
+            "surface-variant": "#d3e4fe",
+            "on-surface": "#0b1c30",
+            "on-secondary-fixed-variant": "#3f465c",
+            "on-error": "#ffffff",
+            "tertiary-fixed-dim": "#4edea3",
+            "error-container": "#ffdad6",
+            "inverse-primary": "#ffb4ab",
+            "background": "#f8f9ff",
+            "on-primary-fixed-variant": "#93000b",
+            "surface-container-low": "#eff4ff",
+            "error": "#ba1a1a",
+            "surface-container-highest": "#d3e4fe",
+            "on-primary-fixed": "#410002",
+            "on-surface-variant": "#5c403c",
+            "surface-dim": "#cbdbf5",
+            "surface-container-high": "#dce9ff",
+            "on-secondary-fixed": "#131b2e",
+            "inverse-on-surface": "#eaf1ff",
+            "outline": "#916f6b",
+            "primary-fixed-dim": "#ffb4ab",
+            "tertiary-container": "#008259",
+            "on-error-container": "#93000a",
+            "primary": "#b70011",
+            "surface-tint": "#bf0715",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-container": "#e1ffec",
+            "on-primary-container": "#fff6f5",
+            "on-secondary-container": "#5c647a",
+            "tertiary-fixed": "#6ffbbe",
+            "secondary-container": "#dae2fd",
+            "surface-bright": "#f8f9ff",
+            "on-primary": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed-dim": "#bec6e0",
+            "on-secondary": "#ffffff",
+            "on-background": "#0b1c30",
+            "primary-container": "#dc2626"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "space-3xl": "2rem",
+            "sidebar-width": "220px",
+            "space-xs": "0.375rem",
+            "space-lg": "1rem",
+            "space-2xs": "0.25rem",
+            "space-2xl": "1.5rem",
+            "space-xl": "1.25rem",
+            "card-gutter": "1rem",
+            "space-md": "0.75rem"
+          },
+          "fontFamily": {
+            "label-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "label-lg": ["Inter"],
+            "body-md": ["Inter"]
+          },
+          "fontSize": {
+            "label-md": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }],
+            "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.06em", "fontWeight": "700" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "letterSpacing": "-0.005em", "fontWeight": "500" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "headline-lg": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+            "label-lg": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "body-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="h-full font-body-md text-on-surface bg-surface antialiased overflow-hidden">
+<!-- BACKGROUND: Orden de Servicio #42 (Laptop Lenovo - Monica Rocio Grande Rojas) con desenfoque / blur -->
+<div class="fixed inset-0 filter blur-[6px] opacity-75 pointer-events-none select-none overflow-y-auto">
+<!-- Shell Sidebar Mocked in background -->
+<aside class="fixed top-0 left-0 h-screen w-[220px] bg-surface-container-lowest border-r border-surface-container flex flex-col justify-between p-4 z-10">
+<div>
+<div class="px-2 py-3 mb-6">
+<div class="font-headline-md text-headline-md text-on-surface font-extrabold tracking-tight">PCMYM</div>
+<div class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">SERVICIO TÉCNICO</div>
+</div>
+<nav class="space-y-1.5">
+<div class="bg-primary-container text-on-primary font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">build</span>
+<span>Órdenes</span>
+</div>
+<div class="text-secondary font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+<span>Inventario</span>
+</div>
+<div class="text-secondary font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5">
+<span class="material-symbols-outlined text-[18px]">group</span>
+<span>Clientes</span>
+</div>
+<div class="text-secondary font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+<span>Finanzas</span>
+</div>
+</nav>
+</div>
+<div class="pt-4 border-t border-surface-container">
+<div class="flex items-center gap-2 px-2 py-2">
+<div class="w-8 h-8 rounded-full bg-on-surface text-on-primary flex items-center justify-center font-bold text-xs">TS</div>
+<div class="leading-none">
+<div class="font-label-lg text-label-lg text-on-surface">Supervisor</div>
+<div class="font-label-sm text-label-sm text-secondary">Taller Principal</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top Bar Background Header -->
+<header class="fixed top-0 right-0 left-[220px] h-16 bg-surface-container-lowest border-b border-surface-container px-6 flex items-center justify-between z-10">
+<div class="flex items-center gap-3">
+<span class="font-label-lg text-label-lg text-secondary">Órdenes</span>
+<span class="text-secondary">/</span>
+<span class="font-label-lg text-label-lg font-bold text-on-surface">Orden #42</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="bg-surface-container text-on-surface px-3 py-1.5 rounded-lg text-label-md font-label-md">En Reparación Activa</div>
+</div>
+</header>
+<!-- Order Detail Canvas in Background -->
+<main class="ml-[220px] pt-20 p-8 max-w-6xl">
+<div class="bg-surface-container-lowest border border-surface-container rounded-xl p-6 mb-6 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="font-headline-lg text-headline-lg text-on-surface font-extrabold">Orden #42</span>
+<span class="bg-primary-container text-on-primary text-label-sm font-label-sm px-2 py-0.5 rounded-full font-bold">URGENTE</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface font-semibold">Laptop Lenovo ThinkPad T14 · Cliente: Monica Rocio Grande Rojas</p>
+<p class="font-body-sm text-body-sm text-secondary">Recibido: 24 Octubre 2024 · Técnico Responsable: Carlos Mendoza</p>
+</div>
+<div class="text-right">
+<div class="text-label-sm font-label-sm text-secondary">Presupuesto Actual</div>
+<div class="text-headline-md font-headline-md text-on-surface font-bold">S/ 580.00</div>
+</div>
+</div>
+<div class="border-t border-surface-container pt-4 mt-4">
+<h4 class="font-headline-sm text-headline-sm mb-3">Repuestos Asignados</h4>
+<div class="border border-surface-container rounded-lg divide-y divide-surface-container">
+<div class="p-3.5 flex items-center justify-between bg-surface-container-low/40">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">memory</span>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface font-bold">SSD Kingston NV2 1TB M.2 NVMe</p>
+<p class="font-body-sm text-body-sm text-secondary">SKU: SSD-KIN-NV2-1TB</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="font-label-lg text-label-lg">Cant: 1 ud</span>
+<span class="font-label-lg text-label-lg font-bold">S/ 230.00</span>
+</div>
+</div>
+<div class="p-3.5 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">animated_images</span>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface font-bold">Pasta Térmica Arctic MX-4 (1g)</p>
+<p class="font-body-sm text-body-sm text-secondary">SKU: THM-ARC-MX4</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="font-label-lg text-label-lg">Cant: 1 ud</span>
+<span class="font-label-lg text-label-lg font-bold">S/ 35.00</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BACKDROP OVERLAY -->
+<div class="fixed inset-0 bg-on-surface/40 backdrop-blur-sm z-50 transition-opacity flex items-center justify-center p-4">
+<!-- MODAL CENTRADO COMPACTO (480px) -->
+<div class="w-full max-w-[480px] bg-surface-container-lowest rounded-2xl border border-surface-container shadow-[0_20px_35px_-8px_rgba(15,23,42,0.18),0_10px_15px_-3px_rgba(15,23,42,0.08)] overflow-hidden flex flex-col transform transition-all animate-in fade-in zoom-in-95 duration-150">
+<!-- CABECERA -->
+<div class="px-6 py-4 border-b border-surface-container flex items-center justify-between bg-surface-container-lowest">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]" data-icon="tune">tune</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-snug">Modificar cantidad de repuesto</h3>
+<p class="font-body-sm text-body-sm text-secondary font-medium">Orden #42 · Laptop Lenovo</p>
+</div>
+</div>
+<button aria-label="Cerrar modal" class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- CONTENIDO PRINCIPAL -->
+<div class="p-6 space-y-4 max-h-[calc(85vh-140px)] overflow-y-auto">
+<!-- 1. Tarjeta informativa del repuesto -->
+<div class="p-3.5 bg-surface-container-low/60 rounded-xl border border-surface-container">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-start gap-2.5">
+<div class="p-2 rounded-lg bg-surface-container-lowest border border-surface-container text-secondary mt-0.5">
+<span class="material-symbols-outlined text-[20px]" data-icon="memory">memory</span>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg text-on-surface font-bold leading-snug">SSD Kingston NV2 1TB M.2 NVMe</h4>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="font-body-sm text-body-sm text-secondary font-mono">SKU: SSD-KIN-NV2-1TB</span>
+</div>
+</div>
+</div>
+<!-- Stock disponible chip -->
+<div class="text-right whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container-lowest text-tertiary border border-surface-container font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                7 unidades en almacén
+              </span>
+</div>
+</div>
+</div>
+<!-- 2. Selector de nueva cantidad -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container p-4">
+<div class="flex items-center justify-between mb-3">
+<label class="font-label-lg text-label-lg text-on-surface font-bold flex items-center gap-1.5">
+<span>Cantidad para la orden</span>
+</label>
+<span class="font-label-sm text-label-sm text-secondary">Máximo disponible: 8 uds</span>
+</div>
+<!-- Selector Interactivo -->
+<div class="flex items-center justify-between gap-4 bg-surface-container-low p-2 rounded-xl border border-surface-container">
+<button class="w-10 h-10 rounded-lg bg-surface-container-lowest border border-surface-container hover:bg-surface text-on-surface font-bold text-lg flex items-center justify-center shadow-sm active:scale-95 transition-all" id="btn-decrease" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="remove">remove</span>
+</button>
+<div class="flex flex-col items-center">
+<div class="flex items-baseline gap-1">
+<span class="font-headline-lg text-headline-lg font-extrabold text-on-surface" id="qty-val">2</span>
+<span class="font-label-md text-label-md text-secondary uppercase font-semibold">uds</span>
+</div>
+</div>
+<button class="w-10 h-10 rounded-lg bg-surface-container-lowest border border-surface-container hover:bg-surface text-on-surface font-bold text-lg flex items-center justify-center shadow-sm active:scale-95 transition-all" id="btn-increase" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
+</button>
+</div>
+<!-- Indicador comparativo -->
+<div class="mt-3 flex items-center justify-center gap-2 py-1.5 px-3 bg-surface-container-lowest rounded-lg border border-surface-container text-body-sm font-body-sm text-secondary">
+<span>Cantidad actual: <strong class="text-on-surface font-semibold">1 ud</strong></span>
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="arrow_forward">arrow_forward</span>
+<span>Nueva cantidad: <strong class="text-primary font-bold" id="qty-indicator-label">2 uds</strong></span>
+</div>
+</div>
+<!-- 3. Impacto en Almacén y Costo Económico (Tarjeta en dos bloques) -->
+<div class="border border-surface-container rounded-xl overflow-hidden bg-surface-container-lowest">
+<!-- Bloque Almacén -->
+<div class="p-3.5 bg-surface-container-lowest border-b border-surface-container flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-on-surface mt-0.5">
+<span class="material-symbols-outlined text-[18px]" data-icon="warehouse">warehouse</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="font-label-sm text-label-sm text-secondary uppercase font-bold tracking-wider">Impacto en Almacén</div>
+<div class="flex items-center justify-between mt-0.5">
+<span class="font-body-sm text-body-sm text-on-surface font-semibold">Diferencia requerida:</span>
+<span class="font-label-lg text-label-lg text-primary font-bold" id="diff-val">-1 unidad adicional</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm text-secondary mt-0.5">
+<span>Stock proyectado en rack:</span>
+<span class="font-semibold text-on-surface" id="stock-val">7 → 6 uds disponibles</span>
+</div>
+</div>
+</div>
+<!-- Bloque Presupuesto -->
+<div class="p-3.5 bg-surface-container-low/40 flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-primary mt-0.5">
+<span class="material-symbols-outlined text-[18px]" data-icon="payments">payments</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="font-label-sm text-label-sm text-secondary uppercase font-bold tracking-wider">Impacto Presupuestario</div>
+<div class="flex items-center justify-between mt-0.5">
+<span class="font-body-sm text-body-sm text-secondary">Precio unitario asignado:</span>
+<span class="font-label-lg text-label-lg text-on-surface font-medium">S/ 230.00</span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<span class="font-body-sm text-body-sm text-on-surface font-bold">Nuevo subtotal repuesto:</span>
+<span class="text-right">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold text-primary" id="subtotal-val">S/ 460.00</span>
+<span class="block font-body-sm text-body-sm text-secondary line-through text-[11px]" id="prev-subtotal-val">(antes S/ 230.00)</span>
+</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. Nota informativa de trazabilidad -->
+<div class="p-3 rounded-xl bg-surface-container-low/70 border border-surface-container/80 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[18px] text-secondary mt-0.5" data-icon="info">info</span>
+<p class="font-body-sm text-body-sm text-secondary leading-relaxed">
+            Se registrará un movimiento de salida por <strong class="text-on-surface font-bold" id="trace-diff">-1 unidad</strong> asociado a la <span class="font-semibold text-on-surface">Orden #42</span> sin sobreescribir el registro original.
+          </p>
+</div>
+</div>
+<!-- FOOTER -->
+<div class="px-6 py-4 bg-surface-container-low border-t border-surface-container flex items-center justify-end gap-3">
+<button class="px-4 py-2.5 rounded-xl font-label-lg text-label-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" type="button">
+          Cancelar
+        </button>
+<button class="px-5 py-2.5 rounded-xl font-label-lg text-label-lg font-bold bg-primary-container text-on-primary shadow-[0_4px_14px_0_rgba(220,38,38,0.35)] hover:bg-primary active:scale-[0.98] transition-all flex items-center gap-2" id="btn-submit" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="check">check</span>
+<span id="cta-label">Actualizar cantidad (S/ 460.00)</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Interactive JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const initialQty = 1;
+      let currentQty = 2;
+      const unitPrice = 230.00;
+      const initialWarehouseStock = 7; // Currently available in warehouse
+
+      const qtyVal = document.getElementById('qty-val');
+      const qtyIndicator = document.getElementById('qty-indicator-label');
+      const diffVal = document.getElementById('diff-val');
+      const stockVal = document.getElementById('stock-val');
+      const subtotalVal = document.getElementById('subtotal-val');
+      const traceDiff = document.getElementById('trace-diff');
+      const ctaLabel = document.getElementById('cta-label');
+      const btnDecrease = document.getElementById('btn-decrease');
+      const btnIncrease = document.getElementById('btn-increase');
+
+      function updateUI() {
+        qtyVal.textContent = currentQty;
+        qtyIndicator.textContent = currentQty + (currentQty === 1 ? ' ud' : ' uds');
+
+        const delta = currentQty - initialQty;
+        const projectedStock = initialWarehouseStock - delta;
+        const total = (currentQty * unitPrice).toFixed(2);
+
+        if (delta > 0) {
+          diffVal.textContent = `-${delta} unidad${delta > 1 ? 'es' : ''} adicional${delta > 1 ? 'es' : ''}`;
+          diffVal.className = 'font-label-lg text-label-lg text-primary font-bold';
+          traceDiff.textContent = `-${delta} unidad${delta > 1 ? 'es' : ''}`;
+        } else if (delta < 0) {
+          const ret = Math.abs(delta);
+          diffVal.textContent = `+${ret} unidad${ret > 1 ? 'es' : ''} de retorno a bodega`;
+          diffVal.className = 'font-label-lg text-label-lg text-tertiary font-bold';
+          traceDiff.textContent = `+${ret} unidad${ret > 1 ? 'es' : ''} (reingreso)`;
+        } else {
+          diffVal.textContent = 'Sin cambios de stock';
+          diffVal.className = 'font-label-lg text-label-lg text-secondary font-bold';
+          traceDiff.textContent = '0 unidades';
+        }
+
+        stockVal.textContent = `${initialWarehouseStock} → ${projectedStock} uds disponibles`;
+        subtotalVal.textContent = `S/ ${total}`;
+        ctaLabel.textContent = `Actualizar cantidad (S/ ${total})`;
+
+        // Bounds validation
+        btnDecrease.disabled = (currentQty <= 1);
+        btnDecrease.classList.toggle('opacity-40', currentQty <= 1);
+        btnDecrease.classList.toggle('cursor-not-allowed', currentQty <= 1);
+
+        btnIncrease.disabled = (projectedStock <= 0);
+        btnIncrease.classList.toggle('opacity-40', projectedStock <= 0);
+        btnIncrease.classList.toggle('cursor-not-allowed', projectedStock <= 0);
+      }
+
+      btnDecrease.addEventListener('click', () => {
+        if (currentQty > 1) {
+          currentQty--;
+          updateUI();
+        }
+      });
+
+      btnIncrease.addEventListener('click', () => {
+        if (initialWarehouseStock - (currentQty - initialQty) > 0) {
+          currentQty++;
+          updateUI();
+        }
+      });
+
+      updateUI();
+    });
+  </script>
+</body></html>

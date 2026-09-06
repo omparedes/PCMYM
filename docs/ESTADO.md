@@ -1,12 +1,49 @@
 # ESTADO DEL PROYECTO
-Última actualización: 2026-08-19 por Codex — estación Oscar/Windows
+Última actualización: 2026-09-06 por Antigravity — estación Oscar/Windows
 
 > Protocolo de handoff: **todo agente actualiza este archivo al cerrar sesión.** Es lo que permite
 > cambiar de estación o de agente sin perder el hilo. Mantén el formato de abajo.
 
 ## Fase actual
-**Fase 4 — Base de conocimiento.** En curso.
-Fase 3 (Cliente y notificaciones) se ejecutó con éxito (arquitectura por Claude, infraestructura por Antigravity).
+**Inventario + Repuestos V1.** Completado e integrado en producción/local.
+
+## Hecho en esta sesión (Inventario + Repuestos V1)
+- **Base de datos & Supabase:**
+  - Migración aplicada en remoto: `20260906080000_create_inventory_and_parts.sql`.
+  - Tablas multi-tenant con RLS estricto e integridad contra stock negativo (`CHECK (current_stock >= 0)`):
+    - `products`: Catálogo completo de hardware, repuestos e insumos con SKU único por tenant, precios y stock mínimo.
+    - `inventory_movements`: Kardex inmutable para auditoría de cada movimiento (`in`, `out`, `adjustment`).
+    - `service_order_parts`: Repuestos asignados a una orden con congelación histórica de precio de venta y costo.
+  - Funciones Postgres atómicas (`SECURITY DEFINER` con bloqueo de filas `FOR UPDATE`):
+    - `create_product_with_initial_stock`: Creación e inicialización en Kardex.
+    - `adjust_product_stock`: Ajuste manual con delta y registro inmutable.
+    - `add_part_to_service_order`: Descuento atómico de stock y congelación de precio en la OS.
+    - `modify_service_order_part_qty`: Modificación de cantidad con devolución/descuento proporcional de stock.
+    - `remove_part_from_service_order`: Retorno íntegro e inmediato del stock a inventario.
+  - Tipos TypeScript regenerados y sincronizados con la BD remota (`database.types.ts`).
+- **Servicios y Modelos (Angular 22 - Signal First):**
+  - `inventory.models.ts`: Tipos, utilidades de margen/ganancia y diccionarios de categorías y motivos.
+  - `inventory.service.ts`: Consultas reactivas con Resource API, KPIs agregados y métodos de ajuste.
+  - `order-parts.service.ts`: Servicios para gestión de repuestos en órdenes de servicio.
+- **UI Módulo de Inventario (`/inventory`):**
+  - `inventory-shell.ts/html`: Contenedor principal con sub-navegación por pestañas (Resumen, Productos, Movimientos, Stock bajo) y orquestación de drawers/modales.
+  - `inventory-summary.ts/html`: Bento grid con métricas operativas (SKUs activos, unidades, valoración económica, alertas) y tabla de atención inmediata.
+  - `product-list.ts/html`: Buscador reactivo, filtros por categoría y stock, acciones rápidas (+/-) y apertura de drawer.
+  - `product-drawer.ts/html`: Panel lateral responsivo con soporte para creación, edición (con stock actual protegido contra edición directa arbitraria) y ficha detallada con Kardex.
+  - `stock-adjustment-modal.ts/html`: Modal de ajuste rápido con proyección de stock en tiempo real y prevención de stock insuficiente.
+  - `inventory-movements.ts/html`: Historial y auditoría de Kardex con chips de filtrado.
+  - `low-stock-list.ts/html`: Vista especializada para reposición de productos agotados y críticos con cálculo de costo estimado.
+- **Integración con Órdenes de Servicio:**
+  - `service-order-detail.ts/html`: Nueva tarjeta de **Repuestos Asignados** con conteo, listado, precios congelados, subtotales y suma económica.
+  - `add-order-part-modal.ts/html`: Modal de búsqueda en inventario con proyección de stock y selector de cantidad validado.
+  - `edit-order-part-modal.ts/html`: Modales para ajuste de cantidad o retiro con retorno inmediato al inventario.
+- **Navegación Global:**
+  - Ruta `/inventory` registrada en `app.routes.ts`.
+  - Acceso directo a "Inventario" añadido tanto al sidebar de escritorio como al menú inferior móvil (`shell.html`).
+- **Verificación:**
+  - `npm run build`: Bundle generado exitosamente sin errores en 3.8s.
+  - `npm run lint`: 0 errores, 0 advertencias en todo el workspace.
+  - `npm test`: 8 pruebas unitarias pasando (incluyendo vitest suite en `inventory.spec.ts`).
 
 ## Hecho en esta sesión (Tablero operativo y alta rápida)
 - **Migración:** `20260819090000_add_service_order_work_types.sql` añade `service_orders.work_types`

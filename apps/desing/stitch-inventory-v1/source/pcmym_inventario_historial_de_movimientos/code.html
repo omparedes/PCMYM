@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PCMYM - Movimientos de Inventario</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed": "#dae2fd",
+            "background": "#f8f9ff",
+            "primary": "#b70011",
+            "inverse-surface": "#213145",
+            "surface-bright": "#f8f9ff",
+            "surface-container-highest": "#d3e4fe",
+            "on-secondary": "#ffffff",
+            "error": "#ba1a1a",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-background": "#0b1c30",
+            "surface-dim": "#cbdbf5",
+            "on-secondary-fixed-variant": "#3f465c",
+            "tertiary-fixed": "#6ffbbe",
+            "on-surface": "#0b1c30",
+            "on-primary-fixed": "#410002",
+            "secondary-fixed-dim": "#bec6e0",
+            "primary-fixed-dim": "#ffb4ab",
+            "outline": "#916f6b",
+            "primary-fixed": "#ffdad6",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-secondary-fixed": "#131b2e",
+            "surface": "#f8f9ff",
+            "on-tertiary-container": "#e1ffec",
+            "surface-container-high": "#dce9ff",
+            "on-secondary-container": "#5c647a",
+            "on-primary": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-primary-container": "#fff6f5",
+            "primary-container": "#dc2626",
+            "tertiary-container": "#008259",
+            "tertiary": "#006645",
+            "on-surface-variant": "#5c403c",
+            "surface-container-low": "#eff4ff",
+            "on-tertiary-fixed": "#002113",
+            "on-error": "#ffffff",
+            "outline-variant": "#e6bdb8",
+            "on-error-container": "#93000a",
+            "inverse-on-surface": "#eaf1ff",
+            "surface-tint": "#bf0715",
+            "surface-container-lowest": "#ffffff",
+            "surface-variant": "#d3e4fe",
+            "secondary-container": "#dae2fd",
+            "inverse-primary": "#ffb4ab",
+            "surface-container": "#e5eeff",
+            "secondary": "#565e74",
+            "on-primary-fixed-variant": "#93000b"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "space-3xl": "2rem",
+            "space-md": "0.75rem",
+            "card-gutter": "1rem",
+            "sidebar-width": "220px",
+            "space-xs": "0.375rem",
+            "space-xl": "1.25rem",
+            "space-2xs": "0.25rem",
+            "space-2xl": "1.5rem",
+            "space-lg": "1rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "label-lg": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "label-md": ["Inter"],
+            "headline-sm": ["Inter"]
+          },
+          "fontSize": {
+            "headline-lg": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "label-lg": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "body-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.06em", "fontWeight": "700" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "letterSpacing": "-0.005em", "fontWeight": "500" }],
+            "label-md": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }],
+            "headline-sm": ["16px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "700" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen overflow-x-hidden">
+<!-- SIDEBAR NAVIGATION (Shared Component) -->
+<aside class="fixed top-0 left-0 h-screen w-[220px] p-4 flex flex-col justify-between z-40 bg-surface-container-lowest border-r border-surface-container shadow-sm">
+<div class="flex flex-col gap-6">
+<!-- Brand Block -->
+<div class="flex items-center gap-3 px-1 pt-2">
+<div class="w-10 h-10 rounded-xl bg-on-surface text-surface-container-lowest flex items-center justify-center font-headline-md text-headline-md shadow-sm">
+<span class="material-symbols-outlined text-[24px]">hardware</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-md font-headline-md text-on-surface font-extrabold tracking-tight">PCMYM</span>
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-secondary">SERVICIO TÉCNICO</span>
+</div>
+</div>
+<!-- Quick Action CTA from Shared JSON -->
+<button class="w-full bg-primary-container hover:bg-primary text-on-primary font-label-lg text-label-lg rounded-xl py-2.5 px-3 flex items-center justify-center gap-2 shadow-sm transition-transform active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>+ Nuevo repuesto</span>
+</button>
+<!-- Nav Items: Inventario is Active -->
+<nav aria-label="Navegación principal" class="flex flex-col gap-1.5">
+<!-- Órdenes -->
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">build</span>
+<span>Órdenes</span>
+</a>
+<!-- Inventario (ACTIVE) -->
+<a class="bg-primary-container text-on-primary font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 shadow-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span>Inventario</span>
+</a>
+<!-- Clientes -->
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span>Clientes</span>
+</a>
+<!-- Finanzas -->
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+<span>Finanzas</span>
+</a>
+</nav>
+</div>
+<!-- Footer Controls & Profile Pinned Bottom -->
+<div class="flex flex-col gap-2 border-t border-surface-container pt-3">
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span>Ajustes</span>
+</a>
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span>Cerrar sesión</span>
+</a>
+<!-- Profile Avatar Widget -->
+<div class="mt-2 p-2 bg-surface-container-low rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-on-surface text-surface-container-lowest font-headline-sm text-headline-sm flex items-center justify-center font-bold">
+            TS
+          </div>
+<div class="flex flex-col">
+<span class="text-label-lg font-label-lg text-on-surface truncate leading-tight">Admin Taller</span>
+<span class="text-label-sm font-label-sm text-secondary">Supervisor</span>
+</div>
+</div>
+<button class="text-secondary hover:text-primary transition-colors p-1" title="Historial y estado">
+<span class="material-symbols-outlined text-[18px]">history</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- TOP APP BAR / SECONDARY NAVIGATION (Shared Component Anchors) -->
+<header class="fixed top-0 right-0 left-[220px] h-16 px-6 flex items-center justify-between z-30 bg-surface-container-lowest border-b border-surface-container shadow-sm">
+<!-- Left: Sub-nav Tab Cluster -->
+<div class="flex items-center gap-8 h-full">
+<div class="flex items-center gap-2 pr-2 border-r border-surface-container">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface">Inventario y Repuestos</span>
+</div>
+<nav aria-label="Sub-navegación inventario" class="flex items-center gap-6 h-full pt-1">
+<a class="text-secondary hover:text-on-surface pb-2 transition-colors font-label-lg text-label-lg flex items-center gap-1.5" href="#">
+<span>Resumen</span>
+</a>
+<a class="text-secondary hover:text-on-surface pb-2 transition-colors font-label-lg text-label-lg flex items-center gap-1.5" href="#">
+<span>Productos</span>
+</a>
+<!-- Movimientos ACTIVO con subrayado rojo según spec -->
+<a class="border-b-2 border-primary text-primary font-bold pb-2 font-label-lg text-label-lg flex items-center gap-1.5" href="#">
+<span>Movimientos</span>
+<span class="w-2 h-2 rounded-full bg-primary inline-block"></span>
+</a>
+<a class="text-secondary hover:text-on-surface pb-2 transition-colors font-label-lg text-label-lg flex items-center gap-2" href="#">
+<span>Stock bajo</span>
+<span class="px-1.5 py-0.5 rounded-full bg-primary-fixed text-primary font-label-sm text-label-sm font-bold">12</span>
+</a>
+</nav>
+</div>
+<!-- Right: Header Actions -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1 text-secondary border-r border-surface-container pr-3 mr-1">
+<button class="p-2 rounded-xl hover:bg-surface-container-low text-secondary hover:text-on-surface transition-colors" title="Notificaciones">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="p-2 rounded-xl hover:bg-surface-container-low text-secondary hover:text-on-surface transition-colors" title="Ajustes de visualización">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</button>
+</div>
+<!-- Quick Action Buttons -->
+<button class="bg-surface-container text-on-surface hover:bg-surface-variant font-label-lg text-label-lg px-3.5 py-2 rounded-xl transition-all active:scale-[0.99] flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">sync_alt</span>
+<span>Ajuste rápido</span>
+</button>
+<button class="bg-primary-container hover:bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-xl shadow-sm transition-all active:scale-[0.99] flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>+ Nuevo movimiento</span>
+</button>
+</div>
+</header>
+<!-- MAIN WORKSPACE CANVAS (Edge-to-edge scrollable data surface) -->
+<main class="ml-[220px] pt-16 p-6 min-h-screen flex flex-col gap-6">
+<!-- 1. ENCABEZADO DE PÁGINA -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2">
+<div class="flex flex-col">
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight">Movimientos de inventario</h1>
+<span class="px-2.5 py-1 bg-surface-container text-secondary rounded-full font-label-sm text-label-sm uppercase font-bold tracking-wider">Trazabilidad Total</span>
+</div>
+<p class="text-secondary font-body-md text-body-md mt-1">Registro cronológico y trazabilidad de entradas, salidas y uso en taller.</p>
+</div>
+<!-- Metric Highlights Micro-strip -->
+<div class="flex items-center gap-3">
+<div class="bg-surface-container-lowest border border-surface-container px-3.5 py-2 rounded-xl shadow-sm flex items-center gap-3">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+<div class="flex flex-col">
+<span class="text-label-sm font-label-sm text-secondary uppercase tracking-wider">Entradas hoy</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">+8 uds</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-surface-container px-3.5 py-2 rounded-xl shadow-sm flex items-center gap-3">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<div class="flex flex-col">
+<span class="text-label-sm font-label-sm text-secondary uppercase tracking-wider">Salidas hoy</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">-3 uds</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 2. BARRA DE HERRAMIENTAS SUPERIOR -->
+<div class="bg-surface-container-lowest border border-surface-container rounded-xl p-4 shadow-sm flex flex-col gap-3.5">
+<!-- Search row & contextual selectors -->
+<div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+<!-- Buscador Prominente -->
+<div class="relative flex-1">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="w-full pl-10 pr-4 py-2.5 bg-surface-container-low border border-surface-container focus:border-primary focus:ring-1 focus:ring-primary rounded-xl text-body-md font-body-md text-on-surface placeholder:text-secondary placeholder:opacity-80 transition-all outline-none" placeholder="Buscar producto, SKU, orden o referencia..." type="text"/>
+</div>
+<!-- Controls: Date Range & Export -->
+<div class="flex items-center gap-2.5 self-end lg:self-auto">
+<!-- Selector de rango de fechas -->
+<div class="relative inline-flex items-center bg-surface-container-low border border-surface-container rounded-xl px-3 py-2 text-label-lg font-label-lg text-on-surface hover:bg-surface-container transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[18px] text-secondary mr-2">calendar_today</span>
+<span>Hoy (05 Sep 2026)</span>
+<span class="material-symbols-outlined text-[18px] text-secondary ml-2">expand_more</span>
+</div>
+<!-- Botón de Exportación / Filtro Avanzado -->
+<button class="flex items-center gap-2 bg-surface-container-low hover:bg-surface-container border border-surface-container px-3.5 py-2 rounded-xl text-label-lg font-label-lg text-on-surface transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px] text-secondary">file_download</span>
+<span>Exportar</span>
+</button>
+<button class="flex items-center gap-2 bg-surface-container-low hover:bg-surface-container border border-surface-container px-3.5 py-2 rounded-xl text-label-lg font-label-lg text-on-surface transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px] text-secondary">filter_list</span>
+<span>Filtros</span>
+</button>
+</div>
+</div>
+<!-- Chips de Filtrado Rápido -->
+<div class="flex items-center gap-2 pt-1 border-t border-surface-container overflow-x-auto">
+<!-- Chip Todos (Active) -->
+<button class="bg-on-surface text-surface-container-lowest font-label-lg text-label-lg px-3.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm transition-colors">
+<span>Todos</span>
+<span class="px-1.5 py-0.2 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm">184</span>
+</button>
+<!-- Chip Entradas -->
+<button class="bg-surface-container-lowest border border-surface-container hover:bg-surface-container-low text-secondary hover:text-on-surface font-label-lg text-label-lg px-3.5 py-1.5 rounded-full flex items-center gap-1.5 transition-colors">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>Entradas</span>
+</button>
+<!-- Chip Salidas -->
+<button class="bg-surface-container-lowest border border-surface-container hover:bg-surface-container-low text-secondary hover:text-on-surface font-label-lg text-label-lg px-3.5 py-1.5 rounded-full flex items-center gap-1.5 transition-colors">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span>Salidas</span>
+</button>
+<!-- Chip Ventas -->
+<button class="bg-surface-container-lowest border border-surface-container hover:bg-surface-container-low text-secondary hover:text-on-surface font-label-lg text-label-lg px-3.5 py-1.5 rounded-full flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[16px] text-secondary">point_of_sale</span>
+<span>Ventas</span>
+</button>
+<!-- Chip Reparaciones (Taller) -->
+<button class="bg-surface-container-lowest border border-surface-container hover:bg-surface-container-low text-secondary hover:text-on-surface font-label-lg text-label-lg px-3.5 py-1.5 rounded-full flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[16px] text-secondary">build</span>
+<span>Reparaciones (Taller)</span>
+</button>
+<!-- Chip Ajustes -->
+<button class="bg-surface-container-lowest border border-surface-container hover:bg-surface-container-low text-secondary hover:text-on-surface font-label-lg text-label-lg px-3.5 py-1.5 rounded-full flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[16px] text-secondary">tune</span>
+<span>Ajustes</span>
+</button>
+</div>
+</div>
+<!-- 3. TABLA MODERNA DE MOVIMIENTOS -->
+<div class="bg-surface-container-lowest border border-surface-container rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-surface-container text-secondary text-label-sm font-label-sm uppercase tracking-wider">
+<th class="py-3 px-4 font-bold" scope="col">FECHA Y HORA</th>
+<th class="py-3 px-4 font-bold" scope="col">PRODUCTO Y SKU</th>
+<th class="py-3 px-4 font-bold" scope="col">TIPO</th>
+<th class="py-3 px-4 font-bold text-center" scope="col">CANTIDAD</th>
+<th class="py-3 px-4 font-bold" scope="col">STOCK PREVIO → NUEVO</th>
+<th class="py-3 px-4 font-bold" scope="col">MOTIVO</th>
+<th class="py-3 px-4 font-bold" scope="col">REFERENCIA</th>
+<th class="py-3 px-4 font-bold" scope="col">RESPONSABLE</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container text-body-md font-body-md">
+<!-- ROW 1: Lenovo 65W Charger -->
+<tr class="hover:bg-surface-container-low transition-colors duration-100">
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">05/09/2026</span>
+<span class="text-secondary text-body-sm font-body-sm">18:42</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">power</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Cargador Laptop Lenovo 65W</span>
+<span class="text-secondary text-body-sm font-body-sm">SKU: CAR-LEN-65W</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm font-bold bg-error-container text-on-error-container border border-outline-variant">
+                  SALIDA
+                </span>
+</td>
+<td class="py-3.5 px-4 text-center whitespace-nowrap">
+<span class="font-bold text-primary">-1 ud</span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="text-secondary">14</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">arrow_forward</span>
+<span class="font-bold text-on-surface">13</span>
+</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-secondary-fixed text-on-secondary-fixed text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]">build</span>
+                  Reparación
+                </span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<a class="inline-flex items-center gap-1 font-label-lg text-label-lg font-bold text-primary hover:underline group" href="#">
+<span>Orden #42</span>
+<span class="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 transition-transform">open_in_new</span>
+</a>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-on-surface text-surface-container-lowest text-label-sm font-label-sm flex items-center justify-center font-bold">
+                    A
+                  </div>
+<span class="text-on-surface font-medium">Administrador</span>
+</div>
+</td>
+</tr>
+<!-- ROW 2: SSD Kingston NV2 -->
+<tr class="hover:bg-surface-container-low transition-colors duration-100">
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">05/09/2026</span>
+<span class="text-secondary text-body-sm font-body-sm">17:30</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">memory</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">SSD Kingston NV2 1TB M.2</span>
+<span class="text-secondary text-body-sm font-body-sm">SKU: SSD-KIN-NV2-1TB</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm font-bold bg-tertiary-fixed text-on-tertiary-fixed-variant border border-tertiary-fixed-dim">
+                  ENTRADA
+                </span>
+</td>
+<td class="py-3.5 px-4 text-center whitespace-nowrap">
+<span class="font-bold text-tertiary">+5 uds</span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="text-secondary">3</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">arrow_forward</span>
+<span class="font-bold text-on-surface">8</span>
+</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-surface-container text-on-surface text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]">receipt_long</span>
+                  Compra / Factura F001-492
+                </span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="text-secondary font-label-md text-label-md">Ingreso manual</span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-on-surface text-surface-container-lowest text-label-sm font-label-sm flex items-center justify-center font-bold">
+                    A
+                  </div>
+<span class="text-on-surface font-medium">Administrador</span>
+</div>
+</td>
+</tr>
+<!-- ROW 3: Mouse Logitech M170 -->
+<tr class="hover:bg-surface-container-low transition-colors duration-100">
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">05/09/2026</span>
+<span class="text-secondary text-body-sm font-body-sm">16:15</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">mouse</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Mouse Logitech M170 Wireless</span>
+<span class="text-secondary text-body-sm font-body-sm">SKU: MOU-LOG-M170</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm font-bold bg-error-container text-on-error-container border border-outline-variant">
+                  SALIDA
+                </span>
+</td>
+<td class="py-3.5 px-4 text-center whitespace-nowrap">
+<span class="font-bold text-primary">-1 ud</span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="text-secondary">18</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">arrow_forward</span>
+<span class="font-bold text-on-surface">17</span>
+</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-surface-container-high text-on-surface text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]">point_of_sale</span>
+                  Venta de mostrador
+                </span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="font-bold text-secondary font-label-md text-label-md">Boleta B002-1204</span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-secondary text-surface-container-lowest text-label-sm font-label-sm flex items-center justify-center font-bold">
+                    T
+                  </div>
+<span class="text-on-surface font-medium">Taller</span>
+</div>
+</td>
+</tr>
+<!-- ROW 4: Memoria RAM Kingston -->
+<tr class="hover:bg-surface-container-low transition-colors duration-100">
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">05/09/2026</span>
+<span class="text-secondary text-body-sm font-body-sm">14:10</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">developer_board</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Memoria RAM Kingston Fury 8GB DDR4</span>
+<span class="text-secondary text-body-sm font-body-sm">SKU: RAM-KIN-8GB</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm font-bold bg-secondary-fixed text-on-secondary-fixed-variant border border-secondary-fixed-dim">
+                  AJUSTE
+                </span>
+</td>
+<td class="py-3.5 px-4 text-center whitespace-nowrap">
+<span class="font-bold text-secondary">+2 uds</span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="text-secondary">0</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">arrow_forward</span>
+<span class="font-bold text-on-surface">2</span>
+</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-surface-container text-on-surface text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]">fact_check</span>
+                  Conteo físico inventario
+                </span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="text-secondary font-label-md text-label-md">Ajuste trimestral</span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-on-surface text-surface-container-lowest text-label-sm font-label-sm flex items-center justify-center font-bold">
+                    A
+                  </div>
+<span class="text-on-surface font-medium">Administrador</span>
+</div>
+</td>
+</tr>
+<!-- ROW 5: Pantalla Samsung A15 -->
+<tr class="hover:bg-surface-container-low transition-colors duration-100 bg-error-container/20">
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">05/09/2026</span>
+<span class="text-secondary text-body-sm font-body-sm">12:05</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">smartphone</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Pantalla Samsung A15 Original</span>
+<span class="text-secondary text-body-sm font-body-sm">SKU: PAN-SAM-A15</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm font-bold bg-error-container text-on-error-container border border-outline-variant">
+                  SALIDA
+                </span>
+</td>
+<td class="py-3.5 px-4 text-center whitespace-nowrap">
+<span class="font-bold text-primary">-1 ud</span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="text-secondary">1</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">arrow_forward</span>
+<span class="font-bold text-primary">0</span>
+<span class="ml-1 px-1.5 py-0.5 rounded bg-primary-container text-on-primary font-label-sm text-label-sm font-bold">AGOTADO</span>
+</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-secondary-fixed text-on-secondary-fixed text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]">build</span>
+                  Reparación
+                </span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<a class="inline-flex items-center gap-1 font-label-lg text-label-lg font-bold text-primary hover:underline group" href="#">
+<span>Orden #39</span>
+<span class="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 transition-transform">open_in_new</span>
+</a>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-secondary text-surface-container-lowest text-label-sm font-label-sm flex items-center justify-center font-bold">
+                    T
+                  </div>
+<span class="text-on-surface font-medium">Taller</span>
+</div>
+</td>
+</tr>
+<!-- ROW 6: Batería HP Pavilion 15 -->
+<tr class="hover:bg-surface-container-low transition-colors duration-100">
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">04/09/2026</span>
+<span class="text-secondary text-body-sm font-body-sm">19:10</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">battery_charging_full</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Batería HP Pavilion 15</span>
+<span class="text-secondary text-body-sm font-body-sm">SKU: BAT-HP-PAV15</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm font-bold bg-tertiary-fixed text-on-tertiary-fixed-variant border border-tertiary-fixed-dim">
+                  ENTRADA
+                </span>
+</td>
+<td class="py-3.5 px-4 text-center whitespace-nowrap">
+<span class="font-bold text-tertiary">+3 uds</span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="text-secondary">2</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">arrow_forward</span>
+<span class="font-bold text-on-surface">5</span>
+</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-surface-container text-on-surface text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]">local_shipping</span>
+                  Compra importación
+                </span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="font-bold text-secondary font-label-md text-label-md">Guía #8812</span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-on-surface text-surface-container-lowest text-label-sm font-label-sm flex items-center justify-center font-bold">
+                    A
+                  </div>
+<span class="text-on-surface font-medium">Administrador</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer: Pagination & Records Tally -->
+<div class="p-4 bg-surface-container-low border-t border-surface-container flex items-center justify-between">
+<div class="flex items-center gap-2 text-secondary text-body-sm font-body-sm">
+<span>Mostrando</span>
+<span class="font-bold text-on-surface">1 - 6</span>
+<span>de</span>
+<span class="font-bold text-on-surface">184</span>
+<span>movimientos registrados</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded-lg border border-surface-container bg-surface-container-lowest text-secondary hover:text-on-surface disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="px-3 py-1 rounded-lg bg-primary text-on-primary font-bold text-label-md font-label-md shadow-sm">1</button>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container text-secondary hover:text-on-surface text-label-md font-label-md">2</button>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container text-secondary hover:text-on-surface text-label-md font-label-md">3</button>
+<span class="px-1 text-secondary">...</span>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container text-secondary hover:text-on-surface text-label-md font-label-md">31</button>
+<button class="p-1.5 rounded-lg border border-surface-container bg-surface-container-lowest text-secondary hover:text-on-surface hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,222 @@
+<div class="space-y-4">
+  
+  <!-- Sub-barra de Filtros y Búsqueda (Strict Stitch Recreation) -->
+  <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+    <!-- Large Search Bar and Urgent Attention Flag -->
+    <div class="flex flex-col md:flex-row items-center gap-3">
+      <div class="relative flex-1 w-full">
+        <svg class="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input
+          type="text"
+          [value]="searchTerm()"
+          (input)="onSearchInput($event)"
+          placeholder="Buscar producto, SKU, marca, modelo o código..."
+          class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-600/20 focus:border-red-600 transition-all"
+        />
+      </div>
+
+      <!-- "Solo atención" Button with Flag -->
+      <button
+        type="button"
+        (click)="toggleAttention()"
+        class="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors whitespace-nowrap"
+        [ngClass]="onlyAttention() ? 'bg-red-600 text-white border-red-600 shadow-sm' : 'bg-red-50 border border-red-200 text-red-600 hover:bg-red-100'"
+      >
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+        <span>Solo atención</span>
+      </button>
+    </div>
+
+    <!-- Filter Chips Strip -->
+    <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
+      <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1">Filtrar por categoría:</span>
+      @for (cat of categories; track cat) {
+        <button
+          type="button"
+          (click)="selectCategory(cat)"
+          class="px-3 py-1 rounded-full text-xs font-semibold transition-all"
+          [ngClass]="selectedCategory() === cat ? 'bg-slate-900 text-white shadow-xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'"
+        >
+          {{ cat }}
+        </button>
+      }
+
+      <div class="h-4 w-[1px] bg-slate-200 mx-1 hidden sm:block"></div>
+
+      <!-- Stock Status Filter Chips -->
+      <button
+        type="button"
+        (click)="selectStockStatus('low')"
+        class="px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 transition-colors"
+        [ngClass]="selectedStockStatus() === 'low' && !onlyAttention() ? 'bg-amber-600 text-white shadow-xs' : 'bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100'"
+      >
+        <span class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedStockStatus() === 'low' && !onlyAttention() ? 'bg-white' : 'bg-amber-600'"></span>
+        <span>Stock bajo</span>
+      </button>
+
+      <button
+        type="button"
+        (click)="selectStockStatus('out')"
+        class="px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 transition-colors"
+        [ngClass]="selectedStockStatus() === 'out' && !onlyAttention() ? 'bg-red-600 text-white shadow-xs' : 'bg-red-50 border border-red-200 text-red-600 hover:bg-red-100'"
+      >
+        <span class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedStockStatus() === 'out' && !onlyAttention() ? 'bg-white' : 'bg-red-600'"></span>
+        <span>Agotados</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- INVENTORY DATA TABLE CONTAINER -->
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+    <!-- Table Header Bar -->
+    <div class="px-6 py-3.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        <span class="font-bold text-xs uppercase tracking-wider text-slate-700">Catálogo de Hardware & Repuestos</span>
+      </div>
+      <span class="text-xs text-slate-500">Mostrando {{ filteredProducts().length }} registros</span>
+    </div>
+
+    @if (products.isLoading()) {
+      <div class="p-12 text-center text-sm text-slate-400">
+        <svg class="w-6 h-6 animate-spin mx-auto text-red-600 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+        Cargando catálogo de inventario...
+      </div>
+    } @else if (filteredProducts().length === 0) {
+      <div class="p-12 text-center space-y-2">
+        <svg class="w-12 h-12 text-slate-300 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <div class="text-sm font-bold text-slate-700">No se encontraron productos</div>
+        <p class="text-xs text-slate-400">Intenta con otros términos de búsqueda o filtros de categoría.</p>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-200 bg-white text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <th class="py-3 px-6">Producto & SKU</th>
+              <th class="py-3 px-4">Categoría</th>
+              <th class="py-3 px-4">Marca & Compatibilidad</th>
+              <th class="py-3 px-4 text-center">Stock Actual</th>
+              <th class="py-3 px-4 text-right">Costo</th>
+              <th class="py-3 px-4 text-right">P. Venta</th>
+              <th class="py-3 px-4 text-center">Margen</th>
+              <th class="py-3 px-6 text-right">Acciones Rápidas</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-xs">
+            @for (p of filteredProducts(); track p.id) {
+              <tr
+                (click)="onRowClick(p)"
+                class="hover:bg-slate-50/80 transition-colors group cursor-pointer"
+                [class.bg-red-50/30]="p.current_stock === 0"
+                [class.bg-amber-50/20]="p.current_stock > 0 && p.current_stock <= p.min_stock"
+              >
+                <!-- Producto & SKU -->
+                <td class="py-3.5 px-6">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-800 group-hover:border-red-600/30 transition-colors shrink-0">
+                      <svg class="w-5 h-5 text-slate-700 group-hover:text-red-600 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>
+                    </div>
+                    <div>
+                      <span class="font-bold text-slate-900 block text-[13.5px] leading-snug group-hover:text-red-600 transition-colors">
+                        {{ p.name }}
+                      </span>
+                      <div class="flex items-center gap-2 mt-0.5 text-[11px] text-slate-500">
+                        <span class="font-mono font-medium">{{ p.sku || 'S/SKU' }}</span>
+                        @if (p.location) {
+                          <span class="text-slate-400">• {{ p.location }}</span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Categoría -->
+                <td class="py-3.5 px-4">
+                  <span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-sky-50 text-sky-700 border border-sky-200">
+                    {{ p.category }}
+                  </span>
+                </td>
+
+                <!-- Marca & Compatibilidad -->
+                <td class="py-3.5 px-4">
+                  <div class="font-semibold text-slate-800">{{ p.brand || '-' }}</div>
+                  <div class="text-[11px] text-slate-400 truncate max-w-[180px]">{{ p.compatibility || p.model || '-' }}</div>
+                </td>
+
+                <!-- Stock Actual -->
+                <td class="py-3.5 px-4 text-center">
+                  @if (p.current_stock === 0) {
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-100 border border-red-200 text-red-800 font-extrabold">
+                      <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>
+                      <span>0 uds</span>
+                    </div>
+                  } @else if (p.current_stock <= p.min_stock) {
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100 border border-amber-200 text-amber-800 font-extrabold">
+                      <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
+                      <span>{{ p.current_stock }} uds</span>
+                    </div>
+                  } @else {
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-extrabold">
+                      <span>{{ p.current_stock }} uds</span>
+                    </div>
+                  }
+                </td>
+
+                <!-- Costo -->
+                <td class="py-3.5 px-4 text-right font-medium text-slate-500">
+                  S/ {{ p.cost_price | number:'1.2-2' }}
+                </td>
+
+                <!-- Precio Venta -->
+                <td class="py-3.5 px-4 text-right font-bold text-slate-900">
+                  S/ {{ p.sale_price | number:'1.2-2' }}
+                </td>
+
+                <!-- Margen -->
+                <td class="py-3.5 px-4 text-center">
+                  @let margin = p.cost_price > 0 ? (((p.sale_price - p.cost_price) / p.cost_price) * 100) : 0;
+                  <span class="text-[11px] font-bold px-2 py-0.5 rounded-md"
+                    [ngClass]="margin >= 20 ? 'bg-emerald-100 text-emerald-800' : margin >= 0 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'">
+                    {{ margin >= 0 ? '+' : '' }}{{ margin | number:'1.1-1' }}%
+                  </span>
+                </td>
+
+                <!-- Acciones Rápidas -->
+                <td class="py-3.5 px-6 text-right">
+                  <div class="flex items-center justify-end gap-1.5">
+                    <button
+                      type="button"
+                      (click)="onQuickStock($event, p, 'in')"
+                      class="w-8 h-8 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center justify-center transition-colors"
+                      title="Agregar stock"
+                    >
+                      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                    <button
+                      type="button"
+                      (click)="onQuickStock($event, p, 'out')"
+                      class="w-8 h-8 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 flex items-center justify-center transition-colors"
+                      title="Retirar stock"
+                    >
+                      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                    <button
+                      type="button"
+                      (click)="onEditClick($event, p)"
+                      class="w-8 h-8 rounded-lg bg-slate-50 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors"
+                      title="Editar ficha técnica"
+                    >
+                      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+</div>

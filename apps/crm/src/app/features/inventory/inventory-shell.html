@@ -1,0 +1,143 @@
+<div class="flex flex-col gap-6">
+  <!-- SECONDARY TOP NAVIGATION HEADER -->
+  <div class="bg-white border-b border-slate-200 -mt-6 -mx-4 md:-mx-6 px-4 md:px-6 pt-4 pb-0 mb-2 shadow-xs">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <!-- Title & Subnav Tabs -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-6">
+        <div class="flex items-center gap-2.5 pr-4 border-r-0 sm:border-r border-slate-200">
+          <div class="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center font-bold">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+              <path d="m3.3 7 8.7 5 8.7-5"/>
+              <path d="M12 22V12"/>
+            </svg>
+          </div>
+          <h1 class="text-lg font-black text-slate-900 tracking-tight">Inventario y Repuestos</h1>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex items-center gap-4 sm:gap-6 overflow-x-auto">
+          <button
+            (click)="setTab('summary')"
+            class="pb-3 text-sm font-bold transition-all relative whitespace-nowrap cursor-pointer"
+            [class.text-red-600]="activeTab() === 'summary'"
+            [class.text-slate-500]="activeTab() !== 'summary'"
+            [class.hover:text-slate-800]="activeTab() !== 'summary'"
+          >
+            <span>Resumen</span>
+            @if (activeTab() === 'summary') {
+              <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600 rounded-full"></div>
+            }
+          </button>
+
+          <button
+            (click)="setTab('products')"
+            class="pb-3 text-sm font-bold transition-all relative whitespace-nowrap cursor-pointer"
+            [class.text-red-600]="activeTab() === 'products'"
+            [class.text-slate-500]="activeTab() !== 'products'"
+            [class.hover:text-slate-800]="activeTab() !== 'products'"
+          >
+            <span>Productos</span>
+            @if (activeTab() === 'products') {
+              <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600 rounded-full"></div>
+            }
+          </button>
+
+          <button
+            (click)="setTab('movements')"
+            class="pb-3 text-sm font-bold transition-all relative whitespace-nowrap cursor-pointer flex items-center gap-1.5"
+            [class.text-red-600]="activeTab() === 'movements'"
+            [class.text-slate-500]="activeTab() !== 'movements'"
+            [class.hover:text-slate-800]="activeTab() !== 'movements'"
+          >
+            <span>Movimientos</span>
+            @if (activeTab() === 'movements') {
+              <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600 rounded-full"></div>
+            }
+          </button>
+
+          <button
+            (click)="setTab('low_stock')"
+            class="pb-3 text-sm font-bold transition-all relative whitespace-nowrap cursor-pointer flex items-center gap-2"
+            [class.text-red-600]="activeTab() === 'low_stock'"
+            [class.text-slate-500]="activeTab() !== 'low_stock'"
+            [class.hover:text-slate-800]="activeTab() !== 'low_stock'"
+          >
+            <span>Stock bajo</span>
+            @if (lowStockCount() > 0) {
+              <span class="px-1.5 py-0.5 rounded-full text-[10.5px] font-extrabold bg-red-100 text-red-700">
+                {{ lowStockCount() }}
+              </span>
+            }
+            @if (activeTab() === 'low_stock') {
+              <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600 rounded-full"></div>
+            }
+          </button>
+        </nav>
+      </div>
+
+      <!-- Right Action CTA -->
+      <div class="flex items-center gap-3 pb-3 md:pb-3">
+        <button
+          (click)="openCreateProduct()"
+          class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-[0_4px_14px_rgba(220,38,38,0.25)] transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Nuevo Producto</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DYNAMIC SUB-VIEW -->
+  <div class="min-h-[500px]">
+    @switch (activeTab()) {
+      @case ('summary') {
+        <app-inventory-summary
+          (openDetail)="openDetailProduct($event)"
+          (openAdjustment)="openStockAdjustment($event)"
+          (goToProducts)="setTab('products')"
+          (goToStockBajo)="setTab('low_stock')"
+        />
+      }
+      @case ('products') {
+        <app-product-list
+          (openDetail)="openDetailProduct($event)"
+          (openEdit)="openEditProduct($event)"
+          (openAdjustment)="openStockAdjustment($event)"
+        />
+      }
+      @case ('movements') {
+        <app-inventory-movements />
+      }
+      @case ('low_stock') {
+        <app-low-stock-list
+          (openDetail)="openDetailProduct($event)"
+          (openAdjust)="openStockAdjustment({ product: $event, type: 'in' })"
+        />
+      }
+    }
+  </div>
+
+  <!-- PRODUCT DRAWER (Create, Edit, Detail) -->
+  <app-product-drawer
+    [isOpen]="isDrawerOpen()"
+    [mode]="drawerMode()"
+    [product]="selectedDrawerProduct()"
+    (closeDrawer)="closeDrawer()"
+    (productSaved)="onProductSaved()"
+    (openAdjustment)="openStockAdjustment($event)"
+  />
+
+  <!-- STOCK ADJUSTMENT MODAL (+ / - / ajuste) -->
+  <app-stock-adjustment-modal
+    [isOpen]="isModalOpen()"
+    [product]="selectedModalProduct()"
+    [initialType]="modalInitialType()"
+    (closeModal)="closeModal()"
+    (stockAdjusted)="onStockAdjusted()"
+  />
+</div>

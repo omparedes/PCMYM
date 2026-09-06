@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PCMYM Servicio Técnico - Stock bajo y reposición</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed": "#dae2fd",
+            "background": "#f8f9ff",
+            "primary": "#b70011",
+            "inverse-surface": "#213145",
+            "surface-bright": "#f8f9ff",
+            "surface-container-highest": "#d3e4fe",
+            "on-secondary": "#ffffff",
+            "error": "#ba1a1a",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-background": "#0b1c30",
+            "surface-dim": "#cbdbf5",
+            "on-secondary-fixed-variant": "#3f465c",
+            "tertiary-fixed": "#6ffbbe",
+            "on-surface": "#0b1c30",
+            "on-primary-fixed": "#410002",
+            "secondary-fixed-dim": "#bec6e0",
+            "primary-fixed-dim": "#ffb4ab",
+            "outline": "#916f6b",
+            "primary-fixed": "#ffdad6",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-secondary-fixed": "#131b2e",
+            "surface": "#f8f9ff",
+            "on-tertiary-container": "#e1ffec",
+            "surface-container-high": "#dce9ff",
+            "on-secondary-container": "#5c647a",
+            "on-primary": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-primary-container": "#fff6f5",
+            "primary-container": "#dc2626",
+            "tertiary-container": "#008259",
+            "tertiary": "#006645",
+            "on-surface-variant": "#5c403c",
+            "surface-container-low": "#eff4ff",
+            "on-tertiary-fixed": "#002113",
+            "on-error": "#ffffff",
+            "outline-variant": "#e6bdb8",
+            "on-error-container": "#93000a",
+            "inverse-on-surface": "#eaf1ff",
+            "surface-tint": "#bf0715",
+            "surface-container-lowest": "#ffffff",
+            "surface-variant": "#d3e4fe",
+            "secondary-container": "#dae2fd",
+            "inverse-primary": "#ffb4ab",
+            "surface-container": "#e5eeff",
+            "secondary": "#565e74",
+            "on-primary-fixed-variant": "#93000b"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "space-3xl": "2rem",
+            "space-md": "0.75rem",
+            "card-gutter": "1rem",
+            "sidebar-width": "220px",
+            "space-xs": "0.375rem",
+            "space-xl": "1.25rem",
+            "space-2xs": "0.25rem",
+            "space-2xl": "1.5rem",
+            "space-lg": "1rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "label-lg": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "label-md": ["Inter"],
+            "headline-sm": ["Inter"]
+          },
+          "fontSize": {
+            "headline-lg": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "label-lg": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "body-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.06em", "fontWeight": "700" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "letterSpacing": "-0.005em", "fontWeight": "500" }],
+            "label-md": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }],
+            "headline-sm": ["16px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "700" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="h-full bg-background font-body-md text-on-surface antialiased overflow-x-hidden">
+<!-- SIDEBAR NAVIGATION COMPONENT (Shared SideNavBar) -->
+<aside class="fixed top-0 left-0 h-full w-[220px] p-4 flex flex-col justify-between overflow-y-auto bg-surface-container-lowest border-r border-surface-container shadow-sm z-40">
+<div>
+<!-- Brand Block -->
+<div class="px-2 py-3 mb-5 flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-on-surface flex items-center justify-center text-surface-container-lowest font-headline-md font-bold shadow-sm">
+          P
+        </div>
+<div>
+<div class="text-headline-sm font-headline-sm text-on-surface font-extrabold tracking-tight">PCMYM</div>
+<div class="text-label-sm font-label-sm uppercase tracking-wider text-secondary">SERVICIO TÉCNICO</div>
+</div>
+</div>
+<!-- Quick Action Button in Sidebar -->
+<button class="w-full mb-6 bg-primary-container text-on-primary font-label-lg rounded-xl flex items-center justify-center gap-2 py-2.5 px-3 shadow-[0_4px_14px_0_rgba(220,38,38,0.35)] active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>+ Nuevo repuesto</span>
+</button>
+<!-- Primary Navigation Tabs -->
+<nav class="space-y-1.5">
+<!-- Órdenes (Inactive) -->
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-secondary">build</span>
+<span>Órdenes</span>
+</a>
+<!-- Inventario (ACTIVE) -->
+<a class="bg-primary-container text-on-primary font-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 shadow-sm active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span>Inventario</span>
+</a>
+<!-- Clientes (Inactive) -->
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-secondary">group</span>
+<span>Clientes</span>
+</a>
+<!-- Finanzas (Inactive) -->
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-secondary">account_balance_wallet</span>
+<span>Finanzas</span>
+</a>
+</nav>
+</div>
+<!-- Footer System Navigation & Profile -->
+<div class="pt-4 border-t border-surface-container">
+<div class="space-y-1 mb-4">
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg rounded-xl flex items-center gap-3 px-3 py-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-secondary">settings</span>
+<span>Ajustes</span>
+</a>
+<a class="text-secondary hover:bg-surface-container-low hover:text-on-surface font-label-lg rounded-xl flex items-center gap-3 px-3 py-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-secondary">logout</span>
+<span>Cerrar sesión</span>
+</a>
+</div>
+<!-- Technician Profile Card -->
+<div class="p-2 rounded-xl bg-surface-container-low flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-on-surface text-on-primary flex items-center justify-center font-label-md font-bold text-xs">
+          TS
+        </div>
+<div class="overflow-hidden">
+<div class="font-label-lg text-on-surface text-xs truncate">Téc. Supervisor</div>
+<div class="font-body-sm text-secondary text-[11px] truncate">Taller Central</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- TOP NAVBAR COMPONENT (Shared TopNavBar) -->
+<header class="fixed top-0 right-0 left-[220px] h-16 px-6 flex items-center justify-between bg-surface-container-lowest border-b border-surface-container z-30 shadow-sm">
+<!-- Left Section: Title & Sub-navigation Links -->
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary font-bold">inventory</span>
+<h1 class="font-headline-md text-headline-md text-on-surface font-bold tracking-tight">Inventario y Repuestos</h1>
+</div>
+<nav class="flex items-center gap-6 pt-1">
+<a class="text-secondary hover:text-on-surface pb-2 font-label-lg transition-colors" href="#">
+          Resumen
+        </a>
+<a class="text-secondary hover:text-on-surface pb-2 font-label-lg transition-colors" href="#">
+          Productos
+        </a>
+<a class="text-secondary hover:text-on-surface pb-2 font-label-lg transition-colors" href="#">
+          Movimientos
+        </a>
+<!-- Active Link with red underline & indicator badge -->
+<a class="border-b-2 border-primary text-primary font-bold pb-2 flex items-center gap-1.5 font-label-lg" href="#">
+<span>Stock bajo</span>
+<span class="bg-primary text-on-primary text-[10px] font-bold px-1.5 py-0.2 rounded-full leading-4">12</span>
+</a>
+</nav>
+</div>
+<!-- Right Section: Actions & Utilities -->
+<div class="flex items-center gap-3">
+<!-- Icon Actions -->
+<div class="flex items-center gap-1 mr-2 border-r border-surface-container pr-3">
+<button class="w-9 h-9 flex items-center justify-center rounded-lg text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors" title="Historial">
+<span class="material-symbols-outlined">history</span>
+</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors" title="Filtros avanzados">
+<span class="material-symbols-outlined">tune</span>
+</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors relative" title="Notificaciones">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+</div>
+<!-- Secondary Quick Adjustment -->
+<button class="px-3 py-2 border border-surface-container text-on-surface font-label-lg rounded-xl hover:bg-surface-container-low transition-colors active:scale-[0.99] flex items-center gap-1.5 text-xs">
+<span class="material-symbols-outlined text-[16px]">edit_note</span>
+<span>Ajuste rápido</span>
+</button>
+<!-- Primary Action: Generar orden de compra -->
+<button class="px-4 py-2 bg-primary-container text-on-primary font-label-lg rounded-xl flex items-center gap-2 shadow-[0_4px_14px_0_rgba(220,38,38,0.35)] hover:bg-primary active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[18px]">shopping_cart_checkout</span>
+<span>+ Generar orden de compra</span>
+</button>
+</div>
+</header>
+<!-- MAIN VIEWPORT CANVAS -->
+<main class="ml-[220px] pt-16 min-h-screen bg-background pb-12">
+<div class="max-w-[1400px] mx-auto p-6 space-y-6">
+<!-- 1. HEADER DE SECCIÓN Y KPIS DE ALERTA -->
+<div class="space-y-4">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Stock bajo y reposición</h2>
+<p class="font-body-md text-secondary mt-0.5">Productos que requieren reposición inmediata para no paralizar ventas ni reparaciones de clientes en taller</p>
+</div>
+<div class="flex items-center gap-2 text-xs font-label-md text-secondary bg-surface-container-lowest px-3 py-1.5 rounded-lg border border-surface-container self-start">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span>Actualizado hace 4 min</span>
+</div>
+</div>
+<!-- 3 Tarjetas KPI de Alerta -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- KPI 1: Críticos (Ámbar) -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-amber-200 shadow-sm flex items-center justify-between relative overflow-hidden">
+<div class="space-y-1">
+<span class="font-label-sm uppercase tracking-wider text-amber-800 font-bold flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                Atención Requerida
+              </span>
+<div class="text-3xl font-extrabold text-amber-900 tracking-tight">12 <span class="text-sm font-normal text-amber-700">productos</span></div>
+<p class="text-xs text-amber-700 font-medium">12 productos en estado crítico de rotación</p>
+</div>
+<div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">warning</span>
+</div>
+</div>
+<!-- KPI 2: Agotados (Rojo Brillante) -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-red-200 shadow-sm flex items-center justify-between relative overflow-hidden">
+<div class="space-y-1">
+<span class="font-label-sm uppercase tracking-wider text-primary font-bold flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+                Paralización Inmediata
+              </span>
+<div class="text-3xl font-extrabold text-primary tracking-tight">3 <span class="text-sm font-normal text-red-700">agotados</span></div>
+<p class="text-xs text-red-600 font-medium">3 productos con stock en 0 unidades</p>
+</div>
+<div class="w-12 h-12 rounded-xl bg-red-100 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">error</span>
+</div>
+</div>
+<!-- KPI 3: Stock de Seguridad (Gris/Azul Oscuro) -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container shadow-sm flex items-center justify-between relative overflow-hidden">
+<div class="space-y-1">
+<span class="font-label-sm uppercase tracking-wider text-secondary font-bold flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                Límite Preventivo
+              </span>
+<div class="text-3xl font-extrabold text-on-surface tracking-tight">9 <span class="text-sm font-normal text-secondary">artículos</span></div>
+<p class="text-xs text-secondary font-medium">9 artículos debajo del stock de seguridad</p>
+</div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">shield</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 2. FILTROS Y BÚSQUEDA -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container shadow-sm space-y-3">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+<!-- Buscador -->
+<div class="relative flex-1 max-w-xl">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-surface-container rounded-xl text-xs font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-secondary" placeholder="Buscar repuesto o producto por reponer (SKU, nombre, modelo)..." type="text"/>
+</div>
+<!-- Selector de Proveedor -->
+<div class="flex items-center gap-2">
+<label class="text-xs font-label-md text-secondary whitespace-nowrap">Filtrar Proveedor:</label>
+<div class="relative">
+<select class="appearance-none bg-surface-container-low border border-surface-container rounded-xl text-xs font-label-lg text-on-surface py-2 pl-3 pr-8 focus:outline-none focus:border-primary transition-all cursor-pointer">
+<option value="todos">Todos los proveedores</option>
+<option value="deltron">Deltron Perú</option>
+<option value="ingram">Ingram Micro</option>
+<option value="techdata">TechData / Mayorista Tech</option>
+<option value="importador">Importador Directo Lima</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-secondary text-[18px]">expand_more</span>
+</div>
+<!-- Botón Exportar / Acciones de lote -->
+<button class="p-2 border border-surface-container rounded-xl text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" title="Descargar reporte">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+</button>
+</div>
+</div>
+<!-- Barra de Chips de Estado / Categoría -->
+<div class="flex items-center gap-2 pt-2 border-t border-surface-container overflow-x-auto custom-scroll pb-1">
+<!-- Chip Activo: Todos los críticos -->
+<button class="bg-on-surface text-surface-container-lowest px-3 py-1 rounded-full text-xs font-label-md flex items-center gap-1.5 shadow-sm whitespace-nowrap">
+<span>Todos los críticos</span>
+<span class="bg-surface-container-lowest/20 px-1.5 py-0.2 rounded-full text-[10px] font-bold">15</span>
+</button>
+<!-- Solo Agotados (3) -->
+<button class="bg-red-50 text-primary border border-red-200 hover:bg-red-100 px-3 py-1 rounded-full text-xs font-label-md flex items-center gap-1.5 transition-colors whitespace-nowrap">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>Solo Agotados</span>
+<span class="bg-primary text-on-primary px-1.5 py-0.2 rounded-full text-[10px] font-bold">3</span>
+</button>
+<!-- Stock Crítico (12) -->
+<button class="bg-surface-container-lowest text-secondary border border-surface-container hover:bg-surface-container-low px-3 py-1 rounded-full text-xs font-label-md flex items-center gap-1.5 transition-colors whitespace-nowrap">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+<span>Stock Crítico</span>
+<span class="bg-surface-container-high text-on-surface px-1.5 py-0.2 rounded-full text-[10px]">12</span>
+</button>
+<!-- Repuestos de taller -->
+<button class="bg-surface-container-lowest text-secondary border border-surface-container hover:bg-surface-container-low px-3 py-1 rounded-full text-xs font-label-md flex items-center gap-1.5 transition-colors whitespace-nowrap">
+<span class="material-symbols-outlined text-[14px]">handyman</span>
+<span>Repuestos de taller</span>
+</button>
+<!-- Componentes PC -->
+<button class="bg-surface-container-lowest text-secondary border border-surface-container hover:bg-surface-container-low px-3 py-1 rounded-full text-xs font-label-md flex items-center gap-1.5 transition-colors whitespace-nowrap">
+<span class="material-symbols-outlined text-[14px]">memory</span>
+<span>Componentes PC</span>
+</button>
+</div>
+</div>
+<!-- 3. TABLA OPERATIVA DE REPOSICIÓN -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container shadow-sm overflow-hidden">
+<div class="overflow-x-auto custom-scroll">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-surface-container bg-surface-container-low/60 text-[11px] font-label-sm uppercase tracking-wider text-secondary">
+<th class="py-3 px-4">PRODUCTO &amp; SKU</th>
+<th class="py-3 px-3">CATEGORÍA</th>
+<th class="py-3 px-3 text-center">STOCK ACTUAL</th>
+<th class="py-3 px-3 text-center">MÍNIMO</th>
+<th class="py-3 px-3">FALTANTE PARA MÍNIMO</th>
+<th class="py-3 px-4">PROVEEDOR SUGERIDO</th>
+<th class="py-3 px-4 text-right">COSTO EST.</th>
+<th class="py-3 px-4 text-center">ACCIÓN RÁPIDA</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container font-body-md text-xs">
+<!-- FILA 1: Pantalla Samsung A15 (Agotado) -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-red-100 text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">smartphone</span>
+</div>
+<div>
+<div class="font-headline-sm text-[13px] font-bold text-on-surface group-hover:text-primary transition-colors">
+                        Pantalla Samsung A15
+                      </div>
+<div class="text-[11px] text-secondary">SKU: REP-SAM-A15-OLED</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-sky-50 text-sky-700 border border-sky-200">
+                    Celular / Repuesto
+                  </span>
+</td>
+<td class="py-3.5 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-primary text-on-primary shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                    0 uds (AGOTADO)
+                  </span>
+</td>
+<td class="py-3.5 px-3 text-center font-bold text-on-surface">
+                  2 uds
+                </td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-1.5 text-primary font-bold">
+<span class="material-symbols-outlined text-[16px]">priority_high</span>
+<span>Faltan 2 uds</span>
+</div>
+<div class="w-24 bg-red-100 h-1 rounded-full mt-1 overflow-hidden">
+<div class="bg-primary h-full w-0"></div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-secondary font-medium">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">local_shipping</span>
+<span>Importador Directo Lima</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-bold text-on-surface">
+                  S/ 140.00
+                </td>
+<td class="py-3.5 px-4 text-center">
+<button class="px-3 py-1.5 bg-primary-container text-on-primary font-label-lg rounded-lg shadow-[0_2px_8px_0_rgba(220,38,38,0.3)] hover:bg-primary active:scale-[0.98] transition-all text-xs inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">add_box</span>
+<span>+ Agregar stock</span>
+</button>
+</td>
+</tr>
+<!-- FILA 2: Memoria RAM Kingston Fury 8GB DDR4 (Crítico 2 uds) -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">memory</span>
+</div>
+<div>
+<div class="font-headline-sm text-[13px] font-bold text-on-surface group-hover:text-primary transition-colors">
+                        Memoria RAM Kingston Fury 8GB DDR4
+                      </div>
+<div class="text-[11px] text-secondary">SKU: RAM-KNG-DDR4-8G</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-purple-50 text-purple-700 border border-purple-200">
+                    Componentes
+                  </span>
+</td>
+<td class="py-3.5 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                    2 uds (CRÍTICO)
+                  </span>
+</td>
+<td class="py-3.5 px-3 text-center font-bold text-on-surface">
+                  5 uds
+                </td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-1.5 text-amber-800 font-bold">
+<span class="material-symbols-outlined text-[16px]">trending_down</span>
+<span>Faltan 3 uds</span>
+</div>
+<div class="w-24 bg-surface-container h-1 rounded-full mt-1 overflow-hidden">
+<div class="bg-amber-500 h-full w-[40%]"></div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-secondary font-medium">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">inventory</span>
+<span>Deltron Perú</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-bold text-on-surface">
+                  S/ 255.00
+                </td>
+<td class="py-3.5 px-4 text-center">
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-surface-container hover:border-primary text-on-surface hover:text-primary font-label-lg rounded-lg shadow-sm active:scale-[0.98] transition-all text-xs inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">add</span>
+<span>+ Agregar stock</span>
+</button>
+</td>
+</tr>
+<!-- FILA 3: Teclado Redragon Kumara K552 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">keyboard</span>
+</div>
+<div>
+<div class="font-headline-sm text-[13px] font-bold text-on-surface group-hover:text-primary transition-colors">
+                        Teclado Redragon Kumara K552
+                      </div>
+<div class="text-[11px] text-secondary">SKU: ACC-RDG-K552-RGB</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                    Accesorios
+                  </span>
+</td>
+<td class="py-3.5 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                    1 ud (CRÍTICO)
+                  </span>
+</td>
+<td class="py-3.5 px-3 text-center font-bold text-on-surface">
+                  4 uds
+                </td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-1.5 text-amber-800 font-bold">
+<span class="material-symbols-outlined text-[16px]">trending_down</span>
+<span>Faltan 3 uds</span>
+</div>
+<div class="w-24 bg-surface-container h-1 rounded-full mt-1 overflow-hidden">
+<div class="bg-amber-500 h-full w-[25%]"></div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-secondary font-medium">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">storefront</span>
+<span>Mayorista Tech</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-bold text-on-surface">
+                  S/ 240.00
+                </td>
+<td class="py-3.5 px-4 text-center">
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-surface-container hover:border-primary text-on-surface hover:text-primary font-label-lg rounded-lg shadow-sm active:scale-[0.98] transition-all text-xs inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">add</span>
+<span>+ Agregar stock</span>
+</button>
+</td>
+</tr>
+<!-- FILA 4: Cargador Lenovo 65W Tipo C -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">power</span>
+</div>
+<div>
+<div class="font-headline-sm text-[13px] font-bold text-on-surface group-hover:text-primary transition-colors">
+                        Cargador Lenovo 65W Tipo C
+                      </div>
+<div class="text-[11px] text-secondary">SKU: CAR-LEN-65W-USB-C</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-sky-50 text-sky-700 border border-sky-200">
+                    Repuestos
+                  </span>
+</td>
+<td class="py-3.5 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-surface-container text-on-surface">
+                    3 uds
+                  </span>
+</td>
+<td class="py-3.5 px-3 text-center font-bold text-on-surface">
+                  6 uds
+                </td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-1.5 text-secondary font-bold">
+<span class="material-symbols-outlined text-[16px]">south_east</span>
+<span>Faltan 3 uds</span>
+</div>
+<div class="w-24 bg-surface-container h-1 rounded-full mt-1 overflow-hidden">
+<div class="bg-secondary h-full w-[50%]"></div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-secondary font-medium">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">inventory</span>
+<span>Deltron Perú</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-bold text-on-surface">
+                  S/ 195.00
+                </td>
+<td class="py-3.5 px-4 text-center">
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-surface-container hover:border-primary text-on-surface hover:text-primary font-label-lg rounded-lg shadow-sm active:scale-[0.98] transition-all text-xs inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">add</span>
+<span>+ Agregar stock</span>
+</button>
+</td>
+</tr>
+<!-- FILA 5: Batería Dell Inspiron 15 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">battery_alert</span>
+</div>
+<div>
+<div class="font-headline-sm text-[13px] font-bold text-on-surface group-hover:text-primary transition-colors">
+                        Batería Dell Inspiron 15
+                      </div>
+<div class="text-[11px] text-secondary">SKU: BAT-DEL-IN15-42W</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-sky-50 text-sky-700 border border-sky-200">
+                    Repuestos
+                  </span>
+</td>
+<td class="py-3.5 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                    1 ud (CRÍTICO)
+                  </span>
+</td>
+<td class="py-3.5 px-3 text-center font-bold text-on-surface">
+                  4 uds
+                </td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-1.5 text-amber-800 font-bold">
+<span class="material-symbols-outlined text-[16px]">trending_down</span>
+<span>Faltan 3 uds</span>
+</div>
+<div class="w-24 bg-surface-container h-1 rounded-full mt-1 overflow-hidden">
+<div class="bg-amber-500 h-full w-[25%]"></div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-secondary font-medium">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">local_shipping</span>
+<span>Repuestos Express</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-bold text-on-surface">
+                  S/ 225.00
+                </td>
+<td class="py-3.5 px-4 text-center">
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-surface-container hover:border-primary text-on-surface hover:text-primary font-label-lg rounded-lg shadow-sm active:scale-[0.98] transition-all text-xs inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">add</span>
+<span>+ Agregar stock</span>
+</button>
+</td>
+</tr>
+<!-- FILA 6: Pasta Térmica Arctic MX-4 4g -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">build_circle</span>
+</div>
+<div>
+<div class="font-headline-sm text-[13px] font-bold text-on-surface group-hover:text-primary transition-colors">
+                        Pasta Térmica Arctic MX-4 4g
+                      </div>
+<div class="text-[11px] text-secondary">SKU: INS-ARC-MX4-4G</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    Taller
+                  </span>
+</td>
+<td class="py-3.5 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                    2 uds (CRÍTICO)
+                  </span>
+</td>
+<td class="py-3.5 px-3 text-center font-bold text-on-surface">
+                  8 uds
+                </td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-1.5 text-primary font-bold">
+<span class="material-symbols-outlined text-[16px]">priority_high</span>
+<span>Faltan 6 uds</span>
+</div>
+<div class="w-24 bg-surface-container h-1 rounded-full mt-1 overflow-hidden">
+<div class="bg-amber-500 h-full w-[25%]"></div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-secondary font-medium">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">inventory</span>
+<span>Deltron Perú</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-bold text-on-surface">
+                  S/ 150.00
+                </td>
+<td class="py-3.5 px-4 text-center">
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-surface-container hover:border-primary text-on-surface hover:text-primary font-label-lg rounded-lg shadow-sm active:scale-[0.98] transition-all text-xs inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">add</span>
+<span>+ Agregar stock</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Paginación y Resumen Inferior -->
+<div class="px-4 py-3 border-t border-surface-container flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-secondary bg-surface-container-lowest">
+<div class="flex items-center gap-2">
+<span>Mostrando 6 de 15 productos que requieren compra</span>
+<span class="text-surface-container">•</span>
+<span class="font-medium text-on-surface">Total estimado a reponer: <strong class="text-primary font-bold">S/ 1,205.00</strong></span>
+</div>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1 border border-surface-container rounded-lg text-secondary disabled:opacity-50 hover:bg-surface-container-low" disabled="">
+              Anterior
+            </button>
+<button class="px-2.5 py-1 bg-primary text-on-primary rounded-lg font-bold">
+              1
+            </button>
+<button class="px-2.5 py-1 border border-surface-container rounded-lg text-secondary hover:bg-surface-container-low">
+              2
+            </button>
+<button class="px-2.5 py-1 border border-surface-container rounded-lg text-secondary hover:bg-surface-container-low">
+              Siguiente
+            </button>
+</div>
+</div>
+</div>
+<!-- BANNER DE RECOMENDACIÓN OPERATIVA RÁPIDA -->
+<div class="p-4 rounded-xl bg-surface-container border border-surface-container-high flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5">info</span>
+<div class="flex-1">
+<h4 class="font-headline-sm text-xs font-bold text-on-surface">Sugerencia de consolidación logística</h4>
+<p class="text-[12px] text-secondary mt-0.5">
+            Tienes <strong>4 productos críticos</strong> asignados a <strong>Deltron Perú</strong>. Se recomienda consolidar en una sola orden de compra para calificar a despacho prioritario gratuito hoy mismo antes de las 17:00 hrs.
+          </p>
+</div>
+<button class="px-3 py-1.5 bg-on-surface text-on-primary font-label-lg text-xs rounded-xl hover:bg-on-surface/90 transition-all self-center whitespace-nowrap">
+          Consolidar pedido Deltron (4)
+        </button>
+</div>
+</div>
+</main>
+</body></html>

@@ -11,6 +11,10 @@
 *.pem
 *.key
 secrets.json
+claude.json
+patch-claude-config.js
+test-webhook.js
+/scripts/
 
 # === Supabase ===
 /supabase/.branches

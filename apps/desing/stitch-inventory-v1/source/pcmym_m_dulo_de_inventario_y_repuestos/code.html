@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#f8fafc]" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inventario y Repuestos - PCMYM Servicio Técnico</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Inter Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config directly adhering to the provided design tokens -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-tint": "#bf0715",
+            "secondary-fixed": "#dae2fd",
+            "surface-container-lowest": "#ffffff",
+            "tertiary-container": "#008259",
+            "primary-container": "#dc2626",
+            "primary-fixed": "#ffdad6",
+            "on-secondary": "#ffffff",
+            "on-tertiary-container": "#e1ffec",
+            "on-primary": "#ffffff",
+            "secondary-container": "#dae2fd",
+            "on-primary-fixed": "#410002",
+            "on-tertiary-fixed-variant": "#005236",
+            "background": "#f8f9ff",
+            "error": "#ba1a1a",
+            "surface-container-low": "#eff4ff",
+            "on-primary-fixed-variant": "#93000b",
+            "primary-fixed-dim": "#ffb4ab",
+            "surface-variant": "#d3e4fe",
+            "on-secondary-container": "#5c647a",
+            "on-background": "#0b1c30",
+            "surface": "#f8f9ff",
+            "secondary": "#565e74",
+            "outline": "#916f6b",
+            "on-surface": "#0b1c30",
+            "on-secondary-fixed-variant": "#3f465c",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary-fixed": "#6ffbbe",
+            "primary": "#b70011",
+            "surface-container-high": "#dce9ff",
+            "on-primary-container": "#fff6f5",
+            "outline-variant": "#e6bdb8",
+            "tertiary": "#006645",
+            "surface-bright": "#f8f9ff",
+            "surface-dim": "#cbdbf5",
+            "inverse-primary": "#ffb4ab",
+            "on-error-container": "#93000a",
+            "error-container": "#ffdad6",
+            "on-tertiary-fixed": "#002113",
+            "surface-container-highest": "#d3e4fe",
+            "on-tertiary": "#ffffff",
+            "on-error": "#ffffff",
+            "inverse-surface": "#213145",
+            "secondary-fixed-dim": "#bec6e0",
+            "surface-container": "#e5eeff",
+            "on-secondary-fixed": "#131b2e",
+            "on-surface-variant": "#5c403c",
+            "tertiary-fixed-dim": "#4edea3"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "space-xs": "0.375rem",
+            "space-3xl": "2rem",
+            "space-2xs": "0.25rem",
+            "space-2xl": "1.5rem",
+            "space-md": "0.75rem",
+            "space-lg": "1rem",
+            "space-xl": "1.25rem",
+            "space-sm": "0.5rem",
+            "sidebar-width": "220px",
+            "card-gutter": "1rem"
+          },
+          fontFamily: {
+            "headline-md": ["Inter", "sans-serif"],
+            "label-lg": ["Inter", "sans-serif"],
+            "label-sm": ["Inter", "sans-serif"],
+            "label-md": ["Inter", "sans-serif"],
+            "body-lg": ["Inter", "sans-serif"],
+            "body-sm": ["Inter", "sans-serif"],
+            "headline-sm": ["Inter", "sans-serif"],
+            "headline-lg": ["Inter", "sans-serif"],
+            "body-md": ["Inter", "sans-serif"]
+          },
+          fontSize: {
+            "headline-md": ["20px", { lineHeight: "26px", letterSpacing: "-0.015em", fontWeight: "700" }],
+            "label-lg": ["13px", { lineHeight: "18px", letterSpacing: "0em", fontWeight: "600" }],
+            "label-sm": ["10px", { lineHeight: "12px", letterSpacing: "0.06em", fontWeight: "700" }],
+            "label-md": ["11px", { lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "700" }],
+            "body-lg": ["15px", { lineHeight: "22px", letterSpacing: "-0.005em", fontWeight: "500" }],
+            "body-sm": ["12px", { lineHeight: "16px", letterSpacing: "0em", fontWeight: "400" }],
+            "headline-sm": ["16px", { lineHeight: "22px", letterSpacing: "-0.01em", fontWeight: "700" }],
+            "headline-lg": ["26px", { lineHeight: "32px", letterSpacing: "-0.02em", fontWeight: "800" }],
+            "body-md": ["13px", { lineHeight: "18px", letterSpacing: "0em", fontWeight: "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+      vertical-align: middle;
+    }
+    .material-symbols-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 20;
+    }
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="h-full font-body-md text-on-surface antialiased bg-[#f8fafc] flex flex-row overflow-hidden">
+<!-- ========================================================================= -->
+<!-- SIDEBAR NAVIGATION RAIL (Exact Match to Style Guidance & Shared JSON)    -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-[220px] bg-surface-container-lowest border-r border-[#e2e8f0] flex flex-col justify-between z-40 select-none">
+<!-- Top Block: Logo and Module Navigation -->
+<div class="p-4 flex flex-col">
+<!-- Brand Anchor Block -->
+<div class="flex items-center gap-3 px-1 py-2 mb-6">
+<div class="w-9 h-9 rounded-xl bg-[#0f172a] text-white flex items-center justify-center font-extrabold text-[17px] shadow-sm tracking-tighter">
+<span class="material-symbols-outlined text-[22px]">devices</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-extrabold text-[#0f172a] tracking-tight leading-tight">PCMYM</span>
+<span class="font-label-sm text-label-sm text-[#94a3b8] uppercase tracking-wider font-bold">SERVICIO TÉCNICO</span>
+</div>
+</div>
+<!-- Section Title -->
+<div class="px-2 mb-2">
+<span class="text-[11px] font-bold text-[#94a3b8] uppercase tracking-wider">OPERACIÓN</span>
+</div>
+<!-- Nav Items Stack -->
+<nav class="flex flex-col gap-1">
+<!-- 1. Órdenes (Inactive) -->
+<a class="text-secondary hover:bg-[#f1f5f9] hover:text-on-surface font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] text-[#64748b] group-hover:text-[#0f172a]">build</span>
+<span>Órdenes</span>
+</a>
+<!-- 2. Inventario (ACTIVE: Style Command Execution from JSON & Guidance) -->
+<a class="bg-primary-container text-on-primary font-label-lg text-label-lg rounded-xl flex items-center justify-between px-3 py-2.5 shadow-sm shadow-red-500/20 active:scale-[0.98] transition-transform" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-white">inventory_2</span>
+<span>Inventario</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+</a>
+<!-- 3. Clientes (Inactive) -->
+<a class="text-secondary hover:bg-[#f1f5f9] hover:text-on-surface font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] text-[#64748b] group-hover:text-[#0f172a]">group</span>
+<span>Clientes</span>
+</a>
+<!-- 4. Finanzas (Inactive) -->
+<a class="text-secondary hover:bg-[#f1f5f9] hover:text-on-surface font-label-lg text-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] text-[#64748b] group-hover:text-[#0f172a]">account_balance_wallet</span>
+<span>Finanzas</span>
+</a>
+</nav>
+<!-- Quick Action Inside Sidebar -->
+<div class="mt-6 pt-4 border-t border-[#f1f5f9]">
+<button class="w-full flex items-center justify-center gap-2 px-3 py-2 text-label-md font-label-md text-[#475569] bg-[#f8fafc] hover:bg-[#e2e8f0] rounded-lg border border-[#e2e8f0] transition-colors" onclick="openModalAjuste()">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span>Ajuste rápido</span>
+</button>
+</div>
+</div>
+<!-- Bottom Block: Footer Profile Card (Direct from UI screenshot) -->
+<div class="p-3 border-t border-[#f1f5f9]">
+<div class="flex items-center justify-between p-2 rounded-xl hover:bg-[#f8fafc] transition-colors">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-[#0f172a] text-white flex items-center justify-center font-bold text-[13px] shadow-sm">
+            AD
+          </div>
+<div class="flex flex-col text-left">
+<span class="text-[13px] font-bold text-[#0f172a] leading-tight">Administrador</span>
+<span class="text-[11px] text-[#64748b]">Taller</span>
+</div>
+</div>
+<button class="text-[#94a3b8] hover:text-primary transition-colors p-1.5 rounded-lg hover:bg-white" title="Cerrar sesión">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE CONTENT CANVAS                                             -->
+<!-- ========================================================================= -->
+<main class="ml-[220px] flex-1 h-screen overflow-y-auto flex flex-col bg-[#f8fafc]">
+<!-- TOP STICKY HEADER CLUSTER -->
+<header class="sticky top-0 z-30 bg-surface-container-lowest/95 backdrop-blur-md border-b border-[#e2e8f0] px-8 py-4">
+<div class="flex items-center justify-between gap-4">
+<!-- Left: Title, Active Badge & Segmented Subtabs -->
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<h1 class="font-headline-lg text-headline-lg font-extrabold text-[#0f172a] tracking-tight">
+              Inventario
+            </h1>
+<!-- Counter Pill Badge with animated live dot (Exact capture style) -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-white border border-[#e2e8f0] rounded-full shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary-container inline-block"></span>
+<span class="font-label-lg text-label-lg text-[#0f172a] font-bold">342 activos</span>
+</div>
+</div>
+<!-- Segmented View Toggles: Resumen, Productos (active), Movimientos, Stock bajo -->
+<div class="hidden md:flex items-center bg-[#f1f5f9] p-1 rounded-xl border border-[#e2e8f0]">
+<button class="px-3.5 py-1.5 text-label-lg font-label-lg text-[#64748b] hover:text-[#0f172a] rounded-lg transition-colors">
+              Resumen
+            </button>
+<button class="px-3.5 py-1.5 text-label-lg font-label-lg text-[#0f172a] font-bold bg-white rounded-lg shadow-sm border border-[#e2e8f0]/60">
+              Productos
+            </button>
+<button class="px-3.5 py-1.5 text-label-lg font-label-lg text-[#64748b] hover:text-[#0f172a] rounded-lg transition-colors">
+              Movimientos
+            </button>
+<button class="px-3.5 py-1.5 text-label-lg font-label-lg text-[#64748b] hover:text-[#0f172a] rounded-lg transition-colors flex items-center gap-1.5">
+<span>Stock bajo</span>
+<span class="bg-[#fee2e2] text-[#dc2626] font-bold px-1.5 py-0.2 rounded-full text-[10px]">12</span>
+</button>
+</div>
+</div>
+<!-- Right: Primary CTA and Quick Aux Buttons -->
+<div class="flex items-center gap-3">
+<button class="hidden xl:flex items-center gap-2 px-3.5 py-2 rounded-xl text-label-lg font-label-lg text-[#0f172a] bg-white border border-[#e2e8f0] hover:bg-[#f8fafc] shadow-sm transition-colors" onclick="openModalOrden42()">
+<span class="material-symbols-outlined text-[18px] text-[#dc2626]">build_circle</span>
+<span>Repuestos en Orden #42</span>
+</button>
+<!-- Primary Red Action Button (Style System Match) -->
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl font-label-lg text-label-lg font-bold text-white bg-primary-container hover:bg-primary shadow-[0_4px_14px_0_rgba(220,38,38,0.35)] active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>+ Nuevo producto</span>
+</button>
+</div>
+</div>
+<!-- KPI MINI BENTO STRIP -->
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-4 pt-3 border-t border-[#f1f5f9]">
+<div class="bg-[#f8fafc] rounded-xl px-3 py-2 border border-[#e2e8f0]/80">
+<span class="text-[11px] font-semibold text-[#64748b] block">Total SKU Activos</span>
+<span class="text-[16px] font-extrabold text-[#0f172a]">342 items</span>
+</div>
+<div class="bg-[#f8fafc] rounded-xl px-3 py-2 border border-[#e2e8f0]/80">
+<span class="text-[11px] font-semibold text-[#64748b] block">Unidades en Taller</span>
+<span class="text-[16px] font-extrabold text-[#0f172a]">1,840 uds</span>
+</div>
+<div class="bg-[#fef2f2] rounded-xl px-3 py-2 border border-[#fecaca]/60">
+<span class="text-[11px] font-bold text-[#dc2626] block flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span> Stock Crítico
+          </span>
+<span class="text-[16px] font-extrabold text-[#dc2626]">12 repuestos</span>
+</div>
+<div class="bg-[#fef2f2] rounded-xl px-3 py-2 border border-[#fecaca]/60">
+<span class="text-[11px] font-bold text-[#dc2626] block">Agotados</span>
+<span class="text-[16px] font-extrabold text-[#b91c1c]">3 items</span>
+</div>
+<div class="bg-[#f8fafc] rounded-xl px-3 py-2 border border-[#e2e8f0]/80">
+<span class="text-[11px] font-semibold text-[#64748b] block">Valorizado Total</span>
+<span class="text-[16px] font-extrabold text-[#0f172a]">S/ 48,250.00</span>
+</div>
+</div>
+</header>
+<!-- WORKSPACE CANVAS BODY -->
+<div class="px-8 py-6 space-y-5">
+<!-- SUB-BARRA DE FILTROS Y BÚSQUEDA (Strict screenshot recreation) -->
+<div class="bg-white p-4 rounded-2xl border border-[#e2e8f0] shadow-sm space-y-3.5">
+<!-- Large Search Bar and Urgent Attention Flag -->
+<div class="flex flex-col md:flex-row items-center gap-3">
+<div class="relative flex-1 w-full">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94a3b8] text-[20px]">
+              search
+            </span>
+<input class="w-full pl-10 pr-4 py-2.5 bg-[#f8fafc] border border-[#e2e8f0] rounded-xl text-body-md font-body-md text-[#0f172a] placeholder-[#94a3b8] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#dc2626]/20 focus:border-[#dc2626] transition-all" placeholder="Buscar producto, SKU, marca, modelo o código..." type="text"/>
+</div>
+<!-- "Solo atención" Button with Flag (Exact match to capture) -->
+<button class="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-[#fef2f2] border border-[#fecaca] text-[#dc2626] rounded-xl font-label-lg text-label-lg font-bold hover:bg-[#fee2e2] transition-colors whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px]">flag</span>
+<span>Solo atención</span>
+</button>
+</div>
+<!-- Filter Chips Strip (Category & Fast Filters) -->
+<div class="flex flex-wrap items-center gap-2 pt-1 border-t border-[#f1f5f9]">
+<span class="text-label-sm font-label-sm text-[#94a3b8] uppercase mr-1">Filtrar por categoría:</span>
+<!-- Active Chip (Black Pill from Screenshot) -->
+<button class="px-3.5 py-1.5 rounded-full bg-[#0f172a] text-white text-label-lg font-label-lg font-bold shadow-sm">
+            Todas
+          </button>
+<button class="px-3.5 py-1.5 rounded-full bg-white border border-[#e2e8f0] text-[#475569] text-label-lg font-label-lg hover:bg-[#f8fafc] transition-colors">
+            PC
+          </button>
+<button class="px-3.5 py-1.5 rounded-full bg-white border border-[#e2e8f0] text-[#475569] text-label-lg font-label-lg hover:bg-[#f8fafc] transition-colors">
+            Laptop
+          </button>
+<button class="px-3.5 py-1.5 rounded-full bg-white border border-[#e2e8f0] text-[#475569] text-label-lg font-label-lg hover:bg-[#f8fafc] transition-colors">
+            Celular
+          </button>
+<button class="px-3.5 py-1.5 rounded-full bg-[#e0f2fe] text-[#0284c7] font-semibold text-label-lg font-label-lg hover:bg-[#bae6fd] transition-colors">
+            Componentes
+          </button>
+<button class="px-3.5 py-1.5 rounded-full bg-[#f3e8ff] text-[#7e22ce] font-semibold text-label-lg font-label-lg hover:bg-[#e9d5ff] transition-colors">
+            Accesorios
+          </button>
+<button class="px-3.5 py-1.5 rounded-full bg-white border border-[#e2e8f0] text-[#475569] text-label-lg font-label-lg hover:bg-[#f8fafc] transition-colors">
+            Repuestos
+          </button>
+<div class="h-4 w-[1px] bg-[#cbd5e1] mx-1"></div>
+<!-- Stock Status Chips -->
+<button class="px-3 py-1.5 rounded-full bg-[#fef2f2] border border-[#fecaca] text-[#dc2626] font-bold text-label-md font-label-md flex items-center gap-1.5 hover:bg-[#fee2e2]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#dc2626]"></span>
+<span>Stock bajo (12)</span>
+</button>
+<button class="px-3 py-1.5 rounded-full bg-[#f1f5f9] text-[#64748b] font-bold text-label-md font-label-md hover:bg-[#e2e8f0]">
+            Agotados (3)
+          </button>
+</div>
+</div>
+<!-- INVENTORY DATA TABLE / MODERN CARD CONTAINER -->
+<div class="bg-white rounded-2xl border border-[#e2e8f0] shadow-sm overflow-hidden">
+<!-- Table Header Bar -->
+<div class="px-6 py-3.5 bg-[#f8fafc] border-b border-[#e2e8f0] flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-[#64748b]">inventory</span>
+<span class="font-headline-sm text-headline-sm font-bold text-[#0f172a]">Catálogo de Hardware &amp; Repuestos</span>
+</div>
+<span class="text-body-sm font-body-sm text-[#64748b]">Mostrando 8 de 342 registros</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-[#e2e8f0] bg-white text-[11px] font-bold text-[#94a3b8] uppercase tracking-wider">
+<th class="py-3 px-6">Producto &amp; SKU</th>
+<th class="py-3 px-4">Categoría</th>
+<th class="py-3 px-4">Marca &amp; Compatibilidad</th>
+<th class="py-3 px-4 text-center">Stock Actual</th>
+<th class="py-3 px-4 text-right">Costo</th>
+<th class="py-3 px-4 text-right">P. Venta</th>
+<th class="py-3 px-4 text-center">Margen</th>
+<th class="py-3 px-6 text-right">Acciones Rápidas</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#f1f5f9] text-body-md font-body-md">
+<!-- ITEM 1: SSD Kingston NV2 1TB (Matches detailed drawer) -->
+<tr class="hover:bg-[#f8fafc] transition-colors group cursor-pointer" onclick="openDrawerDetalle()">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0] flex items-center justify-center text-[#0f172a] group-hover:border-[#dc2626]/30 transition-colors">
+<span class="material-symbols-outlined text-[22px] text-[#0f172a]">memory</span>
+</div>
+<div>
+<span class="font-bold text-[#0f172a] block text-[14px] leading-snug group-hover:text-[#dc2626] transition-colors">
+                        SSD Kingston NV2 1TB M.2 NVMe
+                      </span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-[11px] font-mono text-[#64748b]">SKU: SSD-KIN-NV2-1TB</span>
+<span class="text-[10px] text-[#94a3b8]">• Estante B-03</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#e0f2fe] text-[#0284c7]">
+                    Componentes
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-[13px] font-medium text-[#0f172a]">Kingston</div>
+<div class="text-[11px] text-[#64748b]">PCIe 4.0 / M.2 2280</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#f0fdf4] border border-[#bbf7d0] text-[#166534]">
+<span class="font-extrabold text-[15px]">8</span>
+<span class="text-[11px] font-medium">uds</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-medium text-[#64748b]">S/ 180.00</td>
+<td class="py-3.5 px-4 text-right font-bold text-[#0f172a]">S/ 230.00</td>
+<td class="py-3.5 px-4 text-center">
+<span class="text-[12px] font-bold text-[#006645] bg-[#e1ffec] px-2 py-0.5 rounded-md">
+                    +27.8%
+                  </span>
+</td>
+<td class="py-3.5 px-6 text-right" onclick="event.stopPropagation()">
+<div class="flex items-center justify-end gap-1.5">
+<button class="w-8 h-8 rounded-lg bg-[#f0fdf4] hover:bg-[#dcfce7] text-[#166534] border border-[#bbf7d0] flex items-center justify-center transition-colors" onclick="ajustarStockRapido('SSD Kingston NV2 1TB', 8, 1)" title="Añadir stock">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-[#fff7ed] hover:bg-[#ffedd5] text-[#c2410c] border border-[#fed7aa] flex items-center justify-center transition-colors" onclick="ajustarStockRapido('SSD Kingston NV2 1TB', 8, -1)" title="Disminuir stock">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-[#f8fafc] hover:bg-[#e2e8f0] text-[#475569] flex items-center justify-center transition-colors" onclick="openDrawerDetalle()" title="Ver ficha técnica completa">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ITEM 2: Memoria RAM Kingston Fury 8GB DDR4 (Critical Stock) -->
+<tr class="hover:bg-[#f8fafc] transition-colors group cursor-pointer" onclick="openDrawerDetalle()">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0] flex items-center justify-center text-[#0f172a]">
+<span class="material-symbols-outlined text-[22px]">developer_board</span>
+</div>
+<div>
+<span class="font-bold text-[#0f172a] block text-[14px] leading-snug">
+                        Memoria RAM Kingston Fury 8GB DDR4 3200MHz
+                      </span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-[11px] font-mono text-[#64748b]">SKU: RAM-KIN-8GB-3200</span>
+<span class="text-[10px] text-[#94a3b8]">• Estante B-01</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#e0f2fe] text-[#0284c7]">
+                    Componentes
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-[13px] font-medium text-[#0f172a]">Kingston</div>
+<div class="text-[11px] text-[#64748b]">DDR4 Desktop / Cl16</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<!-- Critical Warning Pill Badge (From Design System) -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#fef2f2] border border-[#fecaca] text-[#dc2626]">
+<span class="font-extrabold text-[15px]">2</span>
+<span class="text-[11px] font-bold uppercase tracking-tight">Crítico</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-medium text-[#64748b]">S/ 85.00</td>
+<td class="py-3.5 px-4 text-right font-bold text-[#0f172a]">S/ 115.00</td>
+<td class="py-3.5 px-4 text-center">
+<span class="text-[12px] font-bold text-[#006645] bg-[#e1ffec] px-2 py-0.5 rounded-md">
+                    +35.3%
+                  </span>
+</td>
+<td class="py-3.5 px-6 text-right" onclick="event.stopPropagation()">
+<div class="flex items-center justify-end gap-1.5">
+<button class="w-8 h-8 rounded-lg bg-[#f0fdf4] hover:bg-[#dcfce7] text-[#166534] border border-[#bbf7d0] flex items-center justify-center" onclick="ajustarStockRapido('RAM Kingston Fury 8GB DDR4', 2, 1)">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-[#fff7ed] hover:bg-[#ffedd5] text-[#c2410c] border border-[#fed7aa] flex items-center justify-center" onclick="ajustarStockRapido('RAM Kingston Fury 8GB DDR4', 2, -1)">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-[#f8fafc] hover:bg-[#e2e8f0] text-[#475569] flex items-center justify-center" onclick="openDrawerDetalle()">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ITEM 3: Cargador Laptop Lenovo 65W Tipo C -->
+<tr class="hover:bg-[#f8fafc] transition-colors group cursor-pointer" onclick="openDrawerDetalle()">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0] flex items-center justify-center text-[#0f172a]">
+<span class="material-symbols-outlined text-[22px]">electrical_services</span>
+</div>
+<div>
+<span class="font-bold text-[#0f172a] block text-[14px] leading-snug">
+                        Cargador Laptop Lenovo 65W Tipo C Original
+                      </span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-[11px] font-mono text-[#64748b]">SKU: CAR-LEN-65W-USB-C</span>
+<span class="text-[10px] text-[#94a3b8]">• Vitrina Accesorios</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#f1f5f9] text-[#475569]">
+                    Repuestos
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-[13px] font-medium text-[#0f172a]">Lenovo ThinkPad/IdeaPad</div>
+<div class="text-[11px] text-[#64748b]">20V - 3.25A Type C</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#f0fdf4] border border-[#bbf7d0] text-[#166534]">
+<span class="font-extrabold text-[15px]">14</span>
+<span class="text-[11px] font-medium">uds</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-medium text-[#64748b]">S/ 65.00</td>
+<td class="py-3.5 px-4 text-right font-bold text-[#0f172a]">S/ 98.00</td>
+<td class="py-3.5 px-4 text-center">
+<span class="text-[12px] font-bold text-[#006645] bg-[#e1ffec] px-2 py-0.5 rounded-md">
+                    +50.7%
+                  </span>
+</td>
+<td class="py-3.5 px-6 text-right" onclick="event.stopPropagation()">
+<div class="flex items-center justify-end gap-1.5">
+<button class="w-8 h-8 rounded-lg bg-[#f0fdf4] hover:bg-[#dcfce7] text-[#166534] border border-[#bbf7d0] flex items-center justify-center" onclick="ajustarStockRapido('Cargador Lenovo 65W', 14, 1)">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-[#fff7ed] hover:bg-[#ffedd5] text-[#c2410c] border border-[#fed7aa] flex items-center justify-center" onclick="ajustarStockRapido('Cargador Lenovo 65W', 14, -1)">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-[#f8fafc] hover:bg-[#e2e8f0] text-[#475569] flex items-center justify-center" onclick="openDrawerDetalle()">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ITEM 4: Pantalla Samsung Galaxy A15 (Out of Stock / Agotado) -->
+<tr class="hover:bg-[#f8fafc] transition-colors group cursor-pointer bg-red-50/20" onclick="openDrawerDetalle()">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-[#fef2f2] border border-[#fecaca] flex items-center justify-center text-[#dc2626]">
+<span class="material-symbols-outlined text-[22px]">smartphone</span>
+</div>
+<div>
+<span class="font-bold text-[#0f172a] block text-[14px] leading-snug">
+                        Pantalla Display Samsung Galaxy A15 AMOLED
+                      </span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-[11px] font-mono text-[#64748b]">SKU: PAN-SAM-A15-AMO</span>
+<span class="text-[10px] text-[#dc2626] font-bold">• Reordenar urgente</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#f1f5f9] text-[#475569]">
+                    Repuestos
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-[13px] font-medium text-[#0f172a]">Samsung Mobile</div>
+<div class="text-[11px] text-[#64748b]">A15 4G / 5G Original Service Pack</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<!-- Red Warning Flag Badge (Capture style) -->
+<div class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#dc2626] text-white">
+<span class="material-symbols-outlined text-[14px]">error</span>
+<span class="font-extrabold text-[12px] uppercase">Agotado</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-medium text-[#64748b]">S/ 140.00</td>
+<td class="py-3.5 px-4 text-right font-bold text-[#0f172a]">S/ 210.00</td>
+<td class="py-3.5 px-4 text-center">
+<span class="text-[12px] font-bold text-[#006645] bg-[#e1ffec] px-2 py-0.5 rounded-md">
+                    +50.0%
+                  </span>
+</td>
+<td class="py-3.5 px-6 text-right" onclick="event.stopPropagation()">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1 text-[11px] font-bold bg-[#dc2626] text-white rounded-lg hover:bg-primary shadow-sm transition-colors flex items-center gap-1" onclick="ajustarStockRapido('Pantalla Samsung A15', 0, 5)" title="Registrar ingreso de stock">
+<span class="material-symbols-outlined text-[14px]">add</span> Pedir
+                    </button>
+<button class="w-8 h-8 rounded-lg bg-[#f8fafc] hover:bg-[#e2e8f0] text-[#475569] flex items-center justify-center" onclick="openDrawerDetalle()">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ITEM 5: Mouse Logitech G203 Lightsync -->
+<tr class="hover:bg-[#f8fafc] transition-colors group cursor-pointer" onclick="openDrawerDetalle()">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0] flex items-center justify-center text-[#0f172a]">
+<span class="material-symbols-outlined text-[22px]">mouse</span>
+</div>
+<div>
+<span class="font-bold text-[#0f172a] block text-[14px] leading-snug">
+                        Mouse Logitech G203 Lightsync RGB Black
+                      </span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-[11px] font-mono text-[#64748b]">SKU: ACC-LOG-G203-BK</span>
+<span class="text-[10px] text-[#94a3b8]">• Gaveta C-02</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#f3e8ff] text-[#7e22ce]">
+                    Accesorios
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-[13px] font-medium text-[#0f172a]">Logitech G</div>
+<div class="text-[11px] text-[#64748b]">8,000 DPI Sensor óptico</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#f0fdf4] border border-[#bbf7d0] text-[#166534]">
+<span class="font-extrabold text-[15px]">11</span>
+<span class="text-[11px] font-medium">uds</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-medium text-[#64748b]">S/ 68.00</td>
+<td class="py-3.5 px-4 text-right font-bold text-[#0f172a]">S/ 99.00</td>
+<td class="py-3.5 px-4 text-center">
+<span class="text-[12px] font-bold text-[#006645] bg-[#e1ffec] px-2 py-0.5 rounded-md">
+                    +45.5%
+                  </span>
+</td>
+<td class="py-3.5 px-6 text-right" onclick="event.stopPropagation()">
+<div class="flex items-center justify-end gap-1.5">
+<button class="w-8 h-8 rounded-lg bg-[#f0fdf4] hover:bg-[#dcfce7] text-[#166534] border border-[#bbf7d0] flex items-center justify-center" onclick="ajustarStockRapido('Mouse Logitech G203', 11, 1)">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-[#fff7ed] hover:bg-[#ffedd5] text-[#c2410c] border border-[#fed7aa] flex items-center justify-center" onclick="ajustarStockRapido('Mouse Logitech G203', 11, -1)">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-[#f8fafc] hover:bg-[#e2e8f0] text-[#475569] flex items-center justify-center" onclick="openDrawerDetalle()">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ITEM 6: Pasta Térmica Arctic MX-4 4g -->
+<tr class="hover:bg-[#f8fafc] transition-colors group cursor-pointer" onclick="openDrawerDetalle()">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0] flex items-center justify-center text-[#0f172a]">
+<span class="material-symbols-outlined text-[22px]">format_paint</span>
+</div>
+<div>
+<span class="font-bold text-[#0f172a] block text-[14px] leading-snug">
+                        Pasta Térmica Arctic MX-4 4g con Espátula
+                      </span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-[11px] font-mono text-[#64748b]">SKU: INS-ARC-MX4-4G</span>
+<span class="text-[10px] text-[#94a3b8]">• Taller Banco #1</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#f1f5f9] text-[#475569]">
+                    Insumos Taller
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-[13px] font-medium text-[#0f172a]">Arctic Cooling</div>
+<div class="text-[11px] text-[#64748b]">Conductividad 8.5 W/(mK)</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#f0fdf4] border border-[#bbf7d0] text-[#166534]">
+<span class="font-extrabold text-[15px]">23</span>
+<span class="text-[11px] font-medium">uds</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-medium text-[#64748b]">S/ 24.00</td>
+<td class="py-3.5 px-4 text-right font-bold text-[#0f172a]">S/ 42.00</td>
+<td class="py-3.5 px-4 text-center">
+<span class="text-[12px] font-bold text-[#006645] bg-[#e1ffec] px-2 py-0.5 rounded-md">
+                    +75.0%
+                  </span>
+</td>
+<td class="py-3.5 px-6 text-right" onclick="event.stopPropagation()">
+<div class="flex items-center justify-end gap-1.5">
+<button class="w-8 h-8 rounded-lg bg-[#f0fdf4] hover:bg-[#dcfce7] text-[#166534] border border-[#bbf7d0] flex items-center justify-center" onclick="ajustarStockRapido('Pasta Térmica Arctic MX-4', 23, 1)">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-[#fff7ed] hover:bg-[#ffedd5] text-[#c2410c] border border-[#fed7aa] flex items-center justify-center" onclick="ajustarStockRapido('Pasta Térmica Arctic MX-4', 23, -1)">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-[#f8fafc] hover:bg-[#e2e8f0] text-[#475569] flex items-center justify-center" onclick="openDrawerDetalle()">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ITEM 7: Fuente de Poder Corsair CV550 -->
+<tr class="hover:bg-[#f8fafc] transition-colors group cursor-pointer" onclick="openDrawerDetalle()">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0] flex items-center justify-center text-[#0f172a]">
+<span class="material-symbols-outlined text-[22px]">power</span>
+</div>
+<div>
+<span class="font-bold text-[#0f172a] block text-[14px] leading-snug">
+                        Fuente de Poder Corsair CV550 550W 80+ Bronze
+                      </span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-[11px] font-mono text-[#64748b]">SKU: POW-COR-CV550-BR</span>
+<span class="text-[10px] text-[#94a3b8]">• Estante D-01</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#e0f2fe] text-[#0284c7]">
+                    Componentes
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-[13px] font-medium text-[#0f172a]">Corsair</div>
+<div class="text-[11px] text-[#64748b]">ATX / 80 Plus Bronze Cert</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#fef2f2] border border-[#fecaca] text-[#dc2626]">
+<span class="font-extrabold text-[15px]">3</span>
+<span class="text-[11px] font-bold uppercase tracking-tight">Crítico</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-medium text-[#64748b]">S/ 195.00</td>
+<td class="py-3.5 px-4 text-right font-bold text-[#0f172a]">S/ 245.00</td>
+<td class="py-3.5 px-4 text-center">
+<span class="text-[12px] font-bold text-[#006645] bg-[#e1ffec] px-2 py-0.5 rounded-md">
+                    +25.6%
+                  </span>
+</td>
+<td class="py-3.5 px-6 text-right" onclick="event.stopPropagation()">
+<div class="flex items-center justify-end gap-1.5">
+<button class="w-8 h-8 rounded-lg bg-[#f0fdf4] hover:bg-[#dcfce7] text-[#166534] border border-[#bbf7d0] flex items-center justify-center" onclick="ajustarStockRapido('Fuente Corsair CV550', 3, 1)">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-[#fff7ed] hover:bg-[#ffedd5] text-[#c2410c] border border-[#fed7aa] flex items-center justify-center" onclick="ajustarStockRapido('Fuente Corsair CV550', 3, -1)">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-[#f8fafc] hover:bg-[#e2e8f0] text-[#475569] flex items-center justify-center" onclick="openDrawerDetalle()">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ITEM 8: Teclado Mecánico Redragon Kumara K552 RGB -->
+<tr class="hover:bg-[#f8fafc] transition-colors group cursor-pointer" onclick="openDrawerDetalle()">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0] flex items-center justify-center text-[#0f172a]">
+<span class="material-symbols-outlined text-[22px]">keyboard</span>
+</div>
+<div>
+<span class="font-bold text-[#0f172a] block text-[14px] leading-snug">
+                        Teclado Mecánico Redragon Kumara K552 RGB (Outemu Blue)
+                      </span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-[11px] font-mono text-[#64748b]">SKU: TEC-RED-K552-BL</span>
+<span class="text-[10px] text-[#94a3b8]">• Vitrina Periféricos</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#f3e8ff] text-[#7e22ce]">
+                    Accesorios
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-[13px] font-medium text-[#0f172a]">Redragon</div>
+<div class="text-[11px] text-[#64748b]">TKL Español Latino / Switches Blue</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#f0fdf4] border border-[#bbf7d0] text-[#166534]">
+<span class="font-extrabold text-[15px]">7</span>
+<span class="text-[11px] font-medium">uds</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-medium text-[#64748b]">S/ 115.00</td>
+<td class="py-3.5 px-4 text-right font-bold text-[#0f172a]">S/ 160.00</td>
+<td class="py-3.5 px-4 text-center">
+<span class="text-[12px] font-bold text-[#006645] bg-[#e1ffec] px-2 py-0.5 rounded-md">
+                    +39.1%
+                  </span>
+</td>
+<td class="py-3.5 px-6 text-right" onclick="event.stopPropagation()">
+<div class="flex items-center justify-end gap-1.5">
+<button class="w-8 h-8 rounded-lg bg-[#f0fdf4] hover:bg-[#dcfce7] text-[#166534] border border-[#bbf7d0] flex items-center justify-center" onclick="ajustarStockRapido('Teclado Redragon Kumara K552', 7, 1)">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-[#fff7ed] hover:bg-[#ffedd5] text-[#c2410c] border border-[#fed7aa] flex items-center justify-center" onclick="ajustarStockRapido('Teclado Redragon Kumara K552', 7, -1)">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-[#f8fafc] hover:bg-[#e2e8f0] text-[#475569] flex items-center justify-center" onclick="openDrawerDetalle()">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer Pagination -->
+<div class="px-6 py-4 border-t border-[#e2e8f0] bg-white flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-[#64748b]">Página 1 de 43 páginas</span>
+<div class="flex items-center gap-1">
+<button class="px-3 py-1.5 rounded-lg border border-[#e2e8f0] text-[#64748b] hover:bg-[#f8fafc] disabled:opacity-50" disabled="">
+              Anterior
+            </button>
+<button class="px-3 py-1.5 rounded-lg bg-[#0f172a] text-white font-bold">1</button>
+<button class="px-3 py-1.5 rounded-lg border border-[#e2e8f0] text-[#475569] hover:bg-[#f8fafc]">2</button>
+<button class="px-3 py-1.5 rounded-lg border border-[#e2e8f0] text-[#475569] hover:bg-[#f8fafc]">3</button>
+<span class="px-2 text-[#94a3b8]">...</span>
+<button class="px-3 py-1.5 rounded-lg border border-[#e2e8f0] text-[#475569] hover:bg-[#f8fafc]">43</button>
+<button class="px-3 py-1.5 rounded-lg border border-[#e2e8f0] text-[#475569] hover:bg-[#f8fafc]">
+              Siguiente
+            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ========================================================================= -->
+<!-- 1. SLIDE-OVER DRAWER (Detalle Técnico: SSD Kingston NV2 1TB)               -->
+<!-- ========================================================================= -->
+<div aria-labelledby="slide-over-title" aria-modal="true" class="fixed inset-0 z-50 overflow-hidden hidden" id="drawerDetalle" role="dialog">
+<div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="closeDrawerDetalle()"></div>
+<div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+<div class="w-screen max-w-md bg-white border-l border-[#e2e8f0] shadow-2xl flex flex-col justify-between overflow-y-auto">
+<!-- Drawer Header -->
+<div class="p-6 border-b border-[#e2e8f0] bg-[#f8fafc]">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold uppercase tracking-wide bg-[#e0f2fe] text-[#0284c7]">
+              Componente M.2 PCIe 4.0
+            </span>
+<button class="w-8 h-8 rounded-full hover:bg-[#e2e8f0] flex items-center justify-center text-[#64748b]" onclick="closeDrawerDetalle()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<h2 class="font-headline-md text-headline-md text-[#0f172a] font-extrabold leading-tight">
+            SSD Kingston NV2 1TB M.2 2280 NVMe
+          </h2>
+<span class="text-body-sm font-body-sm text-[#64748b] block mt-1">SKU: SSD-KIN-NV2-1TB</span>
+</div>
+<!-- Drawer Body -->
+<div class="p-6 space-y-6 flex-1">
+<!-- Product Visual & Barcode Badge -->
+<div class="p-4 bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-white border border-[#e2e8f0] flex items-center justify-center text-[#dc2626] shadow-sm">
+<span class="material-symbols-outlined text-[28px]">memory</span>
+</div>
+<div>
+<span class="text-[12px] font-bold text-[#0f172a] block">Código de barras:</span>
+<span class="font-mono text-[13px] text-[#475569] font-semibold">740617329859</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[32px] text-[#0f172a]">barcode</span>
+</div>
+<!-- Stock & Financial Metrics (Bento mini grid) -->
+<div class="grid grid-cols-2 gap-3">
+<div class="p-3.5 bg-white border border-[#e2e8f0] rounded-xl">
+<span class="text-[11px] font-semibold text-[#64748b] block">Stock Disponible</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="text-[22px] font-extrabold text-[#0f172a]">8</span>
+<span class="text-[12px] text-[#64748b]">uds (Mínimo: 5)</span>
+</div>
+</div>
+<div class="p-3.5 bg-white border border-[#e2e8f0] rounded-xl">
+<span class="text-[11px] font-semibold text-[#64748b] block">Ubicación Taller</span>
+<div class="flex items-center gap-1 mt-1 text-[#0f172a] font-bold text-[14px]">
+<span class="material-symbols-outlined text-[18px] text-[#dc2626]">pin_drop</span>
+<span>Estante B - Gaveta 3</span>
+</div>
+</div>
+<div class="p-3.5 bg-white border border-[#e2e8f0] rounded-xl">
+<span class="text-[11px] font-semibold text-[#64748b] block">Costo Adquisición</span>
+<span class="text-[16px] font-bold text-[#475569] mt-0.5 block">S/ 180.00</span>
+</div>
+<div class="p-3.5 bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl">
+<span class="text-[11px] font-bold text-[#166534] block">Precio Venta / Taller</span>
+<div class="flex items-baseline justify-between mt-0.5">
+<span class="text-[18px] font-extrabold text-[#166534]">S/ 230.00</span>
+<span class="text-[11px] font-extrabold text-[#15803d]">+S/ 50.00</span>
+</div>
+</div>
+</div>
+<!-- Compatibility and Provider Notes -->
+<div class="space-y-3">
+<h3 class="text-label-lg font-label-lg font-bold text-[#0f172a] uppercase tracking-wide">
+              Compatibilidad &amp; Notas Técnicas
+            </h3>
+<div class="p-3 bg-[#f8fafc] border border-[#e2e8f0] rounded-xl text-body-sm font-body-sm text-[#334155] space-y-1.5">
+<p>• Compatible con Laptops Lenovo IdeaPad 3/5, HP Pavilion y placas madre B450, B550, B650 y B760.</p>
+<p>• Velocidad lectura hasta 3,500 MB/s, escritura hasta 2,100 MB/s.</p>
+<p>• <span class="font-bold">Proveedor Oficial:</span> Deltron Perú S.A. (Garantía 3 años)</p>
+</div>
+</div>
+<!-- Historial de Movimientos Recientes -->
+<div class="space-y-3">
+<h3 class="text-label-lg font-label-lg font-bold text-[#0f172a] uppercase tracking-wide flex items-center justify-between">
+<span>Últimos Movimientos</span>
+<span class="text-[11px] text-[#dc2626] font-semibold cursor-pointer">Ver todos</span>
+</h3>
+<div class="space-y-2">
+<div class="p-3 rounded-xl border border-[#e2e8f0] flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded-lg bg-[#fef2f2] text-[#dc2626] flex items-center justify-center font-bold text-[12px]">-1</span>
+<div>
+<span class="font-bold text-[#0f172a] block text-[13px]">Instalado en Orden #42</span>
+<span class="text-[11px] text-[#64748b]">Técnico: Luis C. • Hace 1 día</span>
+</div>
+</div>
+<span class="text-[12px] font-semibold text-[#64748b]">S/ 230.00</span>
+</div>
+<div class="p-3 rounded-xl border border-[#e2e8f0] flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded-lg bg-[#f0fdf4] text-[#166534] flex items-center justify-center font-bold text-[12px]">+10</span>
+<div>
+<span class="font-bold text-[#0f172a] block text-[13px]">Entrada por Factura F001-2849</span>
+<span class="text-[11px] text-[#64748b]">Deltron Perú • 01 Sep 2026</span>
+</div>
+</div>
+<span class="text-[12px] font-semibold text-[#64748b]">S/ 1,800.00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Drawer Footer Actions -->
+<div class="p-6 border-t border-[#e2e8f0] bg-white flex items-center gap-3">
+<button class="flex-1 py-2.5 px-4 rounded-xl border border-[#e2e8f0] hover:bg-[#f8fafc] text-[#0f172a] font-label-lg font-bold transition-colors" onclick="ajustarStockRapido('SSD Kingston NV2 1TB', 8, 0)">
+            Ajustar stock
+          </button>
+<button class="flex-1 py-2.5 px-4 rounded-xl bg-primary-container hover:bg-primary text-white font-label-lg font-bold shadow-md shadow-red-500/20 transition-all" onclick="closeDrawerDetalle()">
+            Cerrar ficha
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- 2. MODAL: AJUSTE RÁPIDO DE STOCK (+/-)                                    -->
+<!-- ========================================================================= -->
+<div class="fixed inset-0 z-50 flex items-center justify-center hidden" id="modalAjuste">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-[#0f172a]/50 backdrop-blur-sm" onclick="closeModalAjuste()"></div>
+<!-- Modal Card -->
+<div class="relative w-full max-w-md bg-white rounded-2xl border border-[#e2e8f0] shadow-2xl p-6 z-10 space-y-5 animate-in fade-in duration-150">
+<!-- Header -->
+<div class="flex items-center justify-between pb-3 border-b border-[#f1f5f9]">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-[#fef2f2] text-[#dc2626] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-extrabold text-[#0f172a]">Ajuste Rápido de Stock</h3>
+</div>
+<button class="text-[#94a3b8] hover:text-[#0f172a]" onclick="closeModalAjuste()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Item Info Box -->
+<div class="p-3 bg-[#f8fafc] rounded-xl border border-[#e2e8f0]">
+<span class="text-[11px] text-[#64748b] uppercase font-bold">Producto Seleccionado:</span>
+<div class="font-bold text-[#0f172a] text-[14px]" id="modalItemTitle">SSD Kingston NV2 1TB M.2 NVMe</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[12px] text-[#475569]">Stock actual registrado:</span>
+<span class="font-extrabold text-[#0f172a] bg-white px-2 py-0.5 rounded border border-[#e2e8f0]" id="modalStockActual">8 unidades</span>
+</div>
+</div>
+<!-- Live Calculation Adjustment Controls -->
+<div class="space-y-3">
+<label class="text-label-lg font-label-lg text-[#0f172a] block">
+          Cantidad a modificar:
+        </label>
+<div class="flex items-center gap-3">
+<button class="w-11 h-11 rounded-xl bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#0f172a] font-bold text-[20px] flex items-center justify-center border border-[#e2e8f0]" onclick="modificarCantidadInput(-1)" type="button">
+            -
+          </button>
+<input class="flex-1 text-center py-2.5 bg-white border border-[#e2e8f0] rounded-xl font-headline-sm text-headline-sm font-extrabold text-[#0f172a] focus:ring-2 focus:ring-[#dc2626]/20 focus:border-[#dc2626]" id="inputModificarCantidad" min="1" oninput="recalcularStockPreview()" type="number" value="1"/>
+<button class="w-11 h-11 rounded-xl bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#0f172a] font-bold text-[20px] flex items-center justify-center border border-[#e2e8f0]" onclick="modificarCantidadInput(1)" type="button">
+            +
+          </button>
+</div>
+<!-- Operation Type Radios -->
+<div class="grid grid-cols-2 gap-2 pt-1">
+<label class="flex items-center justify-center gap-2 p-2.5 rounded-xl border border-[#e2e8f0] cursor-pointer hover:bg-[#f8fafc] has-[:checked]:border-[#dc2626] has-[:checked]:bg-[#fef2f2] has-[:checked]:text-[#dc2626]">
+<input checked="" class="hidden" name="tipoOperacion" onchange="recalcularStockPreview()" type="radio" value="sumar"/>
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span class="text-label-lg font-bold">Sumar (Ingreso)</span>
+</label>
+<label class="flex items-center justify-center gap-2 p-2.5 rounded-xl border border-[#e2e8f0] cursor-pointer hover:bg-[#f8fafc] has-[:checked]:border-[#dc2626] has-[:checked]:bg-[#fef2f2] has-[:checked]:text-[#dc2626]">
+<input class="hidden" name="tipoOperacion" onchange="recalcularStockPreview()" type="radio" value="restar"/>
+<span class="material-symbols-outlined text-[18px]">remove_circle</span>
+<span class="text-label-lg font-bold">Restar (Salida)</span>
+</label>
+</div>
+<!-- Motivo Dropdown -->
+<div>
+<label class="text-[12px] font-semibold text-[#64748b] block mb-1">Motivo del movimiento:</label>
+<select class="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-body-md text-[#0f172a] focus:outline-none focus:border-[#dc2626]">
+<option>Compra de proveedor / Ingreso Factura</option>
+<option selected="">Uso en reparación de servicio técnico</option>
+<option>Venta directa por mostrador</option>
+<option>Ajuste de inventario / Corrección de conteo</option>
+<option>Merma / Producto dañado o garantía</option>
+</select>
+</div>
+</div>
+<!-- Live Preview Badge (Interactive Feedback) -->
+<div class="p-3.5 bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl flex items-center justify-between">
+<span class="text-[12px] font-semibold text-[#166534]">Nuevo stock resultante:</span>
+<div class="font-headline-sm text-headline-sm font-extrabold text-[#166534]">
+<span id="previoStockActual">8</span> → <span class="underline" id="nuevoStockCalculado">9</span> uds
+        </div>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-3 pt-2">
+<button class="flex-1 py-2.5 rounded-xl border border-[#e2e8f0] hover:bg-[#f8fafc] text-[#475569] font-label-lg font-bold" onclick="closeModalAjuste()" type="button">
+          Cancelar
+        </button>
+<button class="flex-1 py-2.5 rounded-xl bg-primary-container hover:bg-primary text-white font-label-lg font-bold shadow-md shadow-red-500/20 active:scale-[0.98] transition-transform" onclick="confirmarAjusteExitoso()" type="button">
+          Confirmar ajuste
+        </button>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- 3. MODAL DE INTEGRACIÓN: VINCULACIÓN DIRECTA ORDEN DE SERVICIO #42        -->
+<!-- ========================================================================= -->
+<div class="fixed inset-0 z-50 flex items-center justify-center hidden" id="modalOrden42">
+<div class="absolute inset-0 bg-[#0f172a]/60 backdrop-blur-sm" onclick="closeModalOrden42()"></div>
+<div class="relative w-full max-w-2xl bg-white rounded-2xl border border-[#e2e8f0] shadow-2xl p-6 z-10 space-y-5">
+<!-- Header with Order Badge (Matches capture: Laptop Lenovo / Monica Rocio Grande Rojas) -->
+<div class="flex items-center justify-between pb-3 border-b border-[#f1f5f9]">
+<div class="flex items-center gap-3">
+<span class="font-extrabold text-[18px] text-[#94a3b8]">#42</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm font-extrabold text-[#0f172a]">Laptop Lenovo</h3>
+<span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-[#dc2626] text-white">URGENTE</span>
+</div>
+<span class="text-[12px] text-[#64748b]">Cliente: Monica Rocio Grande Rojas • Diagnóstico: Cambio de SSD y Mantenimiento</span>
+</div>
+</div>
+<button class="text-[#94a3b8] hover:text-[#0f172a]" onclick="closeModalOrden42()">
+<span class="material-symbols-outlined text-[22px]">close</span>
+</button>
+</div>
+<!-- Quick Add Repuesto Search Bar inside Ticket -->
+<div>
+<label class="text-label-lg font-label-lg font-bold text-[#0f172a] block mb-1.5">
+          Añadir repuesto de inventario al presupuesto:
+        </label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#94a3b8] text-[18px]">search</span>
+<input class="w-full pl-9 pr-24 py-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-xl text-body-md text-[#0f172a]" placeholder="Buscar por nombre o escanear código de barras..." type="text" value="SSD Kingston NV2 1TB"/>
+<button class="absolute right-1.5 top-1/2 -translate-y-1/2 px-3 py-1 bg-[#0f172a] text-white text-[11px] font-bold rounded-lg hover:bg-slate-800">
+            + Añadir
+          </button>
+</div>
+</div>
+<!-- Current Assigned Parts List -->
+<div class="space-y-2">
+<span class="text-[11px] font-bold text-[#64748b] uppercase tracking-wide">Repuestos asignados a esta orden:</span>
+<div class="border border-[#e2e8f0] rounded-xl overflow-hidden divide-y divide-[#f1f5f9]">
+<div class="p-3 bg-white flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-[#0f172a]">memory</span>
+<div>
+<span class="font-bold text-[13px] text-[#0f172a] block">SSD Kingston NV2 1TB M.2</span>
+<span class="text-[11px] text-[#64748b]">SKU: SSD-KIN-NV2-1TB • 1 unidad</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-extrabold text-[14px] text-[#0f172a]">S/ 230.00</span>
+<button class="text-[#dc2626] hover:bg-[#fef2f2] p-1 rounded-lg" title="Quitar de orden">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+<div class="p-3 bg-white flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-[#0f172a]">format_paint</span>
+<div>
+<span class="font-bold text-[13px] text-[#0f172a] block">Pasta Térmica Arctic MX-4 (Dosis Servicio)</span>
+<span class="text-[11px] text-[#64748b]">Insumo de taller • 1 aplicación</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-extrabold text-[14px] text-[#0f172a]">S/ 20.00</span>
+<button class="text-[#dc2626] hover:bg-[#fef2f2] p-1 rounded-lg" title="Quitar de orden">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Totals & Submits -->
+<div class="pt-3 border-t border-[#f1f5f9] flex items-center justify-between">
+<div>
+<span class="text-[11px] text-[#64748b] block">Total en Repuestos asignados:</span>
+<span class="font-headline-sm text-headline-sm font-extrabold text-[#0f172a]">S/ 250.00</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 text-label-lg font-bold text-[#475569] hover:bg-[#f8fafc] rounded-xl border border-[#e2e8f0]" onclick="closeModalOrden42()">
+            Cerrar
+          </button>
+<button class="px-5 py-2 text-label-lg font-bold text-white bg-[#dc2626] hover:bg-primary rounded-xl shadow-md shadow-red-500/20" onclick="closeModalOrden42()">
+            Guardar en Orden #42
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- TOAST FEEDBACK NOTIFICATION -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none" id="toastNotification">
+<div class="bg-[#0f172a] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700">
+<span class="material-symbols-outlined text-[#4edea3] text-[20px]">check_circle</span>
+<span class="font-body-md text-[13px] font-semibold" id="toastMsg">Stock ajustado correctamente.</span>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- INLINE JAVASCRIPT FOR DYNAMIC DEMO INTERACTIONS                           -->
+<!-- ========================================================================= -->
+<script>
+    let currentStockRef = 8;
+    let currentItemName = "SSD Kingston NV2 1TB M.2 NVMe";
+
+    // Drawer Controls
+    function openDrawerDetalle() {
+      const drawer = document.getElementById('drawerDetalle');
+      drawer.classList.remove('hidden');
+    }
+
+    function closeDrawerDetalle() {
+      const drawer = document.getElementById('drawerDetalle');
+      drawer.classList.add('hidden');
+    }
+
+    // Modal Ajuste Controls
+    function openModalAjuste() {
+      ajustarStockRapido("SSD Kingston NV2 1TB", 8, 1);
+    }
+
+    function closeModalAjuste() {
+      document.getElementById('modalAjuste').classList.add('hidden');
+    }
+
+    function ajustarStockRapido(nombre, stockActual, delta) {
+      currentItemName = nombre;
+      currentStockRef = stockActual;
+
+      document.getElementById('modalItemTitle').innerText = nombre;
+      document.getElementById('modalStockActual').innerText = `${stockActual} unidades`;
+      document.getElementById('previoStockActual').innerText = stockActual;
+
+      const radios = document.getElementsByName('tipoOperacion');
+      if (delta >= 0) {
+        radios[0].checked = true;
+      } else {
+        radios[1].checked = true;
+      }
+
+      document.getElementById('inputModificarCantidad').value = Math.abs(delta) || 1;
+      recalcularStockPreview();
+
+      document.getElementById('modalAjuste').classList.remove('hidden');
+    }
+
+    function modificarCantidadInput(delta) {
+      const input = document.getElementById('inputModificarCantidad');
+      let val = parseInt(input.value) || 1;
+      val = Math.max(1, val + delta);
+      input.value = val;
+      recalcularStockPreview();
+    }
+
+    function recalcularStockPreview() {
+      const cantidad = parseInt(document.getElementById('inputModificarCantidad').value) || 0;
+      const esSuma = document.querySelector('input[name="tipoOperacion"]:checked').value === 'sumar';
+      
+      let nuevo = esSuma ? (currentStockRef + cantidad) : Math.max(0, currentStockRef - cantidad);
+      document.getElementById('nuevoStockCalculado').innerText = nuevo;
+    }
+
+    function confirmarAjusteExitoso() {
+      closeModalAjuste();
+      showToast(`Stock actualizado para ${currentItemName}`);
+    }
+
+    // Modal Orden #42 Controls
+    function openModalOrden42() {
+      document.getElementById('modalOrden42').classList.remove('hidden');
+    }
+
+    function closeModalOrden42() {
+      document.getElementById('modalOrden42').classList.add('hidden');
+    }
+
+    // Toast Trigger
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      const text = document.getElementById('toastMsg');
+      text.innerText = msg;
+      
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 3000);
+    }
+  </script>
+</body></html>

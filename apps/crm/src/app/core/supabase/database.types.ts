@@ -342,6 +342,90 @@ export type Database = {
           },
         ]
       }
+      inventory_movements: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          movement_type: string
+          new_stock: number
+          notes: string | null
+          performed_by: string | null
+          previous_stock: number
+          product_id: string
+          quantity: number
+          reason: string
+          reference_doc: string | null
+          service_order_id: string | null
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          movement_type: string
+          new_stock: number
+          notes?: string | null
+          performed_by?: string | null
+          previous_stock: number
+          product_id: string
+          quantity: number
+          reason: string
+          reference_doc?: string | null
+          service_order_id?: string | null
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          movement_type?: string
+          new_stock?: number
+          notes?: string | null
+          performed_by?: string | null
+          previous_stock?: number
+          product_id?: string
+          quantity?: number
+          reason?: string
+          reference_doc?: string | null
+          service_order_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_movements_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "v_accounts_receivable"
+            referencedColumns: ["service_order_id"]
+          },
+        ]
+      }
       order_status_history: {
         Row: {
           business_id: string
@@ -463,6 +547,80 @@ export type Database = {
           },
         ]
       }
+      products: {
+        Row: {
+          active: boolean
+          barcode: string | null
+          brand: string | null
+          business_id: string
+          category: string
+          compatibility: string | null
+          cost_price: number
+          created_at: string
+          current_stock: number
+          id: string
+          location: string | null
+          min_stock: number
+          model: string | null
+          name: string
+          notes: string | null
+          sale_price: number
+          sku: string | null
+          supplier: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          barcode?: string | null
+          brand?: string | null
+          business_id: string
+          category: string
+          compatibility?: string | null
+          cost_price?: number
+          created_at?: string
+          current_stock?: number
+          id?: string
+          location?: string | null
+          min_stock?: number
+          model?: string | null
+          name: string
+          notes?: string | null
+          sale_price?: number
+          sku?: string | null
+          supplier?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          barcode?: string | null
+          brand?: string | null
+          business_id?: string
+          category?: string
+          compatibility?: string | null
+          cost_price?: number
+          created_at?: string
+          current_stock?: number
+          id?: string
+          location?: string | null
+          min_stock?: number
+          model?: string | null
+          name?: string
+          notes?: string | null
+          sale_price?: number
+          sku?: string | null
+          supplier?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           business_id: string
@@ -518,6 +676,74 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "businesses"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_order_parts: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          product_id: string
+          quantity: number
+          service_order_id: string
+          unit_cost: number
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          product_id: string
+          quantity: number
+          service_order_id: string
+          unit_cost?: number
+          unit_price: number
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          product_id?: string
+          quantity?: number
+          service_order_id?: string
+          unit_cost?: number
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_parts_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_parts_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_parts_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_parts_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "v_accounts_receivable"
+            referencedColumns: ["service_order_id"]
           },
         ]
       }
@@ -776,6 +1002,68 @@ export type Database = {
       }
     }
     Functions: {
+      add_part_to_service_order: {
+        Args: {
+          p_notes?: string
+          p_product_id: string
+          p_quantity: number
+          p_service_order_id: string
+        }
+        Returns: {
+          business_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          product_id: string
+          quantity: number
+          service_order_id: string
+          unit_cost: number
+          unit_price: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "service_order_parts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      adjust_product_stock: {
+        Args: {
+          p_notes?: string
+          p_product_id: string
+          p_quantity: number
+          p_reason: string
+          p_reference_doc?: string
+        }
+        Returns: {
+          active: boolean
+          barcode: string | null
+          brand: string | null
+          business_id: string
+          category: string
+          compatibility: string | null
+          cost_price: number
+          created_at: string
+          current_stock: number
+          id: string
+          location: string | null
+          min_stock: number
+          model: string | null
+          name: string
+          notes: string | null
+          sale_price: number
+          sku: string | null
+          supplier: string | null
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "products"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       auth_business_id: { Args: never; Returns: string }
       auth_role: { Args: never; Returns: string }
       change_budget_status: {
@@ -834,6 +1122,51 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_product_with_initial_stock: {
+        Args: {
+          p_barcode?: string
+          p_brand?: string
+          p_category: string
+          p_compatibility?: string
+          p_cost_price: number
+          p_initial_stock?: number
+          p_location?: string
+          p_min_stock?: number
+          p_model?: string
+          p_name: string
+          p_notes?: string
+          p_sale_price: number
+          p_sku?: string
+          p_supplier?: string
+        }
+        Returns: {
+          active: boolean
+          barcode: string | null
+          brand: string | null
+          business_id: string
+          category: string
+          compatibility: string | null
+          cost_price: number
+          created_at: string
+          current_stock: number
+          id: string
+          location: string | null
+          min_stock: number
+          model: string | null
+          name: string
+          notes: string | null
+          sale_price: number
+          sku: string | null
+          supplier: string | null
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "products"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       get_public_tracking_info: { Args: { p_token: string }; Returns: Json }
       is_valid_budget_transition: {
         Args: { p_from: string; p_to: string }
@@ -842,6 +1175,31 @@ export type Database = {
       is_valid_service_order_transition: {
         Args: { p_from: string; p_to: string }
         Returns: boolean
+      }
+      modify_service_order_part_qty: {
+        Args: {
+          p_new_quantity: number
+          p_product_id: string
+          p_service_order_id: string
+        }
+        Returns: {
+          business_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          product_id: string
+          quantity: number
+          service_order_id: string
+          unit_cost: number
+          unit_price: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "service_order_parts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       record_expense: {
         Args: { p_amount: number; p_description: string }
@@ -859,6 +1217,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      remove_part_from_service_order: {
+        Args: { p_product_id: string; p_service_order_id: string }
+        Returns: boolean
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
@@ -880,12 +1242,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -909,11 +1271,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -934,11 +1296,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -959,11 +1321,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -976,11 +1338,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }

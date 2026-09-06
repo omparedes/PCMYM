@@ -1,0 +1,177 @@
+<div class="flex flex-col gap-6">
+  <!-- MINI KPI ALERT STRIP -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="bg-white border border-red-200 rounded-2xl p-4 shadow-sm flex items-center gap-3.5">
+      <div class="w-11 h-11 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <div>
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Productos Agotados</span>
+        <span class="text-xl font-black text-red-600">{{ outOfStockCount() }}</span>
+      </div>
+    </div>
+
+    <div class="bg-white border border-amber-200 rounded-2xl p-4 shadow-sm flex items-center gap-3.5">
+      <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </div>
+      <div>
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Bajo Stock Mínimo</span>
+        <span class="text-xl font-black text-amber-600">{{ lowStockCount() }}</span>
+      </div>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center gap-3.5">
+      <div class="w-11 h-11 rounded-xl bg-slate-50 text-slate-700 flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="1" x2="12" y2="23"></line>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+      </div>
+      <div>
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Costo Est. Reposición</span>
+        <span class="text-xl font-black text-slate-900">S/ {{ estimatedRestockCost() | number: '1.2-2' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTROS Y ACCIONES -->
+  <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <button
+        (click)="setFilter('all_low')"
+        class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all"
+        [class.bg-slate-900]="filterStatus() === 'all_low'"
+        [class.text-white]="filterStatus() === 'all_low'"
+        [class.bg-slate-100]="filterStatus() !== 'all_low'"
+        [class.text-slate-600]="filterStatus() !== 'all_low'"
+      >
+        Todos en Alerta
+      </button>
+      <button
+        (click)="setFilter('out_only')"
+        class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all"
+        [class.bg-red-600]="filterStatus() === 'out_only'"
+        [class.text-white]="filterStatus() === 'out_only'"
+        [class.bg-slate-100]="filterStatus() !== 'out_only'"
+        [class.text-slate-600]="filterStatus() !== 'out_only'"
+      >
+        Solo Agotados
+      </button>
+    </div>
+
+    <button
+      (click)="reload()"
+      class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5"
+    >
+      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+      </svg>
+      Actualizar
+    </button>
+  </div>
+
+  <!-- LISTA DE PRODUCTOS EN ALERTA -->
+  <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    @if (products.isLoading()) {
+      <div class="flex items-center justify-center p-12 text-slate-400 font-semibold gap-3">
+        <div class="w-5 h-5 border-2 border-slate-300 border-t-red-600 rounded-full animate-spin"></div>
+        Analizando niveles de stock...
+      </div>
+    } @else if (products.value().length === 0) {
+      <div class="text-center py-16 px-4">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h3 class="text-sm font-bold text-slate-800">¡Inventario en niveles óptimos!</h3>
+        <p class="text-xs text-slate-400 mt-1">No hay productos que requieran reposición en este momento.</p>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 text-[11px] font-extrabold uppercase tracking-wider">
+              <th class="py-3 px-4">Producto y SKU</th>
+              <th class="py-3 px-4">Categoría</th>
+              <th class="py-3 px-4 text-center">Stock Actual</th>
+              <th class="py-3 px-4 text-center">Stock Mínimo</th>
+              <th class="py-3 px-4 text-center">Faltante</th>
+              <th class="py-3 px-4 text-right">Costo Reposición</th>
+              <th class="py-3 px-4 text-center">Acción</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-[13px]">
+            @for (p of products.value(); track p.id) {
+              <tr class="hover:bg-slate-50/70 transition-colors">
+                <td class="py-3 px-4">
+                  <div class="flex items-center gap-3">
+                    <button
+                      (click)="openDetail.emit(p)"
+                      class="text-left font-bold text-slate-900 hover:text-red-600 transition-colors"
+                    >
+                      {{ p.name }}
+                      <span class="block text-[11px] font-mono text-slate-400 font-normal">SKU: {{ p.sku }}</span>
+                    </button>
+                  </div>
+                </td>
+
+                <td class="py-3 px-4">
+                  <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">
+                    {{ p.category }}
+                  </span>
+                </td>
+
+                <td class="py-3 px-4 text-center">
+                  @if (p.current_stock === 0) {
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">
+                      0 uds (Agotado)
+                    </span>
+                  } @else {
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
+                      {{ p.current_stock }} uds
+                    </span>
+                  }
+                </td>
+
+                <td class="py-3 px-4 text-center font-semibold text-slate-600">
+                  {{ p.min_stock }} uds
+                </td>
+
+                <td class="py-3 px-4 text-center font-bold text-red-600">
+                  -{{ p.min_stock - p.current_stock }} uds
+                </td>
+
+                <td class="py-3 px-4 text-right font-bold text-slate-900">
+                  S/ {{ ((p.min_stock - p.current_stock) * (p.cost_price || 0)) | number: '1.2-2' }}
+                </td>
+
+                <td class="py-3 px-4 text-center">
+                  <button
+                    (click)="openAdjust.emit(p)"
+                    class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 mx-auto"
+                  >
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Reponer
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

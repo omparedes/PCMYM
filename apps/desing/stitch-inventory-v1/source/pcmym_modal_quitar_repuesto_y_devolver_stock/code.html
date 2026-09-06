@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PCMYM - Quitar Repuesto de la Orden #42</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-fixed": "#ffdad6",
+            "surface-container": "#e5eeff",
+            "inverse-surface": "#213145",
+            "tertiary": "#006645",
+            "secondary": "#565e74",
+            "secondary-fixed": "#dae2fd",
+            "on-tertiary-fixed": "#002113",
+            "on-tertiary-fixed-variant": "#005236",
+            "outline-variant": "#e6bdb8",
+            "surface": "#f8f9ff",
+            "surface-variant": "#d3e4fe",
+            "on-surface": "#0b1c30",
+            "on-secondary-fixed-variant": "#3f465c",
+            "on-error": "#ffffff",
+            "tertiary-fixed-dim": "#4edea3",
+            "error-container": "#ffdad6",
+            "inverse-primary": "#ffb4ab",
+            "background": "#f8f9ff",
+            "on-primary-fixed-variant": "#93000b",
+            "surface-container-low": "#eff4ff",
+            "error": "#ba1a1a",
+            "surface-container-highest": "#d3e4fe",
+            "on-primary-fixed": "#410002",
+            "on-surface-variant": "#5c403c",
+            "surface-dim": "#cbdbf5",
+            "surface-container-high": "#dce9ff",
+            "on-secondary-fixed": "#131b2e",
+            "inverse-on-surface": "#eaf1ff",
+            "outline": "#916f6b",
+            "primary-fixed-dim": "#ffb4ab",
+            "tertiary-container": "#008259",
+            "on-error-container": "#93000a",
+            "primary": "#b70011",
+            "surface-tint": "#bf0715",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-container": "#e1ffec",
+            "on-primary-container": "#fff6f5",
+            "on-secondary-container": "#5c647a",
+            "tertiary-fixed": "#6ffbbe",
+            "secondary-container": "#dae2fd",
+            "surface-bright": "#f8f9ff",
+            "on-primary": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed-dim": "#bec6e0",
+            "on-secondary": "#ffffff",
+            "on-background": "#0b1c30",
+            "primary-container": "#dc2626"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "space-3xl": "2rem",
+            "sidebar-width": "220px",
+            "space-xs": "0.375rem",
+            "space-lg": "1rem",
+            "space-2xs": "0.25rem",
+            "space-2xl": "1.5rem",
+            "space-xl": "1.25rem",
+            "card-gutter": "1rem",
+            "space-md": "0.75rem"
+          },
+          "fontFamily": {
+            "label-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "label-lg": ["Inter"],
+            "body-md": ["Inter"]
+          },
+          "fontSize": {
+            "label-md": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }],
+            "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.06em", "fontWeight": "700" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "letterSpacing": "-0.005em", "fontWeight": "500" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "headline-lg": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+            "label-lg": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "body-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface h-full font-body-md overflow-hidden antialiased">
+<!-- ======================================================== -->
+<!-- BACKGROUND LAYER: Vista completa Orden #42 con desenfoque -->
+<!-- ======================================================== -->
+<div aria-hidden="true" class="fixed inset-0 flex select-none pointer-events-none filter blur-[4px] brightness-[0.92] scale-[0.998] transition-all duration-300">
+<!-- Sidebar Rail (Shared Component Structure) -->
+<aside class="fixed top-0 left-0 h-screen w-[220px] flex flex-col justify-between z-10 bg-surface-container-lowest border-r border-surface-container shadow-sm p-4">
+<div>
+<div class="flex items-center gap-2.5 pb-4 mb-3 border-b border-surface-container">
+<div class="w-8 h-8 rounded-xl bg-primary-container flex items-center justify-center text-on-primary font-headline-sm font-extrabold shadow-sm">P</div>
+<div>
+<div class="text-headline-md font-headline-md text-on-surface font-extrabold tracking-tight">PCMYM</div>
+<div class="text-label-sm font-label-sm uppercase tracking-wider text-secondary">SERVICIO TÉCNICO</div>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="bg-primary-container text-on-primary font-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5 shadow-sm">
+<span class="material-symbols-outlined text-[20px]" data-icon="build">build</span>
+<span>Órdenes</span>
+</a>
+<a class="text-secondary hover:bg-surface-container-low font-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5">
+<span class="material-symbols-outlined text-[20px]" data-icon="inventory_2">inventory_2</span>
+<span>Inventario</span>
+</a>
+<a class="text-secondary hover:bg-surface-container-low font-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5">
+<span class="material-symbols-outlined text-[20px]" data-icon="group">group</span>
+<span>Clientes</span>
+</a>
+<a class="text-secondary hover:bg-surface-container-low font-label-lg rounded-xl flex items-center gap-3 px-3 py-2.5">
+<span class="material-symbols-outlined text-[20px]" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span>Finanzas</span>
+</a>
+</nav>
+</div>
+<div class="space-y-2 border-t border-surface-container pt-3">
+<div class="flex items-center gap-2.5 px-2 py-1.5 rounded-xl bg-surface-container-low">
+<div class="w-7 h-7 rounded-full bg-on-surface text-surface-container-lowest flex items-center justify-center font-label-sm font-bold">TC</div>
+<div class="flex-1 min-w-0">
+<div class="text-label-sm font-label-sm text-on-surface truncate">Técnico Carlos M.</div>
+<div class="text-[10px] text-secondary truncate">Supervisor Taller</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top Navigation Header -->
+<header class="fixed top-0 right-0 left-[220px] h-16 px-6 flex items-center justify-between z-10 bg-surface-container-lowest border-b border-surface-container">
+<div class="flex items-center gap-3">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">Órdenes de Trabajo</span>
+<span class="text-secondary">/</span>
+<span class="text-headline-sm font-headline-sm text-on-surface">Orden #42 - Laptop Lenovo Legion 5</span>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-primary font-bold">URGENTE</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-3 py-1.5 text-label-md font-label-md rounded-xl bg-surface-container text-on-surface font-semibold">Guardado hace 3 min</span>
+</div>
+</header>
+<!-- Canvas Principal Orden #42 en Segundo Plano -->
+<main class="ml-[220px] mt-16 p-6 w-full max-w-[1400px] overflow-hidden">
+<!-- Order Banner -->
+<div class="bg-surface-container-lowest border border-surface-container rounded-xl p-5 mb-5 flex justify-between items-center">
+<div>
+<div class="flex items-center gap-2">
+<span class="text-headline-md font-headline-md text-on-surface">#42 · Lenovo Legion 5 15ACH6H</span>
+<span class="bg-surface-variant text-on-surface font-label-sm px-2 py-0.5 rounded">Reparación</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1">Cliente: Marcos Rivera Villegas · DNI 45892110 · Recibida: 24 May 2024</p>
+</div>
+<div class="text-right">
+<div class="text-label-sm font-label-sm text-secondary">PRESUPUESTO TOTAL</div>
+<div class="text-headline-lg font-headline-lg text-primary">S/ 480.00</div>
+</div>
+</div>
+<!-- Grid Detalle Orden -->
+<div class="grid grid-cols-3 gap-5">
+<div class="col-span-2 space-y-4">
+<!-- Tarjeta Repuestos Asociados -->
+<div class="bg-surface-container-lowest border-2 border-primary/40 rounded-xl p-4">
+<div class="flex justify-between items-center pb-3 border-b border-surface-container">
+<span class="font-headline-sm text-headline-sm text-on-surface">Repuestos Asignados a la Orden (1)</span>
+<button class="text-label-sm font-label-sm text-primary font-bold">+ Agregar repuesto</button>
+</div>
+<div class="mt-3 p-3 rounded-lg border border-outline-variant/50 bg-error-container/20 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="inventory_2">inventory_2</span>
+<div>
+<div class="font-label-lg font-label-lg text-on-surface">SSD Kingston NV2 1TB M.2 NVMe</div>
+<div class="text-body-sm font-body-sm text-secondary">SKU: KNG-NV2-1000 · Cant: 1 ud</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right">
+<div class="font-label-lg font-label-lg text-on-surface">S/ 230.00</div>
+<div class="text-[11px] text-tertiary font-medium">Asignado de Taller</div>
+</div>
+<div class="p-1.5 rounded-lg bg-surface-container-lowest text-primary border border-surface-container">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Mano de obra panel -->
+<div class="bg-surface-container-lowest border border-surface-container rounded-xl p-4">
+<div class="font-headline-sm text-headline-sm text-on-surface mb-2">Servicio Técnico y Diagnóstico</div>
+<p class="text-body-md font-body-md text-secondary">Reinstalación de sistema operativo Windows 11 Pro + Limpieza de disipador y cambio de pasta térmica Arctic MX-4.</p>
+<div class="mt-3 pt-3 border-t border-surface-container flex justify-between font-label-lg font-label-lg">
+<span>Mano de obra especializada</span>
+<span>S/ 250.00</span>
+</div>
+</div>
+</div>
+<div class="col-span-1 space-y-4">
+<div class="bg-surface-container-lowest border border-surface-container rounded-xl p-4">
+<div class="font-headline-sm text-headline-sm text-on-surface mb-3">Trazabilidad Técnica</div>
+<ul class="text-body-sm space-y-2 text-secondary">
+<li class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+                Equipo recibido en recepción
+              </li>
+<li class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+                Repuesto reservado en almacén
+              </li>
+<li class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                Diagnóstico de hardware validado
+              </li>
+</ul>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- ======================================================== -->
+<!-- MODAL DIALOG OVERLAY: Reversión y Devolución Repuesto    -->
+<!-- ======================================================== -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-[6px] animate-in fade-in duration-150">
+<!-- Modal Card Container (Exactamente 460px de ancho) -->
+<div aria-labelledby="modal-title" aria-modal="true" class="w-full max-w-[460px] bg-surface-container-lowest rounded-xl border border-surface-container shadow-2xl overflow-hidden transform transition-all duration-200" role="dialog">
+<!-- ================= Cabecera Modal ================= -->
+<div class="px-5 py-4 flex items-center justify-between border-b border-surface-container bg-surface-bright">
+<div class="flex items-center gap-3">
+<!-- Icono ámbar/rojo de devolución -->
+<div class="w-10 h-10 rounded-xl bg-error-container text-primary flex items-center justify-center flex-shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[24px]" data-icon="assignment_return">assignment_return</span>
+</div>
+<div>
+<h2 class="text-headline-sm font-headline-sm text-on-surface leading-tight" id="modal-title">
+              Quitar repuesto de la orden
+            </h2>
+<p class="text-label-sm font-label-sm text-secondary tracking-wide uppercase mt-0.5">
+              Orden #42 · Reversión de inventario
+            </p>
+</div>
+</div>
+<!-- Botón cerrar [X] -->
+<button aria-label="Cerrar diálogo" class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20" onclick="window.history.back()" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- ================= Cuerpo Modal ================= -->
+<div class="p-5 space-y-4 max-h-[calc(90vh-140px)] overflow-y-auto">
+<!-- 1. Tarjeta resumen del repuesto a desafectar -->
+<div class="p-3.5 rounded-xl bg-surface-container-low border border-surface-container flex items-start justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-lowest border border-surface-container flex items-center justify-center text-on-surface flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px] text-secondary" data-icon="memory">memory</span>
+</div>
+<div>
+<div class="text-label-lg font-label-lg text-on-surface font-bold">
+                SSD Kingston NV2 1TB M.2 NVMe
+              </div>
+<div class="text-body-sm font-body-sm text-secondary mt-0.5">
+                Cantidad: <span class="font-semibold text-on-surface">1 unidad</span> · Precio aplicado: <span class="font-semibold text-on-surface">S/ 230.00</span>
+</div>
+<div class="text-label-sm font-label-sm text-secondary-container mt-1 inline-flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded text-[10px] text-on-surface font-medium">
+<span class="material-symbols-outlined text-[12px]" data-icon="qr_code_2">qr_code_2</span>
+                SKU: KNG-NV2-1000
+              </div>
+</div>
+</div>
+<span class="inline-flex px-2 py-0.5 rounded text-[10px] font-label-sm font-bold bg-error-container text-primary">
+            DESAFECTAR
+          </span>
+</div>
+<!-- 2. Explicación de trazabilidad y retorno físico (Caja informativa destacada verde sutil) -->
+<div class="p-3.5 rounded-xl bg-on-tertiary-container/40 border border-tertiary/20">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-tertiary text-[20px] flex-shrink-0 mt-0.5" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div class="space-y-1">
+<p class="text-body-sm font-body-sm text-tertiary font-bold leading-tight">
+                ✓ La unidad será devuelta inmediatamente al inventario.
+              </p>
+<p class="text-body-sm font-body-sm text-on-surface text-opacity-80 leading-relaxed text-[12px]">
+                Se registrará un nuevo movimiento cronológico de <span class="font-semibold text-on-surface">Devolución (+1 unidad)</span> vinculado a la <span class="font-semibold text-on-surface">Orden #42</span> para mantener la trazabilidad contable y física en taller.
+              </p>
+</div>
+</div>
+</div>
+<!-- 3. Impacto de stock (Visualizador de flujo claro) -->
+<div class="rounded-xl border border-surface-container bg-surface-bright p-3.5">
+<div class="text-label-sm font-label-sm text-secondary uppercase tracking-wider mb-2 flex items-center justify-between">
+<span>Impacto en Stock de Almacén</span>
+<span class="text-tertiary font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
+              +1 Disponible
+            </span>
+</div>
+<div class="grid grid-cols-3 gap-2 items-center bg-surface-container-lowest p-2.5 rounded-lg border border-surface-container">
+<!-- Antes -->
+<div class="text-center">
+<div class="text-label-sm font-label-sm text-secondary">En taller</div>
+<div class="text-headline-sm font-headline-sm text-on-surface mt-0.5">7 uds</div>
+</div>
+<!-- Flecha y delta -->
+<div class="flex flex-col items-center justify-center">
+<span class="text-[10px] font-bold text-tertiary bg-on-tertiary-container px-2 py-0.2 rounded-full">+1 retorno</span>
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</div>
+<!-- Después -->
+<div class="text-center bg-surface-container-low py-1 rounded-md">
+<div class="text-label-sm font-label-sm text-on-surface font-semibold">Nuevo stock</div>
+<div class="text-headline-sm font-headline-sm text-tertiary font-extrabold mt-0.5">8 unidades</div>
+</div>
+</div>
+</div>
+<!-- 4. Impacto en presupuesto de la orden -->
+<div class="rounded-xl border border-surface-container bg-surface-bright p-3.5">
+<div class="text-label-sm font-label-sm text-secondary uppercase tracking-wider mb-2">
+            Impacto en Presupuesto de la Orden #42
+          </div>
+<div class="space-y-1.5 text-body-sm font-body-sm">
+<div class="flex justify-between items-center text-secondary">
+<span>Total repuestos actual:</span>
+<span class="line-through font-medium">S/ 230.00</span>
+</div>
+<div class="flex justify-between items-center text-primary font-semibold">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="remove_circle">remove_circle</span>
+                Deducción por devolución:
+              </span>
+<span>- S/ 230.00</span>
+</div>
+<div class="pt-2 border-t border-surface-container flex justify-between items-center text-on-surface font-label-lg">
+<span>Nuevo total de la Orden #42:</span>
+<div class="text-right">
+<span class="text-headline-sm font-headline-sm text-on-surface font-extrabold">S/ 250.00</span>
+<div class="text-[10px] text-secondary font-normal">Saldo ajustado automáticamente</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= Footer Modal ================= -->
+<div class="px-5 py-3.5 bg-surface-container-low border-t border-surface-container flex items-center justify-end gap-2.5">
+<!-- Botón Cancelar -->
+<button class="px-4 py-2 rounded-xl text-label-lg font-label-lg text-secondary hover:text-on-surface hover:bg-surface-container bg-surface-container-lowest border border-surface-container transition-all active:scale-[0.98]" onclick="window.history.back()" type="button">
+          Cancelar
+        </button>
+<!-- Botón rojo primario destructivo -->
+<button class="px-4 py-2 rounded-xl text-label-lg font-label-lg bg-primary-container hover:bg-primary text-on-primary font-bold shadow-md hover:shadow-lg transition-all active:scale-[0.98] flex items-center gap-2" style="box-shadow: 0 4px 14px 0 rgba(220, 38, 38, 0.35);" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="replay">replay</span>
+<span>Quitar repuesto y devolver stock</span>
+</button>
+</div>
+</div>
+</div>
+</body></html>

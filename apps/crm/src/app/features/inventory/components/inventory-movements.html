@@ -1,0 +1,202 @@
+<div class="flex flex-col gap-6">
+  <!-- ENCABEZADO Y FILTROS -->
+  <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="relative flex-1 max-w-lg">
+        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="text"
+          [value]="searchTerm()"
+          (input)="onSearchInput($event)"
+          placeholder="Buscar por producto, SKU, referencia o motivo..."
+          class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13.5px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 outline-none transition-all"
+        />
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button
+          (click)="reload()"
+          class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5"
+          title="Recargar movimientos"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+          Actualizar
+        </button>
+      </div>
+    </div>
+
+    <!-- CHIPS DE TIPO -->
+    <div class="flex items-center gap-2 pt-2 border-t border-slate-100 overflow-x-auto pb-1">
+      <button
+        (click)="setFilterType('all')"
+        class="px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5"
+        [class.bg-slate-900]="filterType() === 'all'"
+        [class.text-white]="filterType() === 'all'"
+        [class.bg-slate-100]="filterType() !== 'all'"
+        [class.text-slate-600]="filterType() !== 'all'"
+      >
+        <span>Todos</span>
+      </button>
+
+      <button
+        (click)="setFilterType('in')"
+        class="px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5"
+        [class.bg-emerald-600]="filterType() === 'in'"
+        [class.text-white]="filterType() === 'in'"
+        [class.bg-slate-100]="filterType() !== 'in'"
+        [class.text-slate-600]="filterType() !== 'in'"
+      >
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span>Entradas</span>
+      </button>
+
+      <button
+        (click)="setFilterType('out')"
+        class="px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5"
+        [class.bg-red-600]="filterType() === 'out'"
+        [class.text-white]="filterType() === 'out'"
+        [class.bg-slate-100]="filterType() !== 'out'"
+        [class.text-slate-600]="filterType() !== 'out'"
+      >
+        <span class="w-2 h-2 rounded-full bg-red-400"></span>
+        <span>Salidas</span>
+      </button>
+
+      <button
+        (click)="setFilterType('adjustment')"
+        class="px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5"
+        [class.bg-blue-600]="filterType() === 'adjustment'"
+        [class.text-white]="filterType() === 'adjustment'"
+        [class.bg-slate-100]="filterType() !== 'adjustment'"
+        [class.text-slate-600]="filterType() !== 'adjustment'"
+      >
+        <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+        <span>Ajustes</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- TABLA DE MOVIMIENTOS -->
+  <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    @if (movements.isLoading()) {
+      <div class="flex items-center justify-center p-12 text-slate-400 font-semibold gap-3">
+        <div class="w-5 h-5 border-2 border-slate-300 border-t-red-600 rounded-full animate-spin"></div>
+        Cargando historial de movimientos...
+      </div>
+    } @else if (movements.value().length === 0) {
+      <div class="text-center py-16 px-4">
+        <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+        </div>
+        <h3 class="text-sm font-bold text-slate-800">No se encontraron movimientos</h3>
+        <p class="text-xs text-slate-400 mt-1">No hay registros que coincidan con los filtros aplicados.</p>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 text-[11px] font-extrabold uppercase tracking-wider">
+              <th class="py-3 px-4">Fecha y Hora</th>
+              <th class="py-3 px-4">Producto</th>
+              <th class="py-3 px-4">Tipo</th>
+              <th class="py-3 px-4 text-center">Cantidad</th>
+              <th class="py-3 px-4">Stock Previo → Nuevo</th>
+              <th class="py-3 px-4">Motivo</th>
+              <th class="py-3 px-4">Referencia / Notas</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-[13px]">
+            @for (m of movements.value(); track m.id) {
+              <tr class="hover:bg-slate-50/70 transition-colors">
+                <!-- FECHA -->
+                <td class="py-3 px-4 whitespace-nowrap">
+                  <div class="flex flex-col">
+                    <span class="font-bold text-slate-800">{{ m.created_at | date: 'dd/MM/yyyy' }}</span>
+                    <span class="text-[11px] text-slate-400">{{ m.created_at | date: 'HH:mm' }}</span>
+                  </div>
+                </td>
+
+                <!-- PRODUCTO -->
+                <td class="py-3 px-4">
+                  <div class="flex flex-col">
+                    <span class="font-bold text-slate-900">{{ m.product?.name || 'Producto' }}</span>
+                    <span class="text-[11px] font-mono text-slate-400">SKU: {{ m.product?.sku || '-' }}</span>
+                  </div>
+                </td>
+
+                <!-- TIPO -->
+                <td class="py-3 px-4 whitespace-nowrap">
+                  @if (m.movement_type === 'in') {
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      ENTRADA
+                    </span>
+                  } @else if (m.movement_type === 'out') {
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-red-50 text-red-700 border border-red-200">
+                      SALIDA
+                    </span>
+                  } @else {
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                      AJUSTE
+                    </span>
+                  }
+                </td>
+
+                <!-- CANTIDAD -->
+                <td class="py-3 px-4 text-center whitespace-nowrap">
+                  <span
+                    class="font-black text-[13.5px]"
+                    [class.text-emerald-600]="m.quantity > 0"
+                    [class.text-red-600]="m.quantity < 0"
+                    [class.text-slate-600]="m.quantity === 0"
+                  >
+                    {{ m.quantity > 0 ? '+' : '' }}{{ m.quantity }} uds
+                  </span>
+                </td>
+
+                <!-- STOCK PREVIO -> NUEVO -->
+                <td class="py-3 px-4 whitespace-nowrap">
+                  <div class="flex items-center gap-1.5 text-xs font-semibold">
+                    <span class="text-slate-400">{{ m.previous_stock }}</span>
+                    <svg class="w-3 h-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                    <span class="font-bold text-slate-900">{{ m.new_stock }}</span>
+                  </div>
+                </td>
+
+                <!-- MOTIVO -->
+                <td class="py-3 px-4 whitespace-nowrap">
+                  <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold">
+                    {{ movementReasonLabel(m.reason) }}
+                  </span>
+                </td>
+
+                <!-- REFERENCIA / NOTAS -->
+                <td class="py-3 px-4">
+                  <div class="flex flex-col text-xs">
+                    @if (m.reference_doc) {
+                      <span class="font-bold text-slate-800">{{ m.reference_doc }}</span>
+                    }
+                    @if (m.notes) {
+                      <span class="text-slate-500 italic">{{ m.notes }}</span>
+                    }
+                    @if (!m.reference_doc && !m.notes) {
+                      <span class="text-slate-400">-</span>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

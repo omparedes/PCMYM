@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PCMYM - Modal: Retirar Stock Manual</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-fixed": "#ffdad6",
+            "surface-container": "#e5eeff",
+            "inverse-surface": "#213145",
+            "tertiary": "#006645",
+            "secondary": "#565e74",
+            "secondary-fixed": "#dae2fd",
+            "on-tertiary-fixed": "#002113",
+            "on-tertiary-fixed-variant": "#005236",
+            "outline-variant": "#e6bdb8",
+            "surface": "#f8f9ff",
+            "surface-variant": "#d3e4fe",
+            "on-surface": "#0b1c30",
+            "on-secondary-fixed-variant": "#3f465c",
+            "on-error": "#ffffff",
+            "tertiary-fixed-dim": "#4edea3",
+            "error-container": "#ffdad6",
+            "inverse-primary": "#ffb4ab",
+            "background": "#f8f9ff",
+            "on-primary-fixed-variant": "#93000b",
+            "surface-container-low": "#eff4ff",
+            "error": "#ba1a1a",
+            "surface-container-highest": "#d3e4fe",
+            "on-primary-fixed": "#410002",
+            "on-surface-variant": "#5c403c",
+            "surface-dim": "#cbdbf5",
+            "surface-container-high": "#dce9ff",
+            "on-secondary-fixed": "#131b2e",
+            "inverse-on-surface": "#eaf1ff",
+            "outline": "#916f6b",
+            "primary-fixed-dim": "#ffb4ab",
+            "tertiary-container": "#008259",
+            "on-error-container": "#93000a",
+            "primary": "#b70011",
+            "surface-tint": "#bf0715",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-container": "#e1ffec",
+            "on-primary-container": "#fff6f5",
+            "on-secondary-container": "#5c647a",
+            "tertiary-fixed": "#6ffbbe",
+            "secondary-container": "#dae2fd",
+            "surface-bright": "#f8f9ff",
+            "on-primary": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed-dim": "#bec6e0",
+            "on-secondary": "#ffffff",
+            "on-background": "#0b1c30",
+            "primary-container": "#dc2626"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "space-3xl": "2rem",
+            "sidebar-width": "220px",
+            "space-xs": "0.375rem",
+            "space-lg": "1rem",
+            "space-2xs": "0.25rem",
+            "space-2xl": "1.5rem",
+            "space-xl": "1.25rem",
+            "card-gutter": "1rem",
+            "space-md": "0.75rem"
+          },
+          "fontFamily": {
+            "label-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "label-lg": ["Inter"],
+            "body-md": ["Inter"]
+          },
+          "fontSize": {
+            "label-md": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }],
+            "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.06em", "fontWeight": "700" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "letterSpacing": "-0.005em", "fontWeight": "500" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "headline-lg": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+            "label-lg": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "body-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen overflow-x-hidden antialiased selection:bg-primary selection:text-white">
+<!-- Background App Workspace -->
+<div class="relative min-h-screen flex flex-col pointer-events-none select-none filter blur-[2px] opacity-75">
+<!-- Top Bar Mock behind -->
+<header class="h-16 border-b border-surface-container bg-surface-container-lowest flex items-center justify-between px-6">
+<div class="flex items-center gap-4">
+<span class="font-headline-sm text-headline-sm text-on-surface font-extrabold tracking-tight">PCMYM</span>
+<span class="text-surface-container text-body-lg">|</span>
+<span class="text-secondary font-label-lg text-label-lg">Inventario y Repuestos / Catálogo</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-3 py-1.5 bg-surface-container-low rounded-xl text-secondary text-body-sm font-body-sm">Stock bajo: 3</span>
+<button class="px-4 py-2 bg-primary-container text-on-primary rounded-xl font-label-lg text-label-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-white" data-icon="add">add</span>
+          + Nuevo repuesto
+        </button>
+</div>
+</header>
+<!-- Content Workspace Grid Mock -->
+<main class="p-8 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-surface-container-lowest border border-surface-container rounded-xl p-5 shadow-sm space-y-3">
+<div class="flex justify-between items-start">
+<span class="text-secondary font-label-sm text-label-sm">#ALM-088</span>
+<span class="bg-surface-container-low text-secondary font-label-sm text-label-sm px-2 py-0.5 rounded-full">DISPONIBLE</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Memoria RAM DDR4 16GB Kingston Fury</h3>
+<p class="text-secondary text-body-sm">3200MHz CL16 DIMM</p>
+<div class="pt-3 border-t border-surface-container flex justify-between text-body-sm text-secondary">
+<span>Stock: 14 uds</span>
+<span class="text-primary font-bold">Venta rápida</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border-2 border-primary rounded-xl p-5 shadow-sm space-y-3 ring-2 ring-primary-fixed">
+<div class="flex justify-between items-start">
+<span class="text-secondary font-label-sm text-label-sm">#ALM-089</span>
+<span class="bg-primary-container text-white font-label-sm text-label-sm px-2 py-0.5 rounded-full">SELECCIONADO</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">SSD Kingston NV2 1TB M.2 NVMe</h3>
+<p class="text-secondary text-body-sm">PCIe 4.0 4x4 Gen 4 Interno</p>
+<div class="pt-3 border-t border-surface-container flex justify-between text-body-sm">
+<span class="font-bold text-on-surface">Stock: 8 unidades</span>
+<span class="text-primary font-bold">En proceso</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-surface-container rounded-xl p-5 shadow-sm space-y-3">
+<div class="flex justify-between items-start">
+<span class="text-secondary font-label-sm text-label-sm">#ALM-090</span>
+<span class="bg-surface-container-low text-secondary font-label-sm text-label-sm px-2 py-0.5 rounded-full">NORMAL</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Pasta Térmica Arctic MX-4 4g</h3>
+<p class="text-secondary text-body-sm">Con espátula de aplicación</p>
+<div class="pt-3 border-t border-surface-container flex justify-between text-body-sm text-secondary">
+<span>Stock: 22 uds</span>
+<span>Anaquel 2B</span>
+</div>
+</div>
+</main>
+</div>
+<!-- Modal Backdrop Overlay -->
+<div class="fixed inset-0 bg-[#0F172A]/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+<!-- Modal Card (520px compact layout) -->
+<div class="relative w-full max-w-[520px] bg-surface-container-lowest rounded-2xl border border-surface-container shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+<!-- Top Red Accent Indicator Line -->
+<div class="h-1.5 w-full bg-primary-container"></div>
+<!-- Header Section -->
+<div class="p-6 pb-4 border-b border-surface-container">
+<div class="flex items-start justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-xl bg-error-container text-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary text-[24px]" data-icon="arrow_outward">arrow_outward</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface tracking-tight leading-tight">Retirar stock</h2>
+<div class="flex items-center gap-2 mt-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container text-secondary font-mono">
+                  #ALM-089
+                </span>
+<span class="text-body-sm font-body-sm text-secondary truncate max-w-[240px]">
+                  SSD Kingston NV2 1TB M.2 NVMe
+                </span>
+</div>
+</div>
+</div>
+<!-- Close button -->
+<button aria-label="Cerrar modal" class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- Current Available Stock Alert Pill -->
+<div class="mt-4 flex items-center justify-between px-3.5 py-2 rounded-xl bg-surface-container-low border border-surface-container">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="text-secondary font-label-lg text-label-lg">Disponibilidad en almacén:</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface font-bold">8 unidades disponibles</span>
+</div>
+</div>
+<!-- Modal Body Form Content -->
+<div class="p-6 space-y-6">
+<!-- 1. Quantity Selector -->
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-2">
+            Cantidad a retirar
+          </label>
+<div class="flex items-center justify-between bg-surface-container-low p-2 rounded-xl border border-surface-container">
+<button class="w-12 h-12 rounded-lg bg-surface-container-lowest border border-surface-container flex items-center justify-center text-on-surface hover:bg-surface transition-all active:scale-95 shadow-sm" id="btn-minus">
+<span class="material-symbols-outlined font-bold" data-icon="remove">remove</span>
+</button>
+<div class="flex-1 text-center">
+<input class="w-20 text-center font-headline-lg text-headline-lg text-on-surface bg-transparent border-0 focus:ring-0 font-extrabold p-0" id="quantity-input" max="8" min="1" type="number" value="1"/>
+<div class="text-secondary font-label-sm text-label-sm uppercase tracking-wider">Unidad</div>
+</div>
+<button class="w-12 h-12 rounded-lg bg-surface-container-lowest border border-surface-container flex items-center justify-center text-on-surface hover:bg-surface transition-all active:scale-95 shadow-sm" id="btn-plus">
+<span class="material-symbols-outlined font-bold" data-icon="add">add</span>
+</button>
+</div>
+</div>
+<!-- 2. Motivo de salida -->
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-2">
+            Motivo de salida
+          </label>
+<div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
+<!-- Selected Pill -->
+<button class="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border-2 border-primary-container bg-error-container/30 text-primary font-label-lg text-label-lg shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="point_of_sale">point_of_sale</span>
+              Venta mostrador
+            </button>
+<!-- Regular Pill -->
+<button class="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-surface-container bg-surface-container-lowest text-secondary font-label-lg text-label-lg hover:border-secondary hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="handyman">handyman</span>
+              Uso interno
+            </button>
+<!-- Regular Pill -->
+<button class="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-surface-container bg-surface-container-lowest text-secondary font-label-lg text-label-lg hover:border-secondary hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="broken_image">broken_image</span>
+              Producto dañado
+            </button>
+<!-- Regular Pill -->
+<button class="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-surface-container bg-surface-container-lowest text-secondary font-label-lg text-label-lg hover:border-secondary hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="tune">tune</span>
+              Ajuste stock
+            </button>
+<!-- Regular Pill -->
+<button class="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-surface-container bg-surface-container-lowest text-secondary font-label-lg text-label-lg hover:border-secondary hover:text-on-surface transition-colors col-span-2 sm:col-span-1" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="more_horiz">more_horiz</span>
+              Otro motivo
+            </button>
+</div>
+</div>
+<!-- 3. Impacto de Stock Preview Box -->
+<div class="bg-surface-container-low rounded-xl border border-surface-container p-4">
+<div class="text-secondary font-label-sm text-label-sm uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]" data-icon="monitoring">monitoring</span>
+            Impacto en inventario
+          </div>
+<div class="grid grid-cols-3 gap-2 text-center divide-x divide-surface-container">
+<div>
+<span class="block text-secondary text-label-sm font-label-sm">Stock actual</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">8 uds</span>
+</div>
+<div>
+<span class="block text-secondary text-label-sm font-label-sm">Salida</span>
+<span class="font-headline-sm text-headline-sm text-primary-container font-extrabold" id="label-delta">-1 ud</span>
+</div>
+<div class="bg-surface-container-lowest rounded-lg py-1 px-2 border border-surface-container shadow-xs">
+<span class="block text-tertiary text-label-sm font-label-sm font-bold">Nuevo stock</span>
+<span class="font-headline-sm text-headline-sm text-tertiary font-extrabold" id="label-result">7 uds</span>
+</div>
+</div>
+</div>
+<!-- 4. Optional Notes -->
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-1.5" for="reference-notes">
+            Nota / Referencia de venta <span class="text-secondary font-normal font-body-sm text-body-sm">(Opcional)</span>
+</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-surface-container rounded-xl px-3.5 py-2.5 text-body-md text-on-surface placeholder:text-secondary/60 focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container text-body-md" id="reference-notes" placeholder="Ej: Venta directa cliente mostrador, boleta manual..." type="text"/>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="p-6 pt-3 bg-surface-container-lowest border-t border-surface-container flex items-center justify-end gap-3">
+<button class="px-5 py-2.5 rounded-xl border border-surface-container text-secondary hover:text-on-surface hover:bg-surface-container-low font-label-lg text-label-lg transition-colors">
+          Cancelar
+        </button>
+<button class="px-6 py-2.5 rounded-xl bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center gap-2 shadow-md hover:bg-primary transition-all active:scale-[0.98]" id="submit-btn">
+<span class="material-symbols-outlined text-white text-[18px]" data-icon="check">check</span>
+<span id="submit-label">Retirar 1 unidad</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Interactive Logic for Counter & Preview -->
+<script>
+    const input = document.getElementById('quantity-input');
+    const minusBtn = document.getElementById('btn-minus');
+    const plusBtn = document.getElementById('btn-plus');
+    const deltaLabel = document.getElementById('label-delta');
+    const resultLabel = document.getElementById('label-result');
+    const submitLabel = document.getElementById('submit-label');
+
+    const totalStock = 8;
+
+    function updateStock(val) {
+      let qty = parseInt(val, 10);
+      if (isNaN(qty) || qty < 1) qty = 1;
+      if (qty > totalStock) qty = totalStock;
+
+      input.value = qty;
+      deltaLabel.textContent = `-${qty} ud${qty > 1 ? 's' : ''}`;
+      resultLabel.textContent = `${totalStock - qty} uds`;
+      submitLabel.textContent = `Retirar ${qty} unidad${qty > 1 ? 'es' : ''}`;
+    }
+
+    minusBtn.addEventListener('click', () => {
+      let current = parseInt(input.value, 10) || 1;
+      if (current > 1) updateStock(current - 1);
+    });
+
+    plusBtn.addEventListener('click', () => {
+      let current = parseInt(input.value, 10) || 1;
+      if (current < totalStock) updateStock(current + 1);
+    });
+
+    input.addEventListener('change', (e) => {
+      updateStock(e.target.value);
+    });
+  </script>
+</body></html>

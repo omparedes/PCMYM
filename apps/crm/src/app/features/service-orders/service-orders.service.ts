@@ -4,6 +4,8 @@ import type {
   NewServiceOrder,
   OrderStatusHistoryEntry,
   ServiceOrder,
+  ServiceOrderDelivery,
+  ServiceOrderDeliveryInput,
   ServiceOrderWithCustomer,
 } from './service-orders.models';
 
@@ -59,6 +61,20 @@ export class ServiceOrdersService {
       p_service_order_id: id,
       p_new_status: newStatus,
       p_note: note ?? undefined,
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  async deliver(id: string, input: ServiceOrderDeliveryInput): Promise<ServiceOrderDelivery> {
+    const { data, error } = await supabase.rpc('deliver_service_order', {
+      p_service_order_id: id,
+      p_receiver_name: input.receiver_name,
+      p_receiver_document: input.receiver_document ?? undefined,
+      p_work_summary: input.work_summary ?? undefined,
+      p_delivery_notes: input.delivery_notes ?? undefined,
+      p_warranty_days: input.warranty_days,
+      p_warranty_terms: input.warranty_terms ?? undefined,
     });
     if (error) throw error;
     return data;

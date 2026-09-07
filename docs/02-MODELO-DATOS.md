@@ -87,7 +87,7 @@ simple según necesidad real, ver migración). RLS estándar (select/insert/upda
 | initial_diagnosis      | text        | nullable — diagnóstico del técnico                      |
 | status                 | text        | enum por check, ver máquina de estados abajo            |
 | priority                | text        | enum: `low` \| `normal` \| `high` \| `urgent`           |
-| work_types              | text[]      | categorías múltiples: `formatting`, `repair`, `parts_replacement` |
+| work_types              | text[]      | categorías múltiples: `formatting`, `repair`, `parts_replacement`, `warranty` |
 | assigned_to            | uuid        | nullable, FK → profiles(id)                             |
 | received_at            | timestamptz | default now()                                            |
 | estimated_delivery     | date        | nullable                                                 |
@@ -98,9 +98,8 @@ simple según necesidad real, ver migración). RLS estándar (select/insert/upda
 > El equipo se modela embebido en la OS por ahora (no como tabla aparte). Se normaliza a una tabla
 > `equipment` en una fase posterior si hace falta (p.ej. historial de equipos de un mismo cliente).
 
-`work_types` permite combinar las tres categorías operativas del tablero (por ejemplo, formateo y
-cambio de repuesto). No es todavía un catálogo comercial de servicios; ese catálogo se evaluará en
-Fase 6.
+`work_types` permite combinar las cuatro categorías operativas del tablero (por ejemplo, garantía y
+reparación). No es todavía un catálogo comercial de servicios; ese catálogo se evaluará en Fase 6.
 
 **Máquina de estados (`status`):**
 `pending → diagnosing → repairing → waiting_parts → ready → delivered`, con `cancelled` alcanzable
@@ -173,6 +172,30 @@ nunca con una URL pública sin autenticar.
 
 Trigger `validate_payment` (mismo patrón de validación cruzada). Tabla inmutable desde el cliente
 (solo `select, insert`). Cada inserción dispara `trg_payments_log_financial_entry`.
+
+### `service_order_deliveries`
+| columna             | tipo          | notas                                                   |
+|---------------------|---------------|---------------------------------------------------------|
+| id                  | uuid PK       | `gen_random_uuid()`                                     |
+| business_id         | uuid          | not null, FK → businesses(id)                           |
+| service_order_id    | uuid          | not null, único por OS, FK → service_orders(id)         |
+| receiver_name       | text          | not null — persona que recibe el equipo                 |
+| receiver_document   | text          | nullable                                                |
+| work_summary        | text          | nullable — resumen del trabajo realizado                 |
+| delivery_notes      | text          | nullable — observaciones de entrega                     |
+| warranty_days       | int           | not null, `>= 0`, default `0`                           |
+| warranty_terms      | text          | nullable — condiciones de garantía                      |
+| delivered_at        | timestamptz   | fecha y hora efectiva de entrega                        |
+| warranty_until      | date          | calculada por el RPC cuando hay garantía                 |
+| delivered_by        | uuid          | nullable, FK → profiles(id)                             |
+| created_at          | timestamptz   | default `now()`                                         |
+
+La tabla es de solo lectura para `authenticated`; la única escritura es el RPC
+`deliver_service_order(p_service_order_id, p_receiver_name, p_receiver_document,
+p_work_summary, p_delivery_notes, p_warranty_days, p_warranty_terms)`, que en una misma
+transacción inserta el registro y cambia la OS de `ready` a `delivered`. Un trigger impide que una
+OS pase a `delivered` sin un registro de entrega. Esto permite reimprimir un comprobante con los
+mismos datos y conserva la trazabilidad de quién recibió el equipo.
 
 ### `financial_entries` (caja — inmutable, ni siquiera INSERT directo)
 | columna      | tipo          | notas                                            |

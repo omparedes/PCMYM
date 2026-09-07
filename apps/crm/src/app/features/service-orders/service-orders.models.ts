@@ -9,6 +9,7 @@ export type ServiceOrder = Database['public']['Tables']['service_orders']['Row']
 export type OrderStatusHistoryEntry = Database['public']['Tables']['order_status_history']['Row'];
 export type ServiceOrderPhoto = Database['public']['Tables']['service_order_photos']['Row'];
 export type Payment = Database['public']['Tables']['payments']['Row'];
+export type ServiceOrderDelivery = Database['public']['Tables']['service_order_deliveries']['Row'];
 export type PaymentMethod = 'cash' | 'transfer' | 'card';
 
 export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
@@ -31,12 +32,13 @@ export type ServiceOrderStatus =
   | 'cancelled';
 
 export type ServiceOrderPriority = 'low' | 'normal' | 'high' | 'urgent';
-export type ServiceOrderWorkType = 'formatting' | 'repair' | 'parts_replacement';
+export type ServiceOrderWorkType = 'formatting' | 'repair' | 'parts_replacement' | 'warranty';
 
 export const WORK_TYPE_LABELS: Record<ServiceOrderWorkType, string> = {
   formatting: 'Formateo',
   repair: 'Reparación',
   parts_replacement: 'Cambio de repuesto',
+  warranty: 'Garantía',
 };
 
 export const WORK_TYPE_OPTIONS = Object.keys(WORK_TYPE_LABELS) as ServiceOrderWorkType[];
@@ -112,6 +114,15 @@ export interface NewServiceOrder {
   assigned_to: string | null;
   estimated_delivery: string | null;
   work_types: ServiceOrderWorkType[];
+}
+
+export interface ServiceOrderDeliveryInput {
+  receiver_name: string;
+  receiver_document: string | null;
+  work_summary: string | null;
+  delivery_notes: string | null;
+  warranty_days: number;
+  warranty_terms: string | null;
 }
 
 export function emptyNewServiceOrder(): NewServiceOrder {

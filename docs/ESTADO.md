@@ -1,11 +1,12 @@
 # ESTADO DEL PROYECTO
-Última actualización: 2026-09-06 por Antigravity — estación Oscar/Windows
+Última actualización: 2026-09-06 por Codex — estación Oscar/Windows
 
 > Protocolo de handoff: **todo agente actualiza este archivo al cerrar sesión.** Es lo que permite
 > cambiar de estación o de agente sin perder el hilo. Mantén el formato de abajo.
 
 ## Fase actual
-**Inventario + Repuestos V1.** Completado e integrado en producción/local.
+**Extensión operativa de OS: recepción y entrega.** Implementada y pendiente de validación visual
+en impresión física/PDF antes de publicar.
 
 ## Carga inicial de inventario (Supabase remoto)
 - Se cargaron 19 productos en el negocio `Mi Taller PCMYM` (`taller-1`) mediante el RPC
@@ -34,6 +35,26 @@
   existentes no cambian; solo se completó el SKU nulo del `Mouse blanco Genius DX-110` como
   `PCMYM-MOU-GEN-DX110-WHT`.
 - Verificación local: 11 pruebas Vitest, lint y build Angular en verde. Build inicial: 742.92 kB.
+
+## Impresión de recepción y entrega de órdenes de servicio
+- Migración remota aplicada: `20260906140000_add_service_order_delivery.sql`.
+- Nueva tabla multi-tenant `service_order_deliveries` con RLS de solo lectura para el cliente y
+  registro auditable de receptor, documento, trabajo realizado, observaciones y garantía.
+- Nuevo RPC atómico `deliver_service_order`: valida que la OS esté `ready`, registra la entrega y
+  cambia el estado a `delivered`. La BD bloquea el cambio directo a `delivered` sin comprobante.
+- En el detalle de la OS se añadieron la hoja de recepción, el modal de cierre de entrega y el
+  comprobante reimprimible. Los documentos muestran QR local de seguimiento, equipo, cliente,
+  repuestos, presupuesto aprobado, pagos, saldo y garantía.
+- Se añadió la ruta protegida `/service-orders/:id/print/:kind` y la dependencia local `qrcode`.
+- Verificación local: 13 pruebas Vitest, lint y build Angular en verde. Bundle inicial: 745.90 kB.
+- Verificación del esquema remoto: `supabase db lint --linked` sin errores.
+- Pendiente recomendado: probar impresión física/PDF con una OS real en formato A4 y validar el
+  texto de garantía que utilizará el taller.
+
+## Tipo de trabajo Garantía
+- La migración `20260906150000_add_warranty_work_type.sql` amplía la restricción de
+  `service_orders.work_types` con el valor `warranty`, sin modificar órdenes existentes.
+- El alta de OS, el detalle y los filtros del tablero muestran ahora la opción **Garantía**.
 
 ## Hecho en esta sesión (Inventario + Repuestos V1)
 - **Base de datos & Supabase:**

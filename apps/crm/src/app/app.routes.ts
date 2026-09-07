@@ -11,6 +11,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/tracking/tracking-status').then((m) => m.TrackingStatus),
   },
   {
+    path: 'service-orders/:id/print/:kind',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/service-orders/service-order-print').then((m) => m.ServiceOrderPrint),
+  },
+  {
     path: '',
     canActivate: [authGuard],
     loadComponent: () => import('./core/layout/shell').then((m) => m.Shell),

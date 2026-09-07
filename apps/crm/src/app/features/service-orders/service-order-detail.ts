@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, resource, signal } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormField, form, min, required } from '@angular/forms/signals';
 
 import { ServiceOrdersService } from './service-orders.service';
@@ -9,6 +9,7 @@ import { PaymentsService } from './payments.service';
 import { OrderPartsService } from './order-parts.service';
 import { AddOrderPartModalComponent } from './components/add-order-part-modal';
 import { EditOrderPartModalComponent } from './components/edit-order-part-modal';
+import { ServiceOrderDeliveryModalComponent } from './components/service-order-delivery-modal';
 import type { ServiceOrderPartWithProduct } from '../inventory/inventory.models';
 import { BudgetsService } from '../budgets/budgets.service';
 import { budgetStatusLabel } from '../budgets/budgets.models';
@@ -34,6 +35,7 @@ function emptyPaymentForm(): PaymentFormModel {
     FormField,
     AddOrderPartModalComponent,
     EditOrderPartModalComponent,
+    ServiceOrderDeliveryModalComponent,
   ],
   templateUrl: './service-order-detail.html',
 })
@@ -44,6 +46,7 @@ export class ServiceOrderDetail {
   private readonly orderPartsService = inject(OrderPartsService);
   private readonly budgetsService = inject(BudgetsService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   protected readonly orderId = this.route.snapshot.paramMap.get('id')!;
 
@@ -82,6 +85,7 @@ export class ServiceOrderDetail {
 
   protected readonly linkCopied = signal(false);
   protected readonly updatingWorkTypes = signal(false);
+  protected readonly isDeliveryModalOpen = signal(false);
 
   protected workTypes(): ServiceOrderWorkType[] {
     return (this.order.value()?.work_types ?? []).filter((type): type is ServiceOrderWorkType =>
@@ -113,6 +117,29 @@ export class ServiceOrderDetail {
       this.linkCopied.set(true);
       setTimeout(() => this.linkCopied.set(false), 2000);
     });
+  }
+
+  protected openPrint(kind: 'receipt' | 'delivery'): void {
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree(['/service-orders', this.orderId, 'print', kind]),
+    );
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
+  protected openDeliveryModal(): void {
+    this.isDeliveryModalOpen.set(true);
+  }
+
+  protected closeDeliveryModal(): void {
+    this.isDeliveryModalOpen.set(false);
+  }
+
+  protected onDeliveryCompleted(): void {
+    this.isDeliveryModalOpen.set(false);
+    this.selectedNextStatus.set('');
+    this.note.set('');
+    this.order.reload();
+    this.history.reload();
   }
 
   protected async onPhotoSelected(event: Event): Promise<void> {
@@ -198,6 +225,10 @@ export class ServiceOrderDetail {
 
   protected async submitStatusChange(): Promise<void> {
     if (!this.selectedNextStatus()) return;
+    if (this.selectedNextStatus() === 'delivered') {
+      this.openDeliveryModal();
+      return;
+    }
     this.errorMsg.set(null);
     this.changingStatus.set(true);
     try {
@@ -257,4 +288,3 @@ export class ServiceOrderDetail {
     this.orderParts.reload();
   }
 }
-

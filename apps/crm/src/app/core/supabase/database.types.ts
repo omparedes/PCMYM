@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       budget_folio_counters: {
@@ -631,6 +656,83 @@ export type Database = {
           },
         ]
       }
+      service_order_deliveries: {
+        Row: {
+          business_id: string
+          created_at: string
+          delivered_at: string
+          delivered_by: string | null
+          delivery_notes: string | null
+          id: string
+          receiver_document: string | null
+          receiver_name: string
+          service_order_id: string
+          warranty_days: number
+          warranty_terms: string | null
+          warranty_until: string | null
+          work_summary: string | null
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          delivered_at?: string
+          delivered_by?: string | null
+          delivery_notes?: string | null
+          id?: string
+          receiver_document?: string | null
+          receiver_name: string
+          service_order_id: string
+          warranty_days?: number
+          warranty_terms?: string | null
+          warranty_until?: string | null
+          work_summary?: string | null
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          delivered_at?: string
+          delivered_by?: string | null
+          delivery_notes?: string | null
+          id?: string
+          receiver_document?: string | null
+          receiver_name?: string
+          service_order_id?: string
+          warranty_days?: number
+          warranty_terms?: string | null
+          warranty_until?: string | null
+          work_summary?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_deliveries_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_deliveries_delivered_by_fkey"
+            columns: ["delivered_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_deliveries_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: true
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_deliveries_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: true
+            referencedRelation: "v_accounts_receivable"
+            referencedColumns: ["service_order_id"]
+          },
+        ]
+      }
       service_order_folio_counters: {
         Row: {
           business_id: string
@@ -1142,6 +1244,38 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      deliver_service_order: {
+        Args: {
+          p_delivery_notes?: string
+          p_receiver_document?: string
+          p_receiver_name: string
+          p_service_order_id: string
+          p_warranty_days?: number
+          p_warranty_terms?: string
+          p_work_summary?: string
+        }
+        Returns: {
+          business_id: string
+          created_at: string
+          delivered_at: string
+          delivered_by: string | null
+          delivery_notes: string | null
+          id: string
+          receiver_document: string | null
+          receiver_name: string
+          service_order_id: string
+          warranty_days: number
+          warranty_terms: string | null
+          warranty_until: string | null
+          work_summary: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "service_order_deliveries"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       generate_product_sku: {
         Args: {
           p_brand?: string
@@ -1337,6 +1471,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },

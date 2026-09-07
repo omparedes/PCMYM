@@ -21,8 +21,10 @@
     "@angular/router": "^22.0.0",
     "@primeuix/themes": "^2.0.3",
     "@supabase/supabase-js": "^2.108.2",
+    "@types/qrcode": "^1.5.6",
     "primeicons": "^7.0.0",
     "primeng": "^21.1.9",
+    "qrcode": "^1.5.4",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

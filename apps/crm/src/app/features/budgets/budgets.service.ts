@@ -75,6 +75,8 @@ export class BudgetsService {
         description: item.description,
         quantity: item.quantity,
         unit_price: item.unit_price,
+        item_type: item.item_type,
+        product_id: item.product_id ?? null,
       })
       .select('*')
       .single();
@@ -94,5 +96,25 @@ export class BudgetsService {
     });
     if (error) throw error;
     return data;
+  }
+
+  async applyPartsToServiceOrder(budgetId: string): Promise<{
+    budget_id: string;
+    service_order_id: string;
+    products_applied: number;
+    units_reserved: number;
+    units_returned: number;
+  }> {
+    const { data, error } = await supabase.rpc('apply_budget_parts_to_service_order', {
+      p_budget_id: budgetId,
+    });
+    if (error) throw error;
+    return data as {
+      budget_id: string;
+      service_order_id: string;
+      products_applied: number;
+      units_reserved: number;
+      units_returned: number;
+    };
   }
 }

@@ -1,12 +1,12 @@
 # ESTADO DEL PROYECTO
-Última actualización: 2026-09-06 por Codex — estación Oscar/Windows
+Última actualización: 2026-09-07 por Codex — estación Oscar/Windows
 
 > Protocolo de handoff: **todo agente actualiza este archivo al cerrar sesión.** Es lo que permite
 > cambiar de estación o de agente sin perder el hilo. Mantén el formato de abajo.
 
 ## Fase actual
-**Extensión operativa de OS: recepción y entrega.** Implementada y pendiente de validación visual
-en impresión física/PDF antes de publicar.
+**Sincronización de presupuestos con inventario y repuestos de OS.** Implementada, migrada al
+Supabase remoto y verificada con pruebas, lint, build y lint de esquema.
 
 ## Carga inicial de inventario (Supabase remoto)
 - Se cargaron 19 productos en el negocio `Mi Taller PCMYM` (`taller-1`) mediante el RPC
@@ -48,13 +48,31 @@ en impresión física/PDF antes de publicar.
 - Se añadió la ruta protegida `/service-orders/:id/print/:kind` y la dependencia local `qrcode`.
 - Verificación local: 13 pruebas Vitest, lint y build Angular en verde. Bundle inicial: 745.90 kB.
 - Verificación del esquema remoto: `supabase db lint --linked` sin errores.
-- Pendiente recomendado: probar impresión física/PDF con una OS real en formato A4 y validar el
-  texto de garantía que utilizará el taller.
+- Validación funcional realizada por el usuario; queda como mejora operativa opcional revisar
+  impresión física/PDF en formato A4 y ajustar el texto de garantía del taller.
 
 ## Tipo de trabajo Garantía
 - La migración `20260906150000_add_warranty_work_type.sql` amplía la restricción de
   `service_orders.work_types` con el valor `warranty`, sin modificar órdenes existentes.
 - El alta de OS, el detalle y los filtros del tablero muestran ahora la opción **Garantía**.
+
+## Sincronización de presupuestos con inventario y repuestos
+- Migración remota aplicada: `20260907100000_link_budget_items_to_inventory.sql`.
+- `budget_items` ahora clasifica cada línea como `part`, `labor` u `other`; los repuestos (`part`)
+  enlazan obligatoriamente un `products.id` y usan cantidades enteras. El precio queda congelado
+  en la cotización y las líneas de mano de obra/otros nunca descuentan stock.
+- `service_order_parts.budget_id` conserva la trazabilidad del presupuesto que originó una reserva.
+- Nuevo RPC atómico `apply_budget_parts_to_service_order`: solo opera presupuestos aprobados,
+  valida todo el stock antes de mutar, registra entradas/salidas en el kardex, reserva o devuelve
+  únicamente el delta y es idempotente al repetirlo. Los repuestos añadidos manualmente a la OS se
+  conservan.
+- En `/budgets` y en el detalle del presupuesto se añadieron selectores de productos activos,
+  autocompletado de descripción/precio y visualización de stock. Tras aprobar un presupuesto,
+  aparece **Aplicar repuestos a la OS** con resumen de unidades reservadas/devueltas y errores
+  legibles.
+- Tipos Supabase regenerados desde el proyecto enlazado. Verificación remota: `supabase migration
+  list` muestra la migración aplicada y `supabase db lint --linked` no reporta errores.
+- Verificación local: 14 pruebas Vitest, `npm run lint` y `npm run build` en verde.
 
 ## Hecho en esta sesión (Inventario + Repuestos V1)
 - **Base de datos & Supabase:**
@@ -228,9 +246,8 @@ en impresión física/PDF antes de publicar.
   mencionada arriba (no es un bloqueo de código, es una verificación manual recomendada).
 
 ## Siguiente paso concreto
-- **Fase 3 — Cliente y notificaciones** (`docs/03-ROADMAP-FASES.md`): seguimiento público por token
-  (`/seguimiento/{uuid}`, sin login) y notificaciones automáticas vía n8n + WhatsApp Cloud API +
-  email con Resend.
+- **Fase 4 — Base de conocimiento** (`docs/03-ROADMAP-FASES.md`): FAQ y guías paso a paso
+  gestionables por tenant, con imágenes y búsqueda para reducir consultas repetitivas.
 - Antes de tocar la BD: leer `docs/02-MODELO-DATOS.md` actualizado (ya incluye `budgets` como base
   para mostrarle al cliente final si su presupuesto fue aprobado).
 - Posible punto de partida para el token público: una columna `tracking_token uuid default

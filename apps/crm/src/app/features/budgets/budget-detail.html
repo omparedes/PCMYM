@@ -57,8 +57,8 @@
             @for (item of items.value(); track item.id) {
               <div class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3">
                 <div class="flex flex-col">
-                  <span class="text-[13.5px] font-bold text-slate-800">{{ item.description }}</span>
-                  <span class="text-[11.5px] font-semibold text-slate-400">{{ item.quantity }} × S/ {{ item.unit_price }}</span>
+                  <div class="flex items-center gap-2"><span class="text-[13.5px] font-bold text-slate-800">{{ item.description }}</span><span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase" [class.bg-red-100]="item.item_type === 'part'" [class.text-red-700]="item.item_type === 'part'" [class.bg-slate-100]="item.item_type !== 'part'" [class.text-slate-500]="item.item_type !== 'part'">{{ item.item_type === 'part' ? 'Repuesto' : item.item_type === 'labor' ? 'Mano de obra' : 'Otro' }}</span></div>
+                  <span class="text-[11.5px] font-semibold text-slate-400">{{ item.quantity }} × S/ {{ item.unit_price }} @if (item.product_id) { · SKU vinculado }</span>
                 </div>
                 <div class="flex items-center gap-3">
                   <span class="font-black text-[14px] text-slate-900">S/ {{ lineTotal(item) | number: '1.2-2' }}</span>
@@ -79,6 +79,19 @@
 
         @if (b.status === 'draft') {
           <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center bg-white border-2 border-dashed border-slate-200 rounded-xl p-3">
+            <select class="w-full sm:w-28 py-2.5 px-2 border-[1.5px] border-slate-200 rounded-lg text-[12px] font-bold text-slate-700 bg-white outline-none focus:border-red-600" [value]="newItemType()" (change)="setNewItemType(($any($event.target)).value)">
+              <option value="part">Repuesto</option>
+              <option value="labor">Mano de obra</option>
+              <option value="other">Otro</option>
+            </select>
+            @if (newItemType() === 'part') {
+              <select class="w-full sm:w-44 py-2.5 px-2 border-[1.5px] border-red-200 rounded-lg text-[12px] font-bold text-slate-700 bg-white outline-none focus:border-red-600" [value]="newItemProductId() ?? ''" (change)="selectNewProduct(($any($event.target)).value)">
+                <option value="">Selecciona producto...</option>
+                @for (product of products.value(); track product.id) {
+                  <option [value]="product.id">{{ product.name }} · {{ product.current_stock }} ud.</option>
+                }
+              </select>
+            }
             <input type="text" placeholder="Descripción del ítem" class="flex-1 py-2.5 px-3.5 border-[1.5px] border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 bg-white outline-none focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)] transition-all" [value]="newItemDescription()" (input)="newItemDescription.set(($any($event.target)).value)" />
             <input type="number" min="0.01" step="0.01" placeholder="Cant." class="w-full sm:w-20 py-2.5 px-3 border-[1.5px] border-slate-200 rounded-lg text-[14px] font-bold text-slate-900 bg-white outline-none focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)] transition-all" [value]="newItemQuantity()" (input)="newItemQuantity.set(+($any($event.target)).value)" />
             <input type="number" min="0" step="0.01" placeholder="P. unit." class="w-full sm:w-28 py-2.5 px-3 border-[1.5px] border-slate-200 rounded-lg text-[14px] font-bold text-slate-900 bg-white outline-none focus:border-red-600 focus:shadow-[0_0_0_3px_rgba(225,29,42,0.13)] transition-all" [value]="newItemUnitPrice()" (input)="newItemUnitPrice.set(+($any($event.target)).value)" />
@@ -89,6 +102,28 @@
         }
       </div>
     </div>
+
+    @if (b.status === 'approved' && hasLinkedParts()) {
+      <div class="bg-red-50 border border-red-100 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.04)] overflow-hidden mb-6">
+        <div class="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-[15px] font-extrabold text-slate-900 m-0">Repuestos del presupuesto</h2>
+            <p class="text-[13px] font-medium text-slate-600 mt-1 mb-0">Reserva en la orden el stock de los repuestos vinculados. Puedes repetir esta acción sin duplicar cantidades.</p>
+            @if (applyError(); as msg) {
+              <p class="text-[12px] text-red-700 font-bold bg-white/70 p-2 rounded-lg mt-3 mb-0">{{ msg }}</p>
+            }
+            @if (applyResult(); as result) {
+              <p class="text-[12px] text-emerald-700 font-bold bg-emerald-100/70 p-2 rounded-lg mt-3 mb-0">
+                Aplicado: {{ result.products_applied }} productos, {{ result.units_reserved }} unidades reservadas@if (result.units_returned > 0) { y {{ result.units_returned }} devueltas }.
+              </p>
+            }
+          </div>
+          <button type="button" class="px-5 py-3 bg-red-600 text-white rounded-xl font-bold text-[13px] shrink-0 hover:bg-red-700 transition-colors disabled:opacity-50" [disabled]="applyingParts()" (click)="applyParts()">
+            {{ applyingParts() ? 'Aplicando...' : 'Aplicar repuestos a la OS' }}
+          </button>
+        </div>
+      </div>
+    }
 
     <!-- STATUS CARD -->
     <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden mb-6">

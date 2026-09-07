@@ -70,6 +70,9 @@ verdes; `ESTADO.md` actualizado. Oscar aprobó Checkpoints A y B.
 - **UI premium**: módulo de presupuestos integrado en el detalle de la OS (crear, ver ítems,
   cambiar estado) y Dashboard Financiero (`/finance`) con tarjetas de resumen, gráfico de
   ingresos vs. gastos, top clientes, equipos más atendidos, cuentas por cobrar y registro de gasto.
+- **Sincronización presupuestos–inventario–OS**: líneas de repuesto enlazadas a `products`,
+  selector/autocompletado en la UI y RPC atómico para reservar o devolver stock al aplicar un
+  presupuesto aprobado, con trazabilidad en `service_order_parts`.
 
 **DoD (cumplido):** vistas SQL versionadas y consultables desde la app; migraciones con RLS por
 `business_id`; `npm run build`/`npm test`/`npm run lint` verdes; verificación E2E del backend

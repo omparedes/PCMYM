@@ -9,6 +9,7 @@ export type BudgetItem = Database['public']['Tables']['budget_items']['Row'];
 export type BudgetStatusHistoryEntry = Database['public']['Tables']['budget_status_history']['Row'];
 
 export type BudgetStatus = 'draft' | 'sent' | 'approved' | 'rejected';
+export type BudgetItemType = 'part' | 'labor' | 'other';
 
 export const BUDGET_STATUS_LABELS: Record<BudgetStatus, string> = {
   draft: 'Borrador',
@@ -37,6 +38,8 @@ export interface NewBudgetItem {
   description: string;
   quantity: number;
   unit_price: number;
+  item_type: BudgetItemType;
+  product_id?: string | null;
 }
 
 export function lineTotal(item: Pick<BudgetItem, 'quantity' | 'unit_price'>): number {

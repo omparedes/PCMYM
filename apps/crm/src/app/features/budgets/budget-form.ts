@@ -1,18 +1,22 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, resource, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { BudgetsService } from './budgets.service';
-import type { NewBudgetItem } from './budgets.models';
+import { InventoryService } from '../inventory/inventory.service';
+import type { BudgetItemType, NewBudgetItem } from './budgets.models';
+import type { Product } from '../inventory/inventory.models';
 
 interface DraftItem {
   description: string;
   quantity: number;
   unit_price: number;
+  item_type: BudgetItemType;
+  product_id: string | null;
 }
 
 function emptyDraftItem(): DraftItem {
-  return { description: '', quantity: 1, unit_price: 0 };
+  return { description: '', quantity: 1, unit_price: 0, item_type: 'other', product_id: null };
 }
 
 @Component({
@@ -23,6 +27,7 @@ function emptyDraftItem(): DraftItem {
 })
 export class BudgetForm {
   private readonly service = inject(BudgetsService);
+  private readonly inventory = inject(InventoryService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -30,6 +35,11 @@ export class BudgetForm {
 
   protected readonly notes = signal('');
   protected readonly items = signal<DraftItem[]>([emptyDraftItem()]);
+  protected readonly products = resource({
+    params: () => ({ orderId: this.serviceOrderId }),
+    loader: () => this.inventory.listProducts({ activeOnly: true }),
+    defaultValue: [] as Product[],
+  });
 
   protected readonly total = computed(() =>
     this.items().reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unit_price || 0), 0),
@@ -56,8 +66,33 @@ export class BudgetForm {
     );
   }
 
+  protected setRowType(index: number, value: BudgetItemType): void {
+    this.items.update((rows) => rows.map((row, i) => i === index ? {
+      ...row,
+      item_type: value,
+      product_id: value === 'part' ? row.product_id : null,
+    } : row));
+  }
+
+  protected selectProduct(index: number, productId: string): void {
+    const product = this.products.value().find((item) => item.id === productId);
+    if (!product) return;
+    this.items.update((rows) => rows.map((row, i) => i === index ? {
+      ...row,
+      item_type: 'part',
+      product_id: product.id,
+      description: product.name,
+      unit_price: Number(product.sale_price),
+    } : row));
+  }
+
   protected async onSubmit(): Promise<void> {
     this.errorMsg.set(null);
+
+    if (this.items().some((row) => row.item_type === 'part' && (!row.product_id || !Number.isInteger(row.quantity)))) {
+      this.errorMsg.set('Cada repuesto debe tener un producto del inventario y una cantidad entera');
+      return;
+    }
 
     const validItems: NewBudgetItem[] = this.items()
       .filter((row) => row.description.trim().length > 0)
@@ -65,6 +100,8 @@ export class BudgetForm {
         description: row.description.trim(),
         quantity: row.quantity > 0 ? row.quantity : 1,
         unit_price: row.unit_price >= 0 ? row.unit_price : 0,
+        item_type: row.item_type,
+        product_id: row.product_id,
       }));
 
     if (validItems.length === 0) {

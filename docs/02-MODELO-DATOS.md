@@ -253,7 +253,13 @@ Tabla sin GRANT de `delete` (se rechaza vía estado, no se borra). `update` solo
 | description    | text          | not null                                                |
 | quantity       | numeric(10,2) | not null, default 1, check `> 0`                       |
 | unit_price     | numeric(10,2) | not null, check `>= 0`                                  |
+| item_type      | text          | `part`, `labor` u `other`; default `other`              |
+| product_id     | uuid          | nullable FK → `products(id)`; obligatorio si `item_type = part` |
 | created_at     | timestamptz   | default now()                                            |
+
+Los ítems `part` son repuestos enlazados al catálogo de inventario y deben tener una cantidad
+entera. El precio unitario queda congelado dentro de la cotización; cambiar el precio del catálogo
+no modifica presupuestos existentes. Los ítems `labor` y `other` no descuentan stock.
 
 **Presupuesto congelado tras enviarse:** los ítems solo se pueden insertar/editar/eliminar
 mientras el presupuesto padre está en `draft` (trigger `validate_budget_item` /
@@ -275,6 +281,12 @@ para `authenticated`.
 - **`change_budget_status(p_budget_id, p_new_status)`** — `SECURITY DEFINER`, mismo shape que
   `change_service_order_status`. Re-valida `business_id = auth_business_id()` antes de mutar; los
   triggers de validación/historial igual se disparan sobre la tabla.
+- **`apply_budget_parts_to_service_order(p_budget_id)`** — `SECURITY DEFINER`, disponible para
+  el tenant autenticado. Solo acepta presupuestos `approved`, bloquea la OS y los productos para
+  hacer un preflight completo de stock antes de mutar. Reserva o devuelve el delta de cada
+  `budget_items.item_type = 'part'`, registra el kardex y enlaza las filas resultantes de
+  `service_order_parts.budget_id`. Es idempotente: repetir la operación no duplica reservas;
+  tampoco elimina repuestos manuales que no pertenezcan al presupuesto.
 - **`record_expense(p_amount, p_description)`** — `SECURITY DEFINER`, única vía para insertar una
   fila `entry_type = 'expense'` en `financial_entries` (que sigue sin GRANT de INSERT para
   `authenticated`, igual que en Fase 1.5). Resuelve `business_id` internamente vía

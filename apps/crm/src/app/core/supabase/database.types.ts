@@ -69,6 +69,8 @@ export type Database = {
           created_at: string
           description: string
           id: string
+          item_type: string
+          product_id: string | null
           quantity: number
           unit_price: number
         }
@@ -78,6 +80,8 @@ export type Database = {
           created_at?: string
           description: string
           id?: string
+          item_type?: string
+          product_id?: string | null
           quantity?: number
           unit_price: number
         }
@@ -87,6 +91,8 @@ export type Database = {
           created_at?: string
           description?: string
           id?: string
+          item_type?: string
+          product_id?: string | null
           quantity?: number
           unit_price?: number
         }
@@ -103,6 +109,13 @@ export type Database = {
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "budget_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -758,6 +771,7 @@ export type Database = {
       }
       service_order_parts: {
         Row: {
+          budget_id: string | null
           business_id: string
           created_at: string
           id: string
@@ -770,6 +784,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          budget_id?: string | null
           business_id: string
           created_at?: string
           id?: string
@@ -782,6 +797,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          budget_id?: string | null
           business_id?: string
           created_at?: string
           id?: string
@@ -794,6 +810,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "service_order_parts_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "service_order_parts_business_id_fkey"
             columns: ["business_id"]
@@ -1087,6 +1110,7 @@ export type Database = {
           p_service_order_id: string
         }
         Returns: {
+          budget_id: string | null
           business_id: string
           created_at: string
           id: string
@@ -1140,6 +1164,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      apply_budget_parts_to_service_order: {
+        Args: { p_budget_id: string }
+        Returns: Json
       }
       auth_business_id: { Args: never; Returns: string }
       auth_role: { Args: never; Returns: string }
@@ -1302,6 +1330,7 @@ export type Database = {
           p_service_order_id: string
         }
         Returns: {
+          budget_id: string | null
           business_id: string
           created_at: string
           id: string

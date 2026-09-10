@@ -73,6 +73,14 @@ verdes; `ESTADO.md` actualizado. Oscar aprobó Checkpoints A y B.
 - **Sincronización presupuestos–inventario–OS**: líneas de repuesto enlazadas a `products`,
   selector/autocompletado en la UI y RPC atómico para reservar o devolver stock al aplicar un
   presupuesto aprobado, con trazabilidad en `service_order_parts`.
+- **Cotizador comercial Deltron (primera versión)**: catálogo externo separado del inventario,
+  importación HTML idempotente con vista previa, cálculo de margen/IGV y proformas independientes
+  de la OS con salida imprimible. Añadidos clasificación por encabezados, filtros técnicos,
+  armado asistido con contextos por PC y fichas corregibles con evidencia. La validación integral
+  depende de completar especificaciones y revisar BIOS/medidas. Plantillas de armado pendientes.
+- **Refinamiento de búsqueda del cotizador**: stock disponible por defecto, orden ascendente por
+  precio, soles como moneda principal, tipo de cambio automático, búsqueda multi-término con
+  sinónimos y navegación por Partes PC, Laptops, Monitores y Periféricos mediante RPC paginada.
 
 **DoD (cumplido):** vistas SQL versionadas y consultables desde la app; migraciones con RLS por
 `business_id`; `npm run build`/`npm test`/`npm run lint` verdes; verificación E2E del backend

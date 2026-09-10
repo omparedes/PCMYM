@@ -38,6 +38,10 @@ export const routes: Routes = [
         path: 'finance',
         loadChildren: () => import('./features/finance/finance.routes').then((m) => m.financeRoutes),
       },
+      {
+        path: 'proformas',
+        loadChildren: () => import('./features/proformas/proformas.routes').then((m) => m.proformasRoutes),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'service-orders' },
     ],
   },

@@ -669,6 +669,207 @@ export type Database = {
           },
         ]
       }
+      sales_quote_folio_counters: {
+        Row: {
+          business_id: string
+          next_folio: number
+        }
+        Insert: {
+          business_id: string
+          next_folio?: number
+        }
+        Update: {
+          business_id?: string
+          next_folio?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_quote_folio_counters_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales_quote_items: {
+        Row: {
+          build_key: string | null
+          business_id: string
+          compatibility_notes: string | null
+          compatibility_status: string
+          created_at: string
+          description: string
+          id: string
+          quantity: number
+          sales_quote_id: string
+          specification_snapshot: Json
+          supplier_product_id: string | null
+          unit_cost_pen: number
+          unit_cost_usd: number | null
+          unit_price_pen: number
+          updated_at: string
+        }
+        Insert: {
+          build_key?: string | null
+          business_id: string
+          compatibility_notes?: string | null
+          compatibility_status?: string
+          created_at?: string
+          description: string
+          id?: string
+          quantity?: number
+          sales_quote_id: string
+          specification_snapshot?: Json
+          supplier_product_id?: string | null
+          unit_cost_pen?: number
+          unit_cost_usd?: number | null
+          unit_price_pen?: number
+          updated_at?: string
+        }
+        Update: {
+          build_key?: string | null
+          business_id?: string
+          compatibility_notes?: string | null
+          compatibility_status?: string
+          created_at?: string
+          description?: string
+          id?: string
+          quantity?: number
+          sales_quote_id?: string
+          specification_snapshot?: Json
+          supplier_product_id?: string | null
+          unit_cost_pen?: number
+          unit_cost_usd?: number | null
+          unit_price_pen?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_quote_items_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_quote_items_sales_quote_id_fkey"
+            columns: ["sales_quote_id"]
+            isOneToOne: false
+            referencedRelation: "sales_quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_quote_items_supplier_product_id_fkey"
+            columns: ["supplier_product_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales_quotes: {
+        Row: {
+          business_id: string
+          created_at: string
+          created_by: string | null
+          currency: string
+          customer_id: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          exchange_rate: number
+          folio: number
+          id: string
+          margin_rate: number
+          notes: string | null
+          status: string
+          subtotal: number
+          tax_amount: number
+          tax_rate: number
+          total_amount: number
+          updated_at: string
+          valid_until: string | null
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          customer_id?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          exchange_rate?: number
+          folio: number
+          id?: string
+          margin_rate?: number
+          notes?: string | null
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number
+          total_amount?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          customer_id?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          exchange_rate?: number
+          folio?: number
+          id?: string
+          margin_rate?: number
+          notes?: string | null
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number
+          total_amount?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_quotes_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_quotes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_quotes_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_quotes_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "v_accounts_receivable"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "sales_quotes_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "v_top_customers"
+            referencedColumns: ["customer_id"]
+          },
+        ]
+      }
       service_order_deliveries: {
         Row: {
           business_id: string
@@ -1008,6 +1209,198 @@ export type Database = {
           },
         ]
       }
+      supplier_catalog_imports: {
+        Row: {
+          accepted_rows: number
+          business_id: string
+          created_at: string
+          created_by: string | null
+          error_rows: number
+          exchange_rate: number
+          id: string
+          notes: string | null
+          skipped_rows: number
+          source_file_name: string
+          source_hash: string | null
+          status: string
+          supplier: string
+          tax_included: boolean
+          total_rows: number
+        }
+        Insert: {
+          accepted_rows?: number
+          business_id: string
+          created_at?: string
+          created_by?: string | null
+          error_rows?: number
+          exchange_rate?: number
+          id?: string
+          notes?: string | null
+          skipped_rows?: number
+          source_file_name: string
+          source_hash?: string | null
+          status?: string
+          supplier?: string
+          tax_included?: boolean
+          total_rows?: number
+        }
+        Update: {
+          accepted_rows?: number
+          business_id?: string
+          created_at?: string
+          created_by?: string | null
+          error_rows?: number
+          exchange_rate?: number
+          id?: string
+          notes?: string | null
+          skipped_rows?: number
+          source_file_name?: string
+          source_hash?: string | null
+          status?: string
+          supplier?: string
+          tax_included?: boolean
+          total_rows?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_catalog_imports_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_catalog_imports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supplier_products: {
+        Row: {
+          active: boolean
+          brand: string | null
+          business_id: string
+          catalog_group: string
+          category: string
+          component_category: string
+          created_at: string
+          distribution_price_usd: number | null
+          freight_text: string | null
+          id: string
+          igv_exempt: boolean
+          inferred_attributes: Json
+          is_quote_candidate: boolean
+          last_import_id: string | null
+          last_seen_at: string
+          name: string
+          pge_price_usd: number | null
+          product_type: string
+          search_document: string
+          search_terms: string[]
+          source_url: string | null
+          specification_overrides: Json
+          stock_is_at_least: boolean
+          stock_quantity: number | null
+          stock_text: string | null
+          supplier: string
+          supplier_code: string
+          supplier_mini_code: string | null
+          technical_attributes: Json
+          technical_comment: string | null
+          technical_description: string | null
+          updated_at: string
+          warranty_code: string | null
+        }
+        Insert: {
+          active?: boolean
+          brand?: string | null
+          business_id: string
+          catalog_group?: string
+          category: string
+          component_category?: string
+          created_at?: string
+          distribution_price_usd?: number | null
+          freight_text?: string | null
+          id?: string
+          igv_exempt?: boolean
+          inferred_attributes?: Json
+          is_quote_candidate?: boolean
+          last_import_id?: string | null
+          last_seen_at?: string
+          name: string
+          pge_price_usd?: number | null
+          product_type?: string
+          search_document?: string
+          search_terms?: string[]
+          source_url?: string | null
+          specification_overrides?: Json
+          stock_is_at_least?: boolean
+          stock_quantity?: number | null
+          stock_text?: string | null
+          supplier?: string
+          supplier_code: string
+          supplier_mini_code?: string | null
+          technical_attributes?: Json
+          technical_comment?: string | null
+          technical_description?: string | null
+          updated_at?: string
+          warranty_code?: string | null
+        }
+        Update: {
+          active?: boolean
+          brand?: string | null
+          business_id?: string
+          catalog_group?: string
+          category?: string
+          component_category?: string
+          created_at?: string
+          distribution_price_usd?: number | null
+          freight_text?: string | null
+          id?: string
+          igv_exempt?: boolean
+          inferred_attributes?: Json
+          is_quote_candidate?: boolean
+          last_import_id?: string | null
+          last_seen_at?: string
+          name?: string
+          pge_price_usd?: number | null
+          product_type?: string
+          search_document?: string
+          search_terms?: string[]
+          source_url?: string | null
+          specification_overrides?: Json
+          stock_is_at_least?: boolean
+          stock_quantity?: number | null
+          stock_text?: string | null
+          supplier?: string
+          supplier_code?: string
+          supplier_mini_code?: string | null
+          technical_attributes?: Json
+          technical_comment?: string | null
+          technical_description?: string | null
+          updated_at?: string
+          warranty_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_products_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_products_last_import_id_fkey"
+            columns: ["last_import_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_catalog_imports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       v_accounts_receivable: {
@@ -1304,6 +1697,36 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      duplicate_sales_quote: {
+        Args: { p_quote_id: string }
+        Returns: {
+          business_id: string
+          created_at: string
+          created_by: string | null
+          currency: string
+          customer_id: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          exchange_rate: number
+          folio: number
+          id: string
+          margin_rate: number
+          notes: string | null
+          status: string
+          subtotal: number
+          tax_amount: number
+          tax_rate: number
+          total_amount: number
+          updated_at: string
+          valid_until: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "sales_quotes"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       generate_product_sku: {
         Args: {
           p_brand?: string
@@ -1315,6 +1738,10 @@ export type Database = {
         Returns: string
       }
       get_public_tracking_info: { Args: { p_token: string }; Returns: Json }
+      infer_supplier_specs: {
+        Args: { p_category: string; p_description: string; p_name: string }
+        Returns: Json
+      }
       is_valid_budget_transition: {
         Args: { p_from: string; p_to: string }
         Returns: boolean
@@ -1349,6 +1776,11 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      next_sales_quote_folio: { Args: never; Returns: number }
+      normalize_supplier_catalog_text: {
+        Args: { p_value: string }
+        Returns: string
+      }
       record_expense: {
         Args: { p_amount: number; p_description: string }
         Returns: {
@@ -1370,8 +1802,148 @@ export type Database = {
         Args: { p_product_id: string; p_service_order_id: string }
         Returns: boolean
       }
+      search_supplier_products: {
+        Args: {
+          p_catalog_group?: string
+          p_component_category?: string
+          p_include_out_of_stock?: boolean
+          p_limit?: number
+          p_offset?: number
+          p_quote_only?: boolean
+          p_search?: string
+        }
+        Returns: {
+          active: boolean
+          brand: string | null
+          business_id: string
+          catalog_group: string
+          category: string
+          component_category: string
+          created_at: string
+          distribution_price_usd: number | null
+          freight_text: string | null
+          id: string
+          igv_exempt: boolean
+          inferred_attributes: Json
+          is_quote_candidate: boolean
+          last_import_id: string | null
+          last_seen_at: string
+          name: string
+          pge_price_usd: number | null
+          product_type: string
+          search_document: string
+          search_terms: string[]
+          source_url: string | null
+          specification_overrides: Json
+          stock_is_at_least: boolean
+          stock_quantity: number | null
+          stock_text: string | null
+          supplier: string
+          supplier_code: string
+          supplier_mini_code: string | null
+          technical_attributes: Json
+          technical_comment: string | null
+          technical_description: string | null
+          updated_at: string
+          warranty_code: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "supplier_products"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      set_supplier_specifications: {
+        Args: { p_overrides: Json; p_product_id: string }
+        Returns: {
+          active: boolean
+          brand: string | null
+          business_id: string
+          catalog_group: string
+          category: string
+          component_category: string
+          created_at: string
+          distribution_price_usd: number | null
+          freight_text: string | null
+          id: string
+          igv_exempt: boolean
+          inferred_attributes: Json
+          is_quote_candidate: boolean
+          last_import_id: string | null
+          last_seen_at: string
+          name: string
+          pge_price_usd: number | null
+          product_type: string
+          search_document: string
+          search_terms: string[]
+          source_url: string | null
+          specification_overrides: Json
+          stock_is_at_least: boolean
+          stock_quantity: number | null
+          stock_text: string | null
+          supplier: string
+          supplier_code: string
+          supplier_mini_code: string | null
+          technical_attributes: Json
+          technical_comment: string | null
+          technical_description: string | null
+          updated_at: string
+          warranty_code: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "supplier_products"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      supplier_header_classification: {
+        Args: { p_category: string }
+        Returns: Json
+      }
+      update_sales_quote_draft: {
+        Args: {
+          p_customer_name: string
+          p_customer_phone: string
+          p_exchange_rate: number
+          p_items: Json
+          p_margin_rate: number
+          p_notes: string
+          p_quote_id: string
+          p_tax_rate: number
+          p_valid_until: string
+        }
+        Returns: {
+          business_id: string
+          created_at: string
+          created_by: string | null
+          currency: string
+          customer_id: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          exchange_rate: number
+          folio: number
+          id: string
+          margin_rate: number
+          notes: string | null
+          status: string
+          subtotal: number
+          tax_amount: number
+          tax_rate: number
+          total_amount: number
+          updated_at: string
+          valid_until: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "sales_quotes"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       [_ in never]: never

@@ -1,12 +1,59 @@
 # ESTADO DEL PROYECTO
-Última actualización: 2026-09-07 por Codex — estación Oscar/Windows
+Última actualización: 2026-09-09 por Codex — estación Oscar/Windows
 
 > Protocolo de handoff: **todo agente actualiza este archivo al cerrar sesión.** Es lo que permite
 > cambiar de estación o de agente sin perder el hilo. Mantén el formato de abajo.
 
 ## Fase actual
-**Sincronización de presupuestos con inventario y repuestos de OS.** Implementada, migrada al
-Supabase remoto y verificada con pruebas, lint, build y lint de esquema.
+**Cotizador Deltron: clasificación por encabezados y armado asistido implementados.**
+Los cinco puntos aprobados están en `feat/deltron-compatible-builder`. Las migraciones están
+aplicadas en Supabase; los cambios de frontend están verificados y listos para publicarse desde
+esta rama.
+El motor usa reglas deterministas, sin IA. Datos ausentes y soporte BIOS no verificado quedan
+en revisión: no se promete compatibilidad integral a partir del socket.
+
+## Armado asistido y fichas técnicas (2026-09-08)
+- Clasificación centralizada en PostgreSQL por grupo Deltron: excepciones para refrigeración,
+  fuentes, accesorios y memoria flash antes de familias generales. Se reclasificó el catálogo
+  existente y se reconstruyeron sus alias; el importador conserva los datos originales del HTML.
+- Filtros técnicos por plataforma, socket, familia, serie, chipset, DDR, formato, capacidad,
+  velocidad, almacenamiento, refrigeración y potencia según la categoría seleccionada.
+- Modos **Catálogo libre** y **Armar PC**, con contextos independientes PC 1, PC 2, etc.
+  Sustituir o quitar piezas recalcula restricciones bidireccionales. Las incompatibles se excluyen
+  y las que tienen datos pendientes se presentan en un bloque de revisión.
+- Ficha editable con especificaciones inferidas y correcciones persistentes separadas. Se pueden
+  registrar soporte del CPU exacto, fuente documental, versión BIOS y medidas/conectores faltantes.
+  Las importaciones actualizan precios y datos del proveedor sin borrar correcciones del taller.
+- Cada línea guarda `build_key` y `specification_snapshot`; los pendientes quedan registrados.
+  Los armados requieren reconocer la revisión antes de guardar un borrador, y los conflictos
+  conocidos bloquean el guardado. La impresión identifica cada PC; las notas técnicas internas
+  se consultan en pantalla pero no se imprimen para el cliente.
+- Migraciones aplicadas: `20260908140000_supplier_specs_and_builds.sql`,
+  `20260908143000_tighten_case_support_evidence.sql` y
+  `20260908144000_align_supplier_function_volatility.sql`.
+- Verificación: 29 pruebas Vitest (incluidas UI con TestBed/Signal Forms), lint y build en verde;
+  `supabase/tests/supplier_specs.sql` pasó contra el remoto con rol authenticated y dos tenants,
+  dentro de una transacción con rollback. `supabase db lint --linked` sin errores ni advertencias.
+- Pendiente: validación visual/manual del usuario en `/proformas`. No se hizo click-through en
+  navegador ni despliegue de frontend en esta sesión. Guía: `docs/05-COTIZADOR-ARMADO.md`.
+- Importante para handoff: los cambios del cotizador V1 y de esta iteración se conservaron en esta
+  rama. No confundir "migrado en Supabase" con "publicado en Vercel".
+
+## Edición y duplicado de proformas (2026-09-08)
+- Los borradores tienen la ruta `/proformas/:id/edit` y permiten cambiar cliente, vigencia,
+  condiciones, cantidades y líneas. Se conservan los precios congelados de las líneas existentes;
+  los productos nuevos usan el catálogo y las reglas de armado actuales.
+- Todas las proformas tienen **Duplicar**. `duplicate_sales_quote()` crea un nuevo folio y copia
+  cliente, condiciones, precios, `build_key`, compatibilidad y snapshots en una sola transacción;
+  la copia queda en `draft` y la original permanece intacta. Se puede duplicar una enviada o
+  aprobada para otro cliente sin reabrirla.
+- `update_sales_quote_draft()` reemplaza atómicamente los datos y líneas de un borrador. La BD
+  rechaza cualquier intento de editar líneas de una proforma no borrador. La impresión ofrece
+  **Duplicar y editar** y **Editar** cuando corresponde.
+- Migraciones aplicadas: `20260908150000_edit_and_duplicate_sales_quotes.sql` y
+  `20260909151000_return_duplicate_quote_totals.sql`. Tipos Supabase regenerados. Prueba remota
+  extendida con edición, duplicado, totales y protección del original;
+  29 pruebas Vitest, lint y build siguen en verde.
 
 ## Carga inicial de inventario (Supabase remoto)
 - Se cargaron 19 productos en el negocio `Mi Taller PCMYM` (`taller-1`) mediante el RPC
@@ -73,6 +120,45 @@ Supabase remoto y verificada con pruebas, lint, build y lint de esquema.
 - Tipos Supabase regenerados desde el proyecto enlazado. Verificación remota: `supabase migration
   list` muestra la migración aplicada y `supabase db lint --linked` no reporta errores.
 - Verificación local: 14 pruebas Vitest, `npm run lint` y `npm run build` en verde.
+
+## Cotizador Deltron y proformas de venta
+- Migraciones remotas aplicadas: `20260908100000_create_supplier_catalog_and_sales_quotes.sql` y
+  `20260908103000_validate_sales_quote_status.sql`.
+- El importador acepta el HTML `POR LINEAS.html` de Deltron, respeta su codificación Windows-1252,
+  muestra una vista previa y procesa por código de proveedor. El catálogo queda separado de
+  `products`, por lo que una actualización no modifica el stock propio.
+- Se guardan historial de importaciones, tipo de cambio, precios en USD, disponibilidad (`>20` se
+  conserva como mínimo conocido), IGV/PGE, marca, garantía, categoría y atributos técnicos básicos.
+  Los productos que desaparecen del archivo más reciente quedan inactivos.
+- Se añadió `/proformas`: búsqueda de catálogo, selección de piezas, cliente, tipo de cambio,
+  margen, IGV, vigencia, notas, cálculo de subtotal/IGV/total y guardado de proformas con folio.
+- Se añadió vista imprimible `/proformas/:id/print` para generar PDF desde el navegador. Las
+  proformas congelan sus importes y no dependen de una OS.
+- La base de datos aplica RLS por tenant, folios correlativos, transición protegida de estados y
+  recálculo atómico de totales. Los ítems conservan `supplier_product_id` y estado de compatibilidad.
+- La carpeta local `GrupoDeltronData/` quedó excluida de Git por contener precios reales del proveedor.
+- Verificación local: 15 pruebas Vitest, `npm run lint` y `npm run build` en verde. `supabase db lint
+  --linked` sin errores.
+
+## Refinamiento del catálogo Deltron
+- Migraciones remotas aplicadas: `20260908120000_refine_supplier_catalog_search.sql`,
+  `20260908121000_fix_supplier_catalog_abbreviations.sql` y
+  `20260908122000_grant_catalog_search_normalizer.sql`. La corrección posterior
+  `20260908123000_fix_supplier_cooling_classification.sql` reclasifica los coolers existentes.
+  Añaden clasificación
+  por grupo (`pc_parts`, `laptops`, `monitors`, `peripherals`, `other`) y subcategoría de componentes,
+  texto de búsqueda normalizado, sinónimos e índices. La RPC `search_supplier_products()` impone el
+  tenant, filtra stock disponible por defecto, ordena por precio ascendente y permite paginación o
+  inclusión explícita de agotados.
+- El parser reconoce abreviaturas y equivalencias comerciales (`MB`/placa madre, `RAM`/memoria,
+  `case`/gabinete, etc.), conserva `C` como case solo cuando es la categoría del proveedor y
+  prioriza `cooler`, `fan`, `liquid` y `disipador` como refrigeración antes de evaluar la palabra
+  `CPU`. La interfaz ahora usa filtros por Partes PC, Laptops, Monitores y Periféricos, subfiltros
+  de componentes, búsqueda multi-término y soles como precio principal; el tipo de cambio se toma
+  de la última importación y puede ajustarse manualmente.
+- Verificación: 17 pruebas Vitest, `npm run lint`, `npm run build`, `supabase db lint --linked` y
+  `supabase migration list` en verde; las migraciones `20260908120000` a `20260908123000` figuran
+  aplicadas en remoto.
 
 ## Hecho en esta sesión (Inventario + Repuestos V1)
 - **Base de datos & Supabase:**
@@ -246,6 +332,12 @@ Supabase remoto y verificada con pruebas, lint, build y lint de esquema.
   mencionada arriba (no es un bloqueo de código, es una verificación manual recomendada).
 
 ## Siguiente paso concreto
+- Validar manualmente el armado asistido y el flujo de edición/duplicado según
+  `docs/05-COTIZADOR-ARMADO.md`. Después, con autorización, commitear/subir los cambios del
+  cotizador y verificar el despliegue frontend.
+- **Próxima iteración: plantillas de armado** económica, oficina, gaming y diseño, apoyadas en
+  las fichas técnicas verificadas y en el motor de restricciones ya implementado. No están
+  incluidas en estos cinco puntos. Completar fuentes oficiales y soporte BIOS por modelo.
 - **Fase 4 — Base de conocimiento** (`docs/03-ROADMAP-FASES.md`): FAQ y guías paso a paso
   gestionables por tenant, con imágenes y búsqueda para reducir consultas repetitivas.
 - Antes de tocar la BD: leer `docs/02-MODELO-DATOS.md` actualizado (ya incluye `budgets` como base

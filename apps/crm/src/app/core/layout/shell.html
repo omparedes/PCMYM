@@ -50,6 +50,16 @@
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg>
         <span>Finanzas</span>
       </a>
+
+      <a routerLink="/proformas"
+         routerLinkActive="bg-red-600 text-white shadow-[0_8px_18px_rgba(225,29,42,0.26)]"
+         [routerLinkActiveOptions]="{exact: false}"
+         #rlp="routerLinkActive"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-[14.5px] transition-all duration-150 text-slate-500 hover:bg-slate-50"
+         [class.hover:bg-slate-50]="!rlp.isActive">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+        <span>Proformas</span>
+      </a>
     </nav>
 
     <div class="mt-auto border-t border-slate-100 pt-4 flex items-center gap-3 px-2">
@@ -99,6 +109,10 @@
     <a routerLink="/finance" routerLinkActive="text-red-600" [routerLinkActiveOptions]="{exact: false}" #mbF="routerLinkActive" class="flex-1 flex flex-col items-center gap-1 p-2 transition-colors" [class.text-slate-400]="!mbF.isActive">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg>
       <span class="text-[11px] font-bold">Finanzas</span>
+    </a>
+    <a routerLink="/proformas" routerLinkActive="text-red-600" [routerLinkActiveOptions]="{exact: false}" #mbP="routerLinkActive" class="flex-1 flex flex-col items-center gap-1 p-2 transition-colors" [class.text-slate-400]="!mbP.isActive">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+      <span class="text-[11px] font-bold">Proformas</span>
     </a>
   </nav>
 </div>

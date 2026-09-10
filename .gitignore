@@ -22,6 +22,9 @@ test-webhook.js
 # Config local con posibles secretos (se regenera con `supabase init`)
 /supabase/.env
 
+# Catálogos reales de proveedores (precios y disponibilidad)
+/GrupoDeltronData/
+
 # === Node / Angular ===
 node_modules/
 dist/

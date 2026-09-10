@@ -1,0 +1,262 @@
+<div class="max-w-[1280px] w-full mx-auto md:p-6 p-4">
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+    <div>
+      <p class="text-[11px] font-black uppercase tracking-[0.2em] text-red-600 m-0">Ventas</p>
+      <h1 class="text-3xl font-black tracking-tight text-slate-900 mt-1 mb-1">{{ editingQuoteId ? 'Editar proforma' : 'Cotizador de equipos' }}</h1>
+      <p class="text-sm font-medium text-slate-500 m-0">Catálogo Deltron para armar proformas rápidas de laptops y computadoras.</p>
+    </div>
+    <div class="flex items-center gap-2 text-xs font-bold text-slate-500 bg-white border border-slate-200 rounded-xl px-3 py-2">
+      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+      Catálogo externo separado del inventario propio
+    </div>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] p-6 mb-6">
+    @if (editingQuoteId) {
+      @if (editorData.isLoading()) { <p class="text-sm font-semibold text-slate-500 m-0">Cargando proforma para editar...</p> }
+      @else if (editorData.error()) { <p role="alert" class="text-sm font-bold text-red-600 m-0">No se pudo cargar la proforma.</p> }
+      @else if (editorData.value()?.quote?.status !== 'draft') { <p role="alert" class="text-sm font-bold text-amber-700 m-0">Solo los borradores se pueden editar. Usa «Duplicar» para crear una copia editable.</p> }
+      @else { <p class="text-sm font-bold text-blue-700 m-0">Editando proforma #{{ editorData.value()?.quote?.folio }}. Los precios guardados se conservan.</p> }
+    } @else {
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div>
+        <h2 class="text-[16px] font-extrabold text-slate-900 m-0">Actualizar catálogo Deltron</h2>
+        <p class="text-[13px] text-slate-500 font-medium mt-1 mb-0">Sube el HTML descargado. El sistema detecta productos, precios, stock y tipo de cambio antes de aplicar.</p>
+      </div>
+      <label class="inline-flex items-center justify-center gap-2 px-4 py-3 bg-slate-900 text-white rounded-xl font-bold text-[13px] cursor-pointer hover:bg-slate-800 transition-colors">
+        <input type="file" accept=".html,.htm,text/html" class="hidden" (change)="chooseFile(($any($event.target)).files?.[0])" />
+        {{ previewing() ? 'Analizando...' : 'Seleccionar HTML' }}
+      </label>
+    </div> }
+
+    @if (importPreview(); as preview) {
+      <div class="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <p class="text-sm font-extrabold text-amber-900 m-0">{{ preview.file.name }}</p>
+            <p class="text-xs font-semibold text-amber-800 mt-1 mb-0">{{ preview.parsed.products.length }} productos · tipo de cambio {{ preview.parsed.exchange_rate }} · {{ preview.parsed.tax_included ? 'Incluye IGV' : 'No incluye IGV' }}</p>
+          </div>
+          <button type="button" class="px-4 py-2.5 bg-red-600 text-white rounded-lg font-bold text-xs hover:bg-red-700 disabled:opacity-50" [disabled]="importing()" (click)="applyImport()">
+            {{ importing() ? 'Aplicando...' : 'Aplicar actualización' }}
+          </button>
+        </div>
+        @if (preview.parsed.warnings.length > 0) {
+          <div class="mt-3 text-xs text-amber-900 font-medium">
+            @for (warning of preview.parsed.warnings.slice(0, 3); track warning) { <p class="m-0 mt-1">{{ warning }}</p> }
+            @if (preview.parsed.warnings.length > 3) { <p class="m-0 mt-1">Hay {{ preview.parsed.warnings.length - 3 }} advertencias adicionales.</p> }
+          </div>
+        }
+      </div>
+    }
+    @if (importResult(); as result) {
+      <div class="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-800 font-bold">
+        Catálogo actualizado: {{ result.acceptedRows }} productos procesados y {{ result.skippedRows }} filas omitidas.
+      </div>
+    }
+    @if (importError(); as msg) {
+      <div class="mt-4 rounded-xl border border-red-100 bg-red-50 p-3 text-xs text-red-700 font-bold">{{ msg }}</div>
+    }
+    @if (imports.value().length > 0) {
+      <p class="text-[11px] text-slate-400 font-semibold mt-4 mb-0">Última importación: {{ imports.value()[0].source_file_name }} · {{ imports.value()[0].created_at | date:'short' }}</p>
+    }
+  </div>
+
+  <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+    <section class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden">
+      <div class="p-4 border-b bg-blue-50">
+        <div class="flex flex-wrap gap-2 items-center">
+          <button type="button" class="rounded border px-3 py-2 text-sm" [class.bg-white]="!buildMode()" (click)="buildMode.set(false)">Catálogo libre</button>
+          <button type="button" class="rounded border px-3 py-2 text-sm" [class.bg-white]="buildMode()" (click)="buildMode.set(true)">Armar PC</button>
+          @if (buildMode()) {
+            <label class="text-sm">Armado <select class="border rounded p-2" [value]="activeBuild()" (change)="activeBuild.set($any($event.target).value)">
+              @for (key of builds(); track key) { <option [value]="key">{{ key }}</option> }
+            </select></label>
+            <button type="button" class="text-blue-700 font-bold text-sm" (click)="newBuild()">+ Otra PC</button>
+          }
+        </div>
+        @if (buildMode()) {
+          <p class="text-xs mt-3">Se filtran las piezas según {{ activeBuild() }}. Los datos pendientes se muestran por separado. Quita o sustituye una pieza para cambiar las restricciones.</p>
+          <div class="flex flex-wrap gap-2 mt-2">
+            @for (item of currentItems(); track item.key) {
+              <span class="bg-white border rounded px-2 py-1 text-xs">{{ supplierComponentCategoryLabel(item.product.component_category) }}: {{ item.product.name }}
+                @if (productSpecs(item.product)['socket']) { · {{ productSpecs(item.product)['socket'] }} }
+                @if (productSpecs(item.product)['memory_type']) { · {{ productSpecs(item.product)['memory_type'] }} }
+                <button type="button" (click)="removeProduct(item.key)" [attr.aria-label]="'Quitar ' + item.product.name"> ×</button>
+              </span>
+            }
+          </div>
+        }
+      </div>
+      <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-[15px] font-extrabold text-slate-900 m-0">Catálogo para cotizar</h2>
+          <p class="text-xs font-medium text-slate-500 mt-1 mb-0">Selecciona piezas disponibles para agregarlas a la proforma.</p>
+        </div>
+        <div class="flex flex-col gap-2 w-full md:w-auto">
+          <div class="flex gap-2">
+            <input type="search" list="proforma-search-suggestions" placeholder="Buscar: RAM 8G DDR4..." class="w-full md:w-72 py-2.5 px-3 border border-slate-200 rounded-lg text-xs font-medium outline-none focus:border-red-600" [value]="search()" (input)="search.set(($any($event.target)).value)" />
+            <datalist id="proforma-search-suggestions">
+              @for (suggestion of searchSuggestions(); track suggestion.value) { <option [value]="suggestion.value">{{ suggestion.label }}</option> }
+            </datalist>
+            <button type="button" class="px-3 py-2 rounded-lg text-xs font-bold border border-slate-200 bg-white text-slate-600 whitespace-nowrap" [class.bg-red-600]="quoteOnly()" [class.text-white]="quoteOnly()" (click)="quoteOnly.set(!quoteOnly())">{{ quoteOnly() ? 'Cotizables' : 'Todos disponibles' }}</button>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            @for (group of catalogGroups; track group.value) {
+              <button type="button" class="px-2.5 py-1.5 rounded-lg text-[10px] font-extrabold border border-slate-200 text-slate-500" [class.bg-slate-900]="catalogGroup() === group.value" [class.text-white]="catalogGroup() === group.value" (click)="setCatalogGroup(group.value)">{{ group.label }}</button>
+            }
+            <button type="button" class="px-2.5 py-1.5 rounded-lg text-[10px] font-extrabold border border-slate-200 text-slate-500" [class.bg-amber-500]="includeOutOfStock()" [class.text-white]="includeOutOfStock()" (click)="includeOutOfStock.set(!includeOutOfStock())">{{ includeOutOfStock() ? 'Incluye agotados' : 'Solo con stock' }}</button>
+          </div>
+          @if (catalogGroup() === 'pc_parts') {
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" class="px-2 py-1 rounded-md text-[10px] font-bold" [class.bg-red-50]="componentCategory() === 'all'" [class.text-red-700]="componentCategory() === 'all'" (click)="setComponentCategory('all')">Todas las partes</button>
+              @for (category of componentCategories; track category.value) {
+                <button type="button" class="px-2 py-1 rounded-md text-[10px] font-bold text-slate-500 hover:bg-slate-50" [class.bg-red-50]="componentCategory() === category.value" [class.text-red-700]="componentCategory() === category.value" (click)="setComponentCategory(category.value)">{{ category.label }}</button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+      <div class="p-4">
+        @if (editingProduct(); as product) {
+          <app-supplier-spec-editor [product]="product" (saved)="specificationsSaved($event)" (closed)="editingProduct.set(null)" />
+        }
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-3">
+          @for (facet of facets(); track facet.key) {
+            <label class="text-xs font-semibold">{{ facet.label }}
+              <select class="block mt-1 w-full border rounded p-2 bg-white" [value]="technicalFilters()[facet.key] || ''" (change)="setTechnicalFilter(facet.key, $any($event.target).value)">
+                <option value="">Todos</option>
+                @for (value of facet.values; track value) { <option [value]="value">{{ valueLabel(value) }}</option> }
+              </select>
+            </label>
+          }
+        </div>
+        <div class="flex flex-wrap justify-between items-center gap-2 mb-3 text-xs text-slate-500">
+          <span>{{ filteredResults().length }} resultados · Menor a mayor precio</span>
+          <button type="button" class="text-blue-700" (click)="technicalFilters.set({}); search.set('')">Limpiar búsqueda y filtros técnicos</button>
+          @if (buildMode()) {
+            <span>{{ excludedCount() }} incompatibles excluidos · {{ reviewCount() }} por revisar</span>
+            <label><input type="checkbox" [checked]="showReview()" (change)="showReview.set($any($event.target).checked)" /> Mostrar pendientes de revisión</label>
+          }
+        </div>
+        @if (products.isLoading()) {
+          <p class="text-sm text-slate-400 font-semibold text-center py-10 m-0">Cargando catálogo...</p>
+        } @else if (products.error()) {
+          <p role="alert" class="text-red-600">No se pudo cargar el catálogo. <button type="button" (click)="products.reload()">Reintentar</button></p>
+        } @else if (filteredResults().length === 0) {
+          <div class="text-center py-12">
+            <p class="text-sm font-bold text-slate-500 m-0">No hay productos que cumplan estos filtros.</p>
+            <p class="text-xs text-slate-400 font-medium mt-1 mb-0">Revisa los filtros, las piezas elegidas o actualiza el catálogo.</p>
+          </div>
+        } @else {
+          @for (section of ['available', 'review']; track section) {
+          @if (section === 'review' && buildMode() && reviewCount() > 0) { <h3 class="text-sm font-bold text-amber-800 mt-5">Requieren revisión técnica</h3> }
+          <div class="flex flex-col divide-y divide-slate-100">
+            @for (result of pageResults(); track result.product.id) {
+            @if ((result.check.status === 'review') === (section === 'review')) {
+              @let product = result.product;
+              <div class="py-3 flex flex-wrap sm:flex-nowrap items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                  @if (product.product_type === 'laptop') { 💻 } @else if (product.product_type === 'component') { ⚙️ } @else if (product.product_type === 'monitor') { 🖥️ } @else { ▦ }
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2"><p class="text-[13px] font-bold text-slate-800 m-0">{{ product.name }}</p></div>
+                  <p class="text-[11px] font-medium text-slate-400 truncate mt-1 mb-0">{{ product.brand }} · {{ product.supplier_code }} · Stock {{ availability(product) }}</p>
+                  <p class="text-[10px] text-slate-500 mt-1">{{ product.category }} → {{ product.component_category !== 'other' ? supplierComponentCategoryLabel(product.component_category) : supplierProductTypeLabel(product.product_type) }}</p>
+                  @if (buildMode()) {
+                    <p class="text-xs mt-1" [class.text-amber-700]="result.check.status === 'review'">{{ compatibilityLabels[result.check.status] }}</p>
+                    @for (reason of result.check.reasons; track reason) { <p class="text-xs text-amber-800">{{ reason }}</p> }
+                  }
+                  <button type="button" class="text-xs text-blue-700 mt-1" (click)="editingProduct.set(product)">Revisar / completar ficha</button>
+                </div>
+                <div class="text-right shrink-0">
+                  <p class="text-[17px] font-black text-slate-900 m-0">S/ {{ customerPrice(product) | number:'1.0-0' }}</p>
+                  <p class="text-[10px] font-semibold text-slate-500 mt-1 mb-0">Venta estimada</p>
+                  <p class="text-[10px] font-semibold text-slate-400 mt-0.5 mb-0">US$ {{ product.distribution_price_usd | number:'1.2-2' }} · base S/ {{ salePrice(product) | number:'1.0-0' }}</p>
+                </div>
+                <button type="button" class="px-2 py-2 text-xs rounded-lg bg-red-50 text-red-600 font-bold hover:bg-red-100 disabled:opacity-30" [disabled]="!product.is_quote_candidate || product.stock_quantity === null || product.stock_quantity === 0" (click)="addProduct(product)">{{ addLabel(product) }}</button>
+              </div>
+            }
+            }
+          </div>
+          }
+          <div class="flex justify-between items-center mt-4 text-xs">
+            <button type="button" class="border rounded p-2 disabled:opacity-30" [disabled]="page() === 0" (click)="page.set(page() - 1)">Anterior</button>
+            <span>Página {{ page() + 1 }} de {{ pageCount() }}</span>
+            <button type="button" class="border rounded p-2 disabled:opacity-30" [disabled]="page() + 1 >= pageCount()" (click)="page.set(page() + 1)">Siguiente</button>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden xl:sticky xl:top-6">
+      <div class="px-6 py-5 bg-slate-900 text-white">
+        <p class="text-[10px] uppercase tracking-[0.18em] text-red-300 font-black m-0">Nueva proforma</p>
+        <h2 class="text-xl font-black mt-1 mb-0">Armar cotización</h2>
+      </div>
+      <div class="p-5">
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <input type="text" placeholder="Cliente" class="col-span-2 py-2.5 px-3 border border-slate-200 rounded-lg text-xs font-medium outline-none focus:border-red-600" [value]="customerName()" (input)="customerName.set(($any($event.target)).value)" />
+          <input type="text" placeholder="Celular (opcional)" class="py-2.5 px-3 border border-slate-200 rounded-lg text-xs font-medium outline-none focus:border-red-600" [value]="customerPhone()" (input)="customerPhone.set(($any($event.target)).value)" />
+          <input type="date" class="py-2.5 px-3 border border-slate-200 rounded-lg text-xs font-medium outline-none focus:border-red-600" [value]="validUntil()" (input)="validUntil.set(($any($event.target)).value)" />
+        </div>
+        <div class="grid grid-cols-3 gap-2 mb-4">
+          <label class="text-[10px] font-bold text-slate-500">TC<input type="number" step="0.001" class="mt-1 w-full py-2 px-2 border border-slate-200 rounded-lg text-xs font-bold" [value]="exchangeRate()" (input)="setExchangeRate(+($any($event.target)).value)" /></label>
+          <label class="text-[10px] font-bold text-slate-500">Margen %<input type="number" step="1" class="mt-1 w-full py-2 px-2 border border-slate-200 rounded-lg text-xs font-bold" [value]="marginRate() * 100" (input)="setMarginPercent(+($any($event.target)).value)" /></label>
+          <label class="text-[10px] font-bold text-slate-500">IGV %<input type="number" step="1" class="mt-1 w-full py-2 px-2 border border-slate-200 rounded-lg text-xs font-bold" [value]="taxRate() * 100" (input)="setTaxPercent(+($any($event.target)).value)" /></label>
+        </div>
+
+        @if (selected().length === 0) {
+          <div class="rounded-xl border border-dashed border-slate-200 p-7 text-center mb-4"><p class="text-xs font-bold text-slate-400 m-0">Agrega productos desde el catálogo.</p></div>
+        } @else {
+          <div class="flex flex-col gap-2 mb-4">
+            @for (item of selected(); track item.key) {
+              <div class="rounded-xl border border-slate-100 bg-slate-50 p-3">
+                <p class="text-[10px] text-blue-700 font-bold mb-1">{{ item.buildKey || 'Producto independiente' }}</p>
+                <div class="flex justify-between gap-2"><p class="text-xs font-bold text-slate-800 m-0 leading-tight">{{ item.product.name }}</p><button type="button" class="text-slate-400 hover:text-red-600" (click)="removeProduct(item.key)">×</button></div>
+                <div class="flex items-center justify-between mt-2"><input type="number" min="1" step="1" class="w-16 py-1.5 px-2 border border-slate-200 rounded-md text-xs font-bold" [disabled]="!!item.buildKey && singleSlot(item.product)" [value]="item.quantity" (input)="setQuantity(item.key, +($any($event.target)).value)" /><span class="text-xs font-black text-slate-900">S/ {{ quoteItemTotal({quantity: item.quantity, unit_price_pen: itemUnitPrice(item)}) | number:'1.2-2' }}</span></div>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="border-t border-slate-100 pt-3 space-y-1 text-xs font-semibold text-slate-500">
+          <div class="flex justify-between"><span>Subtotal</span><span>S/ {{ subtotal() | number:'1.2-2' }}</span></div>
+          <div class="flex justify-between"><span>IGV</span><span>S/ {{ taxAmount() | number:'1.2-2' }}</span></div>
+          <div class="flex justify-between text-lg font-black text-slate-900 pt-2"><span>Total</span><span>S/ {{ total() | number:'1.2-2' }}</span></div>
+        </div>
+        <textarea rows="2" placeholder="Notas y condiciones..." class="mt-4 w-full py-2.5 px-3 border border-slate-200 rounded-lg text-xs font-medium outline-none resize-y focus:border-red-600" [value]="quoteNotes()" (input)="quoteNotes.set(($any($event.target)).value)"></textarea>
+        @if (quoteError(); as msg) { <p class="text-xs text-red-600 font-bold mt-3 mb-0">{{ msg }}</p> }
+        @for (report of buildReports(); track report.key) {
+          <div class="mt-3 rounded border p-3 text-xs" [class.border-red-400]="report.result.status === 'incompatible'">
+            <p class="font-bold">{{ report.key }} · {{ compatibilityLabels[report.result.status] }}</p>
+            @for (reason of report.result.reasons; track reason) { <p class="mt-1">{{ reason }}</p> }
+          </div>
+        }
+        @if (buildReports().length > 0) {
+          <label class="block text-xs mt-3"><input type="checkbox" [checked]="reviewAccepted()" (change)="reviewAccepted.set($any($event.target).checked)" /> Guardar como borrador con los pendientes técnicos indicados. No confirma compatibilidad completa.</label>
+        }
+        @if (savedQuoteFolio(); as folio) { <p class="text-xs text-emerald-700 font-bold mt-3 mb-0">Proforma #{{ folio }} guardada.</p> }
+        <button type="button" class="w-full mt-4 py-3 bg-red-600 text-white rounded-xl font-bold text-sm hover:bg-red-700 disabled:opacity-50" [disabled]="savingQuote() || !!(editingQuoteId && editorData.value()?.quote?.status !== 'draft')" (click)="saveQuote()">{{ savingQuote() ? 'Guardando...' : editingQuoteId ? 'Guardar cambios' : 'Guardar proforma' }}</button>
+      </div>
+    </section>
+  </div>
+
+  <section class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden mt-6">
+    <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50"><h2 class="text-[15px] font-extrabold text-slate-900 m-0">Proformas recientes</h2></div>
+    <div class="p-4">
+      @if (quotes.value().length === 0) { <p class="text-sm text-slate-400 text-center py-6 m-0">Todavía no hay proformas guardadas.</p> }
+      @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+          @for (quote of quotes.value(); track quote.id) {
+            <div class="rounded-xl border border-slate-100 p-4">
+              <div class="flex justify-between items-start gap-2"><div><p class="text-sm font-black text-slate-900 m-0">Proforma #{{ quote.folio }}</p><p class="text-[11px] text-slate-400 font-semibold mt-1 mb-0">{{ quote.customer_name || 'Cliente sin registrar' }}</p></div><span class="text-[10px] font-extrabold uppercase text-slate-500">{{ salesQuoteStatusLabel(quote.status) }}</span></div>
+              <p class="text-lg font-black text-slate-900 mt-4 mb-0">S/ {{ quote.total_amount | number:'1.2-2' }}</p>
+              <p class="text-[11px] text-slate-400 font-semibold mt-1 mb-0">Creada {{ quote.created_at | date:'short' }}</p>
+              <div class="flex flex-wrap items-center gap-3 mt-3"><a [routerLink]="['/proformas', quote.id, 'print']" class="text-xs font-bold text-red-600 hover:text-red-700">Ver e imprimir →</a>@if (quote.status === 'draft') { <a [routerLink]="['/proformas', quote.id, 'edit']" class="text-[11px] font-bold text-slate-500 hover:text-slate-900">Editar</a> <button type="button" class="text-[11px] font-bold text-slate-500 hover:text-slate-900" (click)="changeQuoteStatus(quote.id, 'sent')">Marcar enviada</button> } @else if (quote.status === 'sent') { <button type="button" class="text-[11px] font-bold text-emerald-600 hover:text-emerald-700" (click)="changeQuoteStatus(quote.id, 'approved')">Aprobar</button> } <button type="button" class="text-[11px] font-bold text-blue-600 hover:text-blue-700" (click)="duplicateQuote(quote.id)">Duplicar</button></div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</div>

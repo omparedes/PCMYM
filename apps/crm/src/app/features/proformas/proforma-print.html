@@ -1,0 +1,25 @@
+<div class="min-h-screen bg-slate-100 p-4 md:p-8 print:bg-white print:p-0">
+  <div class="max-w-[820px] mx-auto mb-4 flex justify-between print:hidden">
+    <button type="button" class="px-4 py-2 rounded-lg bg-white border border-slate-200 text-slate-600 font-bold text-sm" (click)="back()">Volver</button>
+    <div class="flex gap-2"><button type="button" class="px-4 py-2 rounded-lg bg-white border border-blue-200 text-blue-700 font-bold text-sm" (click)="duplicate()">Duplicar y editar</button>@if (quote.value()?.status === 'draft') { <button type="button" class="px-4 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold text-sm" (click)="back()">Editar</button> }<button type="button" class="px-4 py-2 rounded-lg bg-red-600 text-white font-bold text-sm" (click)="print()">Imprimir / PDF</button></div>
+  </div>
+  @if (quote.value(); as q) {
+    @for (review of technicalReviews(); track review.key) {
+      <aside class="max-w-[820px] mx-auto mb-4 p-4 border border-amber-200 bg-amber-50 text-xs print:hidden">
+        <p class="font-bold">{{ review.key }} · Revisión interna guardada (no se imprime)</p>
+        <p class="whitespace-pre-line">{{ review.notes }}</p>
+      </aside>
+    }
+    <article class="max-w-[820px] mx-auto bg-white p-8 md:p-12 shadow-sm print:shadow-none print:max-w-none print:p-8">
+      <div class="flex justify-between gap-6 border-b-2 border-slate-900 pb-6">
+        <div><p class="text-[12px] font-black uppercase tracking-[0.2em] text-red-600 m-0">PCMYM</p><h1 class="text-3xl font-black text-slate-900 mt-2 mb-0">Proforma #{{ q.folio }}</h1><p class="text-xs text-slate-500 font-semibold mt-2 mb-0">Válida hasta {{ q.valid_until | date:'dd/MM/yyyy' }}</p></div>
+        <div class="text-right text-xs text-slate-500 font-semibold"><p class="m-0">Cotización de equipos</p><p class="mt-2 mb-0">Fecha: {{ q.created_at | date:'dd/MM/yyyy' }}</p></div>
+      </div>
+      <div class="grid grid-cols-2 gap-6 py-6 border-b border-slate-200 text-sm"><div><p class="text-[10px] uppercase tracking-wider font-black text-slate-400 m-0">Cliente</p><p class="font-bold text-slate-900 mt-1 mb-0">{{ q.customer_name || 'Cliente sin registrar' }}</p></div><div><p class="text-[10px] uppercase tracking-wider font-black text-slate-400 m-0">Contacto</p><p class="font-bold text-slate-900 mt-1 mb-0">{{ q.customer_phone || '—' }}</p></div></div>
+      <table class="w-full mt-7 text-sm border-collapse"><thead><tr class="border-b-2 border-slate-900 text-left"><th class="py-3">Descripción</th><th class="py-3 text-center">Cant.</th><th class="py-3 text-right">Precio</th><th class="py-3 text-right">Total</th></tr></thead><tbody>@for (item of items.value(); track item.id) { <tr class="border-b border-slate-200"><td class="py-3 font-semibold">@if (item.build_key) { <span class="block text-xs text-blue-700">{{ item.build_key }}</span> }{{ item.description }}</td><td class="py-3 text-center">{{ item.quantity }}</td><td class="py-3 text-right">S/ {{ item.unit_price_pen | number:'1.2-2' }}</td><td class="py-3 text-right font-bold">S/ {{ (item.quantity * item.unit_price_pen) | number:'1.2-2' }}</td></tr> }</tbody></table>
+      <div class="flex justify-end mt-8"><div class="w-64 space-y-2 text-sm"><div class="flex justify-between"><span>Subtotal</span><span>S/ {{ q.subtotal | number:'1.2-2' }}</span></div><div class="flex justify-between"><span>IGV</span><span>S/ {{ q.tax_amount | number:'1.2-2' }}</span></div><div class="flex justify-between border-t-2 border-slate-900 pt-3 text-xl font-black"><span>Total</span><span>S/ {{ q.total_amount | number:'1.2-2' }}</span></div></div></div>
+      @if (q.notes) { <div class="mt-10 p-4 bg-slate-50 rounded-xl text-xs font-medium text-slate-600 whitespace-pre-line">{{ q.notes }}</div> }
+      <p class="text-[10px] text-slate-400 mt-12 mb-0">Precios sujetos a disponibilidad del proveedor. La compatibilidad técnica debe confirmarse antes de realizar la compra.</p>
+    </article>
+  } @else if (quote.isLoading()) { <p class="text-center font-semibold text-slate-500 py-20">Cargando proforma...</p> }
+</div>

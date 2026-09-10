@@ -292,6 +292,64 @@ para `authenticated`.
   `authenticated`, igual que en Fase 1.5). Resuelve `business_id` internamente vía
   `auth_business_id()`, nunca confía en un valor que mande el cliente.
 
+### `supplier_catalog_imports` y `supplier_products` (catálogo de proveedores)
+El catálogo externo se mantiene separado de `products`: importar una lista de Deltron nunca
+modifica el stock propio. `supplier_catalog_imports` registra cada archivo, tipo de cambio,
+impuestos, filas aceptadas y advertencias. `supplier_products` usa el código del proveedor como
+identificador estable y conserva categoría, descripción técnica, disponibilidad, precios en USD,
+marca, garantía, clasificación comercial y atributos técnicos extraídos.
+
+`supplier_products` añade `catalog_group` (`pc_parts`, `laptops`, `monitors`, `peripherals` u
+`other`) y `component_category` (`processor`, `motherboard`, `memory`, `storage`, `graphics`,
+`power_supply`, `case`, `cooling` u `other`). `search_document` y `search_terms` guardan el texto
+normalizado y los sinónimos técnicos/comerciales generados durante la importación. Esto permite
+buscar `RAM 8G DDR4`, `placa AM5` o `case gabinete` aunque los términos no estén contiguos.
+
+Ambas tablas son multi-tenant y tienen RLS por `business_id`. Cada importación marca como inactivos
+los productos Deltron que ya no aparecen en el archivo más reciente. La importación es idempotente
+por `(business_id, supplier, supplier_code)`.
+
+La RPC `search_supplier_products()` aplica el tenant autenticado, oculta por defecto el stock cero
+o desconocido, filtra por grupo/subcategoría y ordena por precio de distribución ascendente. Acepta
+paginación y un modo explícito para incluir agotados; la UI no carga un límite arbitrario del catálogo
+para completar la búsqueda.
+
+### `sales_quotes` y `sales_quote_items` (proformas de venta)
+Las proformas son independientes de la OS y congelan el tipo de cambio, margen, IGV, vigencia,
+cliente, costo y precio de cada línea. `supplier_product_id` permite rastrear el producto externo
+que originó la línea, pero los importes quedan guardados para que una actualización posterior del
+catálogo no altere una proforma enviada.
+
+La máquina de estados es `draft → sent → approved | rejected | expired`. Los ítems solo se pueden
+modificar mientras la proforma está en `draft`. El trigger `recalculate_sales_quote_total` mantiene
+subtotal, IGV y total calculados en PostgreSQL. `next_sales_quote_folio()` asigna folios correlativos
+por negocio bajo bloqueo de fila.
+
+La clasificación se deriva exclusivamente del encabezado Deltron mediante
+`supplier_header_classification`; las descripciones sirven para enriquecer atributos, no para
+convertir un teclado o disco en una placa. `infer_supplier_specs` extrae datos conservadores.
+El trigger `refresh_supplier_specs` centraliza clasificación, atributos y alias en cada escritura.
+
+`supplier_products.inferred_attributes` conserva la extracción del HTML y
+`specification_overrides` las correcciones manuales (valores textuales; null borra un atributo
+inferido). `technical_attributes` es la combinación efectiva. El RPC invoker
+`set_supplier_specifications(uuid,jsonb)` aplica las correcciones bajo RLS del negocio actual;
+enviar `{}` restaura la extracción automática. Las importaciones no envían overrides y los
+conservan en el upsert. No se añadieron tablas ni accesos públicos nuevos.
+
+`sales_quote_items.build_key` separa conjuntos independientes dentro de la proforma;
+`specification_snapshot` conserva la ficha efectiva al cotizar. `compatibility_status` usa
+`unchecked`, `compatible`, `incompatible` o `review`, con los motivos en `compatibility_notes`.
+La UI bloquea conflictos conocidos y guarda armados como `review` hasta la comprobación técnica
+integral. El motor de reglas vive en `pc-compatibility.ts`; no es un validador de compatibilidad
+en el backend. RLS y el bloqueo de edición de ítems después de `sent` siguen aplicándose en BD.
+
+Las proformas en `draft` se modifican mediante `update_sales_quote_draft()`, que reemplaza de
+forma atómica sus datos de cliente, condiciones y líneas, y deja que los triggers recalculen los
+totales. `duplicate_sales_quote()` copia cualquier proforma del mismo tenant a un nuevo folio en
+estado `draft`, incluyendo precios, armados y snapshots; la original no se altera. Las proformas
+enviadas, aprobadas, rechazadas o vencidas no se editan directamente: se duplica una copia.
+
 ## Vistas de reportes financieros (Fase 2)
 Todas creadas `with (security_invoker = true)` (Postgres 15+): la vista corre con los privilegios
 de quien la consulta, no de su dueño. Como cada tabla base ya tiene RLS por

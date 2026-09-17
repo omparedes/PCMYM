@@ -1,10 +1,15 @@
 # ESTADO DEL PROYECTO
-Última actualización: 2026-09-09 por Codex — estación Oscar/Windows
+Última actualización: 2026-09-17 por Codex — estación Oscar/Windows
 
 > Protocolo de handoff: **todo agente actualiza este archivo al cerrar sesión.** Es lo que permite
 > cambiar de estación o de agente sin perder el hilo. Mantén el formato de abajo.
 
 ## Fase actual
+**Próximo trabajo preparado para Luna:** cola pública automática a partir de OS. Plan ejecutable
+en `docs/06-PLAN-COLA-PUBLICA-LUNA.md`; contiene tiempos, etapas, privacidad y aceptación.
+En esta sesión solo se preparó documentación, sin modificar código, migraciones ni Supabase.
+La automatización de Deltron queda pospuesta; Oscar continuará importando manualmente.
+
 **Cotizador Deltron: clasificación por encabezados y armado asistido implementados.**
 Los cinco puntos aprobados están en `feat/deltron-compatible-builder`. Las migraciones están
 aplicadas en Supabase; los cambios de frontend están verificados y listos para publicarse desde

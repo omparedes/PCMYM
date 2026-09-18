@@ -5,10 +5,13 @@
 > cambiar de estación o de agente sin perder el hilo. Mantén el formato de abajo.
 
 ## Fase actual
-**Pagos inteligentes y distribución de cobros en órdenes de servicio (Completada):**
-Implementada en su totalidad en la rama `feat/service-order-smart-payments`.
-Migración aplicada en Supabase remoto (`20260918101500_add_payment_notes_and_concept.sql`), tipos regenerados,
-46 pruebas unitarias Vitest en verde, linter en verde y build de producción validado (756.29 kB inicial < 800 kB).
+**Integración a main preparada (Completada):**
+Rama `feat/service-order-smart-payments` lista para Pull Request único hacia `main`. Incluye:
+1. Documentación actualizada de cotizador (`0926f16`).
+2. Cola pública automática, tiempos de taller y derivación (`565d926`).
+3. Pagos inteligentes, desglose de conceptos y anulación de cobros (`12a20ef`).
+4. Limpieza de espacios en blanco y saltos de línea (`0742099`), con `git diff --check main..HEAD` en 0 advertencias.
+46/46 pruebas unitarias Vitest en verde, linter en verde, build de producción validado (756.29 kB inicial < 800 kB) y 5 migraciones aplicadas en Supabase remoto.
 
 ## Pagos inteligentes y distribución de cobros (2026-09-18)
 - **Base de datos & Supabase:**

@@ -1,16 +1,90 @@
 # ESTADO DEL PROYECTO
-Última actualización: 2026-09-09 por Codex — estación Oscar/Windows
+Última actualización: 2026-09-18 por Antigravity — estación Oscar/Windows
 
 > Protocolo de handoff: **todo agente actualiza este archivo al cerrar sesión.** Es lo que permite
 > cambiar de estación o de agente sin perder el hilo. Mantén el formato de abajo.
 
 ## Fase actual
-**Cotizador Deltron: clasificación por encabezados y armado asistido implementados.**
-Los cinco puntos aprobados están en `feat/deltron-compatible-builder`. Las migraciones están
-aplicadas en Supabase; los cambios de frontend están verificados y listos para publicarse desde
-esta rama.
-El motor usa reglas deterministas, sin IA. Datos ausentes y soporte BIOS no verificado quedan
-en revisión: no se promete compatibilidad integral a partir del socket.
+**Integración a main preparada (Completada):**
+Rama `feat/service-order-smart-payments` lista para Pull Request único hacia `main`. Incluye:
+1. Documentación actualizada de cotizador (`0926f16`).
+2. Cola pública automática, tiempos de taller y derivación (`565d926`).
+3. Pagos inteligentes, desglose de conceptos y anulación de cobros (`12a20ef`).
+4. Limpieza de espacios en blanco y saltos de línea (`0742099`), con `git diff --check main..HEAD` en 0 advertencias.
+46/46 pruebas unitarias Vitest en verde, linter en verde, build de producción validado (756.29 kB inicial < 800 kB) y 5 migraciones aplicadas en Supabase remoto.
+
+## Pagos inteligentes y distribución de cobros (2026-09-18)
+- **Base de datos & Supabase:**
+  - Migración remota aplicada: `20260918101500_add_payment_notes_and_concept.sql`.
+  - Nueva columna `notes text` en `public.payments` para registrar el concepto detallado del pago.
+  - Trigger `trg_payments_log_financial_entry` actualizado para enriquecer la descripción contable en `financial_entries` con el concepto (`'Pago de Orden #<folio> — <notes>'`), permitiendo que el flujo de caja en `/finance` registre exactamente qué se pagó (repuestos vs servicio vs abono).
+  - Prueba remota automatizada `supabase/tests/smart_payments.sql` ejecutada con rollback; verificó columnas, tipos e inserciones con y sin notas.
+  - Tipos TypeScript regenerados desde la BD enlazada (`database.types.ts`).
+- **Lógica de distribución (`payment-distribution.ts`):**
+  - `buildBillableConcepts`: extrae repuestos directos asignados (`service_order_parts` con `budget_id is null`) y presupuesto aprobado de la orden en orden de prioridad comercial: primero productos físicos (garantizar cobro de inventario), luego mano de obra / servicio técnico.
+  - `calculatePaymentDistribution`: imputa pagos previos y distribuye nuevos montos. Por ejemplo en la Orden #44 (Adaptador Bluetooth S/ 45.00 + Presupuesto #10 de S/ 30.00 = Total S/ 75.00):
+    - Con adelanto inicial de S/ 50.00: asigna S/ 45.00 al producto (cubierto 100%) y S/ 5.00 al servicio (abono parcial), pre-llenando la nota: *"Adaptador Bluetooth USB (S/ 45.00) + Abono Servicio Técnico (Presupuesto #10) (S/ 5.00)"* y dejando saldo de S/ 25.00.
+    - Con pago final de S/ 25.00: cancela el saldo del servicio técnico, pre-llenando: *"Saldo de Servicio Técnico (Presupuesto #10)"*.
+- **Experiencia de Usuario en Angular (`service-order-detail`):**
+  - **Cabecera de pagos:** Muestra en tiempo real el Total de la Orden, Total Pagado y un badge destacado con el **Saldo Pendiente** (o "Saldado").
+  - **Atajos rápidos de 1 clic:** Botón `[⚡ Saldo total]` y chips por cada producto o presupuesto pendiente.
+  - **Desglose interactivo:** Al teclear el monto, muestra una tarjeta visual en vivo indicando qué porcentaje y monto cubre cada ítem y cuánto saldo quedará tras el pago.
+  - **Concepto auto-sugerido editable:** El técnico puede aceptar la nota generada automáticamente o escribir/modificar cualquier texto.
+  - **Modo libre/express:** Si la orden no tiene presupuestos o repuestos (mantenimientos rápidos, limpiezas de momento), el técnico puede ingresar el monto y método libremente como siempre, sin trabas ni restricciones.
+  - **Historial de pagos:** Cada pago muestra su método, fecha y ahora la nota/concepto detallado de lo que se cobró.
+  - **Consolidación en comprobantes de impresión (`service-order-print`):** Se corrigió `documentTotal` usando `serviceOrderTotal` para sumar repuestos directos + presupuestos aprobados (`S/ 45 + S/ 30 = S/ 75`).
+- **Eliminación y anulación de pagos erróneos:**
+  - Migraciones aplicadas en remoto: `20260918110000_enable_payment_deletion.sql` y `20260918111000_allow_admin_payment_deletion.sql`.
+  - Columna `payment_id uuid references payments(id) on delete cascade` añadida a `financial_entries`.
+  - RPC atómico `delete_payment(p_payment_id uuid)` con control multi-tenant y saneamiento automático de entradas de caja asociadas (incluyendo limpieza de pagos previos sin `payment_id`).
+  - Botón de papelera en cada fila de pago en el detalle de la OS con modal de confirmación antes de eliminar.
+  - Al borrar un pago, la orden revierte de inmediato su saldo y el libro de caja en `/finance` descuenta el ingreso sin generar movimientos falsos ni descuadrar los balances.
+  - Script SQL de validación `supabase/tests/delete_payment.sql` probado con éxito contra el remoto.
+- **Verificación:**
+  - 46 pruebas Vitest pasando al 100% (incluidas 6 pruebas exhaustivas en `payment-distribution.spec.ts` y test de totales consolidados en `service-order-documents.spec.ts`).
+  - `npm run lint`: 0 errores en todo el workspace.
+  - `npm run build`: Compilación limpia de producción en 8.5s (756.29 kB inicial).
+## Cola pública automática de órdenes de servicio (2026-09-17)
+- **Base de datos y modelo de datos:**
+  - Migración aplicada en Supabase remoto: `20260917193000_add_public_service_queue.sql` y ajuste de linter `20260917193500_clean_public_queue_lint.sql`.
+  - Ampliación de `service_orders.work_types` para incluir `'maintenance'`.
+  - Nuevas columnas en `service_orders`: `backup_requested` (boolean default false), `service_location` (`in_store` | `external_workshop`), `time_adjustment_minutes` (int default 0), `current_stage` (text), `stage_started_at` (timestamptz), `accumulated_active_seconds` (int default 0).
+  - Nueva tabla multi-tenant auditada `service_order_location_history` con RLS estricto.
+  - Máquina de estados actualizada: validación de transiciones en PostgreSQL permite ahora `pending → repairing` para mantenimientos, formateos o derivaciones directas.
+  - Triggers y funciones deterministas en PostgreSQL:
+    - `calculate_service_order_target_minutes`: cálculo heurístico según categoría de equipo (laptop, PC, otro) y combinación de trabajos. Mantenimiento laptop: 60m; PC: 120m. Formateo: 60m (+60m si hay respaldo). Reparación pura: 20m de diagnóstico inicial. Taller externo o estados terminales: 0m.
+    - `sync_service_order_time_tracking`: sincronización atómica de tiempos activos, pausas automáticas al derivar a taller externo o pasar a espera de repuestos, y derivación automática de reparaciones directas hacia diagnóstico/reparación según corresponda.
+    - `normalize_equipment_type`: clasificación normalizada y robusta.
+  - Nuevas columnas en `businesses`: `public_queue_enabled` (boolean default false) y `public_queue_token` (uuid unique nullable default gen_random_uuid()).
+  - RPCs atómicos con RLS y SECURITY DEFINER:
+    - `transition_service_location`: derivación y retorno entre tienda y taller externo con auditoría.
+    - `adjust_service_order_time`: ajuste de holgura (+15, +30, +60 min) con nota en historial.
+    - `set_public_queue_config` / `get_public_queue_config`: activación/desactivación y rotación criptográfica de token por el `owner`.
+    - `get_public_service_queue(p_token uuid)`: acceso anónimo de solo lectura con grant a `anon` y `authenticated`.
+- **Privacidad y Seguridad (Zero PII):**
+  - La proyección pública no expone clientes, marcas exactas, números de serie, fallas descritas ni técnicos. Solo folio, tipo general de equipo, tipo de trabajo simplificado, badge de ubicación, tiempo transcurrido en minutos y avance heurístico.
+  - El tiempo estimado público no se calcula sumando tiempos en serie; utiliza la banda heurística `[max(activas), max(activas) + sum(espera)]` con paralelismo de atenciones concurrentes. Si hay órdenes excedidas o tiempos indeterminados, oculta la banda y reporta "Tiempo por confirmar".
+- **Frontend Angular 22 (Signal-First & Zoneless):**
+  - Formulario de alta de OS (`/service-orders/new`): chip de **Mantenimiento**, checkbox reactivo para **Respaldo de información (+60 min)**, y visor de tiempo base estimado.
+  - Detalle de OS (`/service-orders/:id`):
+    - Badge de ubicación de servicio ("En tienda" / "Taller externo") con acción de derivación/retorno.
+    - Tarjeta de Tiempos y Ubicación: tiempo activo acumulado, tiempo estimado, indicador de atraso.
+    - Modal de ajuste de tiempo excepcional (+15, +30, +60 min).
+    - Checkbox para alternar respaldo de información desde el diagnóstico.
+  - Tablero Kanban (`/service-orders`):
+    - Botón y modal de gestión de **Cola Pública** en la cabecera (activar/desactivar, copiar link `/cola/:token`, rotar token público).
+    - Filtros y tarjetas con soporte completo para la categoría **Mantenimiento**.
+  - Módulo y vista pública móvil (`/cola/:token`):
+    - Vista limpia, responsiva y adaptable a móviles o pantallas de sala de espera.
+    - Polling silencioso cada 60s usando Resource API condicionado a visibilidad de la pestaña (`document.visibilityState`).
+    - Desglose por etapas: En atención (en tienda), Derivados (taller externo) y En espera.
+    - Aviso legal visible sobre tiempos de estimación técnica aproximada sujeta a diagnóstico.
+- **Verificación:**
+  - `supabase/tests/public_service_queue.sql`: Ejecutado contra el Supabase remoto enlazado con transacción y rollback; todos los asserts y accesos anon/multi-tenant pasaron exitosamente.
+  - `npx supabase db lint --linked`: 0 errores, 0 advertencias.
+  - `npm run lint`: 0 errores en todos los archivos de `apps/crm/`.
+  - `npm test -- --watch=false`: 39/39 pruebas pasando (incluye 10 nuevas pruebas en `service-orders.models.spec.ts`).
+  - `npm run build`: Compilación exitosa, bundle inicial 755.70 kB (< 800 kB), chunk lazy público en 11.13 kB (3.33 kB transfer).
 
 ## Armado asistido y fichas técnicas (2026-09-08)
 - Clasificación centralizada en PostgreSQL por grupo Deltron: excepciones para refrigeración,

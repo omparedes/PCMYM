@@ -5,6 +5,7 @@ import type { Payment, PaymentMethod } from './service-orders.models';
 export interface NewPayment {
   amount: number;
   payment_method: PaymentMethod;
+  notes?: string | null;
 }
 
 // financial_entries books itself automatically from this insert (trigger,
@@ -34,11 +35,17 @@ export class PaymentsService {
         service_order_id: serviceOrderId,
         amount: input.amount,
         payment_method: input.payment_method,
+        notes: input.notes?.trim() || null,
         recorded_by: userData.user?.id ?? null,
       })
       .select('*')
       .single();
     if (error) throw error;
     return data;
+  }
+
+  async delete(paymentId: string): Promise<void> {
+    const { error } = await supabase.rpc('delete_payment', { p_payment_id: paymentId });
+    if (error) throw error;
   }
 }

@@ -4,10 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as QRCode from 'qrcode';
 import { ServiceOrderDocumentsService } from './service-order-documents.service';
 import {
-  budgetTotal,
   latestApprovedBudget,
   partsTotal,
   paymentsTotal,
+  serviceOrderTotal,
 } from './service-order-documents.models';
 import type { ServiceOrderDocumentKind } from './service-order-documents.models';
 import { paymentMethodLabel, statusLabel } from './service-orders.models';
@@ -53,8 +53,9 @@ export class ServiceOrderPrint {
   protected readonly partsAmount = computed(() => partsTotal(this.document.value()?.parts ?? []));
   protected readonly paidAmount = computed(() => paymentsTotal(this.document.value()?.payments ?? []));
   protected readonly documentTotal = computed(() => {
-    const budget = this.approvedBudget();
-    return budget ? budgetTotal(budget) : this.partsAmount();
+    const data = this.document.value();
+    if (!data) return 0;
+    return serviceOrderTotal(this.approvedBudget(), data.parts ?? []);
   });
   protected readonly balanceDue = computed(() => Math.max(this.documentTotal() - this.paidAmount(), 0));
 

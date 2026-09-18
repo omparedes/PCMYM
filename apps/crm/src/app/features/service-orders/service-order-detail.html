@@ -63,6 +63,7 @@
               <button type="button" (click)="toggleWorkType(workType)" [disabled]="updatingWorkTypes()" class="px-2.5 py-1.5 rounded-lg border text-[11px] font-bold disabled:opacity-50"
                       [class.bg-violet-100]="workType === 'formatting' && workTypes().includes(workType)" [class.border-violet-300]="workType === 'formatting' && workTypes().includes(workType)" [class.text-violet-800]="workType === 'formatting'"
                       [class.bg-sky-100]="workType === 'repair' && workTypes().includes(workType)" [class.border-sky-300]="workType === 'repair' && workTypes().includes(workType)" [class.text-sky-800]="workType === 'repair'"
+                      [class.bg-emerald-100]="workType === 'maintenance' && workTypes().includes(workType)" [class.border-emerald-300]="workType === 'maintenance' && workTypes().includes(workType)" [class.text-emerald-800]="workType === 'maintenance'"
                       [class.bg-amber-100]="workType === 'parts_replacement' && workTypes().includes(workType)" [class.border-amber-300]="workType === 'parts_replacement' && workTypes().includes(workType)" [class.text-amber-800]="workType === 'parts_replacement'"
                       [class.bg-indigo-100]="workType === 'warranty' && workTypes().includes(workType)" [class.border-indigo-300]="workType === 'warranty' && workTypes().includes(workType)" [class.text-indigo-800]="workType === 'warranty'"
                       [class.bg-slate-50]="!workTypes().includes(workType)" [class.border-slate-200]="!workTypes().includes(workType)">
@@ -70,8 +71,22 @@
               </button>
             }
           </div>
+          @if (workTypes().includes('formatting')) {
+            <div class="mt-2.5 pt-2.5 border-t border-slate-100 flex items-center gap-2">
+              <input
+                id="detail_backup"
+                type="checkbox"
+                class="w-3.5 h-3.5 text-violet-600 rounded border-violet-300 cursor-pointer"
+                [checked]="o.backup_requested"
+                (change)="toggleBackupRequested()"
+              />
+              <label for="detail_backup" class="text-[11.5px] font-bold text-violet-900 cursor-pointer select-none">
+                Respaldo de información (+60 min al formateo)
+              </label>
+            </div>
+          }
         </div>
-        
+
         @if (o.tracking_token) {
           <button type="button" class="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-[12.5px] shadow-sm hover:bg-slate-800 transition-colors w-full justify-center md:w-auto" (click)="copyTrackingLink(o.tracking_token)">
             @if (linkCopied()) {
@@ -100,10 +115,10 @@
 
     <!-- MAIN GRID -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      
+
       <!-- LEFT COLUMN -->
       <div class="lg:col-span-2 flex flex-col gap-6">
-        
+
         <!-- INFO CARD -->
         <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden">
           <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
@@ -127,7 +142,7 @@
                 }
               </div>
             </div>
-            
+
             @if (o.accessories) {
               <div class="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
                 <div class="text-[12px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-2">
@@ -161,7 +176,7 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
               <h2 class="text-[15px] font-extrabold text-slate-900 m-0">Galería de Fotos</h2>
             </div>
-            
+
             <label class="flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg font-bold text-[12.5px] shadow-sm transition-all duration-200 hover:bg-slate-800 hover:shadow-md cursor-pointer" [class.opacity-50]="uploadingPhoto()">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               {{ uploadingPhoto() ? 'Subiendo...' : 'Agregar Foto' }}
@@ -202,7 +217,83 @@
 
       <!-- RIGHT COLUMN -->
       <div class="flex flex-col gap-6">
-        
+
+        <!-- LOCATION & TIME TRACKING CARD -->
+        <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden">
+          <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <h2 class="text-[15px] font-extrabold text-slate-900 m-0">Tiempos y Ubicación</h2>
+            </div>
+            <span class="px-3 py-1 rounded-full text-[11.5px] font-extrabold uppercase tracking-wide"
+                  [class.bg-emerald-100]="o.service_location === 'in_store'" [class.text-emerald-800]="o.service_location === 'in_store'"
+                  [class.bg-amber-100]="o.service_location === 'external_workshop'" [class.text-amber-800]="o.service_location === 'external_workshop'">
+              {{ serviceLocationLabel(o.service_location) }}
+            </span>
+          </div>
+
+          <div class="p-6 space-y-4">
+            <div class="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+              <div>
+                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Tiempo activo</span>
+                <span class="text-[15px] font-black text-slate-900">{{ elapsedMinutes() }} min</span>
+              </div>
+              <div>
+                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Estimado</span>
+                <span class="text-[15px] font-black text-slate-900">
+                  {{ targetMinutes() !== null && targetMinutes()! > 0 ? ('~' + targetMinutes() + ' min') : 'Por confirmar' }}
+                </span>
+              </div>
+            </div>
+
+            @if (isOverdue()) {
+              <div class="p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl text-[12.5px] font-bold flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Está tomando más tiempo de lo estimado
+              </div>
+            } @else if (remainingMinutes() !== null && remainingMinutes()! > 0 && o.status !== 'waiting_parts' && o.service_location === 'in_store') {
+              <div class="text-[12.5px] font-bold text-blue-700 bg-blue-50 border border-blue-100 px-3 py-2 rounded-xl flex items-center justify-between">
+                <span>Tiempo restante orientativo:</span>
+                <span class="font-extrabold">~{{ remainingMinutes() }} min</span>
+              </div>
+            }
+
+            @if (o.time_adjustment_minutes) {
+              <div class="text-[11.5px] font-semibold text-slate-500 bg-slate-100/70 px-3 py-1.5 rounded-lg flex items-center justify-between">
+                <span>Ajuste aplicado al tiempo:</span>
+                <span class="font-bold text-slate-700">{{ o.time_adjustment_minutes > 0 ? '+' : '' }}{{ o.time_adjustment_minutes }} min</span>
+              </div>
+            }
+
+            <div class="flex gap-2 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                (click)="toggleLocation()"
+                [disabled]="togglingLocation()"
+                class="flex-1 py-2.5 px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[12.5px] font-bold text-slate-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                @if (o.service_location === 'in_store') {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Derivar a externo
+                } @else {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                  Retornar a tienda
+                }
+              </button>
+
+              <button
+                type="button"
+                (click)="openTimeAdjustModal()"
+                class="py-2.5 px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[12.5px] font-bold text-slate-700 transition-colors flex items-center gap-1 cursor-pointer"
+                title="Ampliar o ajustar tiempo de atención"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Ajustar tiempo
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- STATUS CHANGE CARD -->
         <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden">
           <div class="px-6 py-5 border-b border-slate-100 bg-red-50 flex items-center gap-3">
@@ -401,13 +492,29 @@
 
         <!-- PAYMENTS CARD -->
         <div class="bg-white border border-slate-200 rounded-[22px] shadow-[0_4px_24px_rgba(16,24,40,0.05)] overflow-hidden">
-          <div class="px-6 py-5 border-b border-slate-100 bg-emerald-50/50 flex items-center justify-between">
+          <div class="px-6 py-5 border-b border-slate-100 bg-emerald-50/50 flex items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              <h2 class="text-[15px] font-extrabold text-emerald-800 m-0">Pagos</h2>
+              <div>
+                <h2 class="text-[15px] font-extrabold text-emerald-800 m-0 leading-tight">Pagos</h2>
+                @if (totalOrderAmount() > 0) {
+                  <span class="text-[11px] font-semibold text-slate-500">Total Orden: S/ {{ totalOrderAmount() | number: '1.2-2' }}</span>
+                }
+              </div>
             </div>
-            <div class="text-[14px] font-black text-slate-900 bg-white px-3 py-1 rounded-lg border border-slate-200 shadow-sm">
-              S/ {{ totalPaid() | number: '1.2-2' }}
+            <div class="flex items-center gap-2">
+              @if (pendingBalance() > 0) {
+                <span class="text-[12px] font-extrabold text-amber-700 bg-amber-100/70 border border-amber-200 px-2.5 py-1 rounded-lg shadow-sm">
+                  Saldo: S/ {{ pendingBalance() | number: '1.2-2' }}
+                </span>
+              } @else if (totalOrderAmount() > 0) {
+                <span class="text-[12px] font-extrabold text-emerald-700 bg-emerald-100/70 border border-emerald-200 px-2.5 py-1 rounded-lg shadow-sm">
+                  Saldado
+                </span>
+              }
+              <div class="text-[14px] font-black text-slate-900 bg-white px-3 py-1 rounded-lg border border-slate-200 shadow-sm">
+                S/ {{ totalPaid() | number: '1.2-2' }}
+              </div>
             </div>
           </div>
           <div class="p-6">
@@ -417,10 +524,75 @@
 
             @if (showPaymentForm()) {
               <form class="flex flex-col gap-4 mb-6 bg-white border border-slate-200 p-4 rounded-xl shadow-sm" (submit)="$event.preventDefault(); submitPayment()">
+                @if (billableConcepts().length > 0 || pendingBalance() > 0) {
+                  <div class="flex flex-col gap-2 pb-3 border-b border-slate-100">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Atajos rápidos de cobro:</span>
+                    <div class="flex flex-wrap gap-1.5">
+                      @if (pendingBalance() > 0) {
+                        <button type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-[12px] font-extrabold hover:bg-emerald-700 transition-colors shadow-sm" (click)="setPaymentAmount(pendingBalance())">
+                          ⚡ Saldo total (S/ {{ pendingBalance() | number: '1.2-2' }})
+                        </button>
+                      }
+                      @for (concept of billableConcepts(); track concept.id) {
+                        <button type="button" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-[11.5px] font-bold text-slate-700 hover:bg-slate-100 transition-colors" (click)="setPaymentAmount(concept.totalAmount, concept.name)">
+                          @if (concept.type === 'product') { 📦 } @else { 🔧 }
+                          {{ concept.name }} (S/ {{ concept.totalAmount | number: '1.2-2' }})
+                        </button>
+                      }
+                    </div>
+                  </div>
+                }
+
                 <div>
                   <label for="payment_amount" class="block text-[12px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Monto (S/)</label>
-                  <input id="payment_amount" type="number" step="0.01" class="w-full py-2.5 px-3 border-[1.5px] border-slate-200 rounded-lg text-[14px] font-bold text-slate-900 outline-none focus:border-emerald-500 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.13)] transition-all" [formField]="paymentForm.amount" />
+                  <input id="payment_amount" type="number" step="0.01" class="w-full py-2.5 px-3 border-[1.5px] border-slate-200 rounded-lg text-[14px] font-bold text-slate-900 outline-none focus:border-emerald-500 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.13)] transition-all" [formField]="paymentForm.amount" (input)="onAmountInput($event)" />
                 </div>
+
+                @if (paymentDistribution(); as dist) {
+                  @if (dist.concepts.length > 0 && dist.paymentAmount > 0) {
+                    <div class="rounded-xl border border-emerald-200 bg-emerald-50/50 p-3 flex flex-col gap-2">
+                      <div class="flex items-center justify-between">
+                        <span class="text-[11.5px] font-extrabold text-emerald-900 flex items-center gap-1.5">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                          Distribución sugerida del pago:
+                        </span>
+                        <span class="text-[11px] font-bold text-emerald-800">
+                          Quedará saldo: S/ {{ dist.remainingBalanceAfter | number: '1.2-2' }}
+                        </span>
+                      </div>
+                      <div class="flex flex-col gap-1.5">
+                        @for (item of dist.concepts; track item.id) {
+                          <div class="flex items-center justify-between text-[12px] bg-white/80 border border-emerald-100 rounded-lg px-2.5 py-1.5">
+                            <span class="font-bold text-slate-800 flex items-center gap-1.5 truncate pr-2">
+                              @if (item.type === 'product') { 📦 } @else { 🔧 }
+                              {{ item.name }}
+                            </span>
+                            <div class="flex items-center gap-2 shrink-0">
+                              <span class="font-black text-emerald-700">+ S/ {{ item.allocatedAmount | number: '1.2-2' }}</span>
+                              @if (item.isFullyCovered) {
+                                <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Cubierto</span>
+                              } @else {
+                                <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Resta S/ {{ item.remainingBalance | number: '1.2-2' }}</span>
+                              }
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                }
+
+                <div>
+                  <div class="flex items-center justify-between mb-1.5">
+                    <label for="payment_notes" class="block text-[12px] font-bold text-slate-700 uppercase tracking-wider">Concepto / Detalle (Opcional)</label>
+                    <label class="flex items-center gap-1.5 cursor-pointer text-[11px] font-bold text-slate-500 hover:text-slate-800 transition-colors">
+                      <input type="checkbox" [checked]="autoSuggestConcept()" (change)="toggleAutoSuggestConcept()" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" />
+                      Auto-sugerir concepto
+                    </label>
+                  </div>
+                  <input id="payment_notes" type="text" placeholder="Ej. Adaptador Bluetooth USB + Abono servicio..." class="w-full py-2.5 px-3 border-[1.5px] border-slate-200 rounded-lg text-[13px] font-semibold text-slate-900 outline-none focus:border-emerald-500 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.13)] transition-all" [formField]="paymentForm.notes" />
+                </div>
+
                 <div>
                   <label for="payment_method" class="block text-[12px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Método</label>
                   <div class="relative">
@@ -439,7 +611,7 @@
                 }
 
                 <button type="submit" class="w-full bg-emerald-600 text-white rounded-lg py-2.5 font-bold text-[13.5px] shadow-[0_4px_14px_rgba(16,185,129,0.2)] hover:bg-emerald-700 transition-colors disabled:opacity-50" [disabled]="savingPayment()">
-                  {{ savingPayment() ? 'Procesando...' : 'Confirmar' }}
+                  {{ savingPayment() ? 'Procesando...' : 'Confirmar Pago' }}
                 </button>
               </form>
             }
@@ -447,12 +619,29 @@
             @if (payments.value().length > 0) {
               <div class="flex flex-col gap-2">
                 @for (payment of payments.value(); track payment.id) {
-                  <div class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3">
-                    <div class="flex flex-col">
-                      <span class="text-[13px] font-bold text-slate-800">{{ paymentMethodLabel(payment.payment_method) }}</span>
-                      <span class="text-[11px] font-semibold text-slate-400">{{ payment.created_at | date: 'shortDate' }}</span>
+                  <div class="flex items-start justify-between rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 gap-3">
+                    <div class="flex flex-col gap-1 min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="text-[13px] font-bold text-slate-800">{{ paymentMethodLabel(payment.payment_method) }}</span>
+                        <span class="text-[11px] font-semibold text-slate-400">{{ payment.created_at | date: 'shortDate' }}</span>
+                      </div>
+                      @if (payment.notes) {
+                        <p class="m-0 text-[11.5px] font-semibold text-slate-600 leading-snug break-words">
+                          {{ payment.notes }}
+                        </p>
+                      }
                     </div>
-                    <span class="font-black text-[14px] text-emerald-700 bg-emerald-100/50 px-2.5 py-1 rounded-md">S/ {{ payment.amount }}</span>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="font-black text-[14px] text-emerald-700 bg-emerald-100/50 px-2.5 py-1 rounded-md">S/ {{ payment.amount | number: '1.2-2' }}</span>
+                      <button
+                        type="button"
+                        (click)="openDeletePaymentModal(payment)"
+                        class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                        title="Eliminar este pago"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      </button>
+                    </div>
                   </div>
                 }
               </div>
@@ -522,5 +711,79 @@
       (closeModal)="closeDeliveryModal()"
       (delivered)="onDeliveryCompleted()"
     />
+
+    @if (showTimeAdjustModal()) {
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-100">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h3 class="text-base font-extrabold text-slate-900 m-0">Ajustar tiempo de trabajo</h3>
+            <button type="button" (click)="closeTimeAdjustModal()" class="text-slate-400 hover:text-slate-600 font-bold text-lg leading-none cursor-pointer">×</button>
+          </div>
+          <div class="py-4 space-y-4">
+            <p class="text-xs text-slate-500 m-0">Permite registrar una ampliación excepcional de tiempo (+30 min, etc.) sin alterar el tipo de trabajo de la orden.</p>
+            <div>
+              <label for="time_adjust_min" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Minutos a ajustar (positivo o negativo)</label>
+              <div class="flex gap-2 mb-2">
+                <button type="button" (click)="timeAdjustMinutes.set(15)" class="px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer" [class.bg-slate-900]="timeAdjustMinutes() === 15" [class.text-white]="timeAdjustMinutes() === 15">+15 min</button>
+                <button type="button" (click)="timeAdjustMinutes.set(30)" class="px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer" [class.bg-slate-900]="timeAdjustMinutes() === 30" [class.text-white]="timeAdjustMinutes() === 30">+30 min</button>
+                <button type="button" (click)="timeAdjustMinutes.set(60)" class="px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer" [class.bg-slate-900]="timeAdjustMinutes() === 60" [class.text-white]="timeAdjustMinutes() === 60">+60 min</button>
+                <button type="button" (click)="timeAdjustMinutes.set(-15)" class="px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer" [class.bg-slate-900]="timeAdjustMinutes() === -15" [class.text-white]="timeAdjustMinutes() === -15">-15 min</button>
+              </div>
+              <input id="time_adjust_min" type="number" step="5" class="w-full py-2.5 px-3 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:border-red-600" [value]="timeAdjustMinutes()" (input)="timeAdjustMinutes.set(($any($event.target)).value)" />
+            </div>
+            <div>
+              <label for="time_adjust_reason" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Motivo del ajuste</label>
+              <input id="time_adjust_reason" type="text" placeholder="Ej. Dificultad técnica, limpieza profunda..." class="w-full py-2.5 px-3 border border-slate-200 rounded-xl text-sm font-medium outline-none focus:border-red-600" [value]="timeAdjustReason()" (input)="timeAdjustReason.set(($any($event.target)).value)" />
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+            <button type="button" (click)="closeTimeAdjustModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer">Cancelar</button>
+            <button type="button" (click)="submitTimeAdjustment()" [disabled]="adjustingTime()" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 disabled:opacity-50 cursor-pointer">{{ adjustingTime() ? 'Guardando...' : 'Aplicar ajuste' }}</button>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (paymentToDelete(); as p) {
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md p-6 animate-in fade-in zoom-in-95 duration-150">
+          <div class="flex items-center gap-3 text-red-600 mb-3">
+            <div class="p-2.5 rounded-xl bg-red-50 border border-red-100">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div>
+              <h3 class="text-base font-extrabold text-slate-900 m-0">¿Eliminar este pago?</h3>
+              <span class="text-xs font-semibold text-slate-400">Esta acción revertirá el saldo de la orden</span>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed mb-4">
+            Se eliminará el pago de <strong>S/ {{ p.amount | number: '1.2-2' }}</strong> ({{ paymentMethodLabel(p.payment_method) }}) registrado el {{ p.created_at | date: 'shortDate' }}. Se actualizará automáticamente el saldo pendiente y se removerá la entrada correspondiente en caja.
+          </p>
+
+          @if (deletePaymentError(); as err) {
+            <p class="text-xs text-red-600 font-bold mb-3">{{ err }}</p>
+          }
+
+          <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+            <button
+              type="button"
+              (click)="closeDeletePaymentModal()"
+              class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+              [disabled]="deletingPayment()"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              (click)="executeDeletePayment()"
+              class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-700 shadow-sm transition-colors disabled:opacity-50 cursor-pointer"
+              [disabled]="deletingPayment()"
+            >
+              {{ deletingPayment() ? 'Eliminando...' : 'Sí, eliminar pago' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
   }
 </div>

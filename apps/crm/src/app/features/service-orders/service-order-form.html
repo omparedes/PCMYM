@@ -27,7 +27,33 @@
         <section>
           <div class="text-[11px] font-black tracking-widest text-slate-400 uppercase border-b border-slate-100 pb-2 mb-4">Tipo de trabajo</div>
           <p class="text-[13px] font-medium text-slate-500 mt-0 mb-3">Puedes marcar más de una opción.</p>
-          <div class="flex flex-wrap gap-2">@for (workType of workTypeOptions; track workType) { <button type="button" (click)="toggleWorkType(workType)" class="px-3.5 py-2 rounded-xl border text-[13px] font-bold transition-colors" [class.bg-violet-100]="workType === 'formatting' && selectedWorkTypes().includes(workType)" [class.border-violet-300]="workType === 'formatting' && selectedWorkTypes().includes(workType)" [class.text-violet-800]="workType === 'formatting'" [class.bg-sky-100]="workType === 'repair' && selectedWorkTypes().includes(workType)" [class.border-sky-300]="workType === 'repair' && selectedWorkTypes().includes(workType)" [class.text-sky-800]="workType === 'repair'" [class.bg-amber-100]="workType === 'parts_replacement' && selectedWorkTypes().includes(workType)" [class.border-amber-300]="workType === 'parts_replacement' && selectedWorkTypes().includes(workType)" [class.text-amber-800]="workType === 'parts_replacement'" [class.bg-indigo-100]="workType === 'warranty' && selectedWorkTypes().includes(workType)" [class.border-indigo-300]="workType === 'warranty' && selectedWorkTypes().includes(workType)" [class.text-indigo-800]="workType === 'warranty'" [class.bg-white]="!selectedWorkTypes().includes(workType)" [class.border-slate-200]="!selectedWorkTypes().includes(workType)">{{ selectedWorkTypes().includes(workType) ? '✓ ' : '' }}{{ workTypeLabels[workType] }}</button> }</div>
+          <div class="flex flex-wrap gap-2">@for (workType of workTypeOptions; track workType) { <button type="button" (click)="toggleWorkType(workType)" class="px-3.5 py-2 rounded-xl border text-[13px] font-bold transition-colors" [class.bg-violet-100]="workType === 'formatting' && selectedWorkTypes().includes(workType)" [class.border-violet-300]="workType === 'formatting' && selectedWorkTypes().includes(workType)" [class.text-violet-800]="workType === 'formatting'" [class.bg-sky-100]="workType === 'repair' && selectedWorkTypes().includes(workType)" [class.border-sky-300]="workType === 'repair' && selectedWorkTypes().includes(workType)" [class.text-sky-800]="workType === 'repair'" [class.bg-emerald-100]="workType === 'maintenance' && selectedWorkTypes().includes(workType)" [class.border-emerald-300]="workType === 'maintenance' && selectedWorkTypes().includes(workType)" [class.text-emerald-800]="workType === 'maintenance'" [class.bg-amber-100]="workType === 'parts_replacement' && selectedWorkTypes().includes(workType)" [class.border-amber-300]="workType === 'parts_replacement' && selectedWorkTypes().includes(workType)" [class.text-amber-800]="workType === 'parts_replacement'" [class.bg-indigo-100]="workType === 'warranty' && selectedWorkTypes().includes(workType)" [class.border-indigo-300]="workType === 'warranty' && selectedWorkTypes().includes(workType)" [class.text-indigo-800]="workType === 'warranty'" [class.bg-white]="!selectedWorkTypes().includes(workType)" [class.border-slate-200]="!selectedWorkTypes().includes(workType)">{{ selectedWorkTypes().includes(workType) ? '✓ ' : '' }}{{ workTypeLabels[workType] }}</button> }</div>
+          @if (selectedWorkTypes().includes('formatting')) {
+            <div class="mt-3.5 p-3.5 rounded-xl border border-violet-200 bg-violet-50/70 flex items-center gap-3">
+              <input
+                id="backup_requested"
+                type="checkbox"
+                class="w-4 h-4 text-violet-600 rounded border-violet-300 focus:ring-violet-500 cursor-pointer"
+                [checked]="backupRequested()"
+                (change)="backupRequested.set(($any($event.target)).checked)"
+              />
+              <label for="backup_requested" class="text-[13px] font-bold text-violet-900 cursor-pointer select-none">
+                Requiere respaldo de información (+60 min al formateo)
+              </label>
+            </div>
+          }
+          <div class="mt-3.5 flex items-center gap-2">
+            <span class="text-[12.5px] font-bold text-slate-500">Estimación de taller:</span>
+            @if (estimatedMinutes(); as mins) {
+              <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[12px] font-extrabold bg-blue-50 text-blue-700 border border-blue-200">
+                ~{{ mins }} min
+              </span>
+            } @else {
+              <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[12px] font-extrabold bg-amber-50 text-amber-700 border border-amber-200">
+                Tiempo por confirmar
+              </span>
+            }
+          </div>
         </section>
 
         <section class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4">

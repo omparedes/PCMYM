@@ -80,14 +80,52 @@ export class ServiceOrdersService {
     return data;
   }
 
-  async updateWorkTypes(id: string, workTypes: string[]): Promise<ServiceOrder> {
+  async updateWorkTypes(id: string, workTypes: string[], backupRequested = false): Promise<ServiceOrder> {
     const { data, error } = await supabase
       .from('service_orders')
-      .update({ work_types: workTypes })
+      .update({
+        work_types: workTypes,
+        backup_requested: workTypes.includes('formatting') ? backupRequested : false,
+      })
       .eq('id', id)
       .select('*')
       .single();
     if (error) throw error;
     return data;
+  }
+
+  async transitionLocation(id: string, location: 'in_store' | 'external_workshop', notes?: string): Promise<ServiceOrder> {
+    const { data, error } = await supabase.rpc('transition_service_location', {
+      p_service_order_id: id,
+      p_target_location: location,
+      p_notes: notes ?? undefined,
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  async adjustTime(id: string, minutesDelta: number, reason?: string): Promise<ServiceOrder> {
+    const { data, error } = await supabase.rpc('adjust_service_order_time', {
+      p_service_order_id: id,
+      p_minutes_delta: minutesDelta,
+      p_reason: reason ?? undefined,
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  async getQueueConfig(): Promise<{ public_queue_enabled: boolean; public_queue_token: string }> {
+    const { data, error } = await supabase.rpc('get_public_queue_config');
+    if (error) throw error;
+    return data as unknown as { public_queue_enabled: boolean; public_queue_token: string };
+  }
+
+  async setQueueConfig(enabled: boolean, rotateToken = false): Promise<{ public_queue_enabled: boolean; public_queue_token: string }> {
+    const { data, error } = await supabase.rpc('set_public_queue_config', {
+      p_enabled: enabled,
+      p_rotate_token: rotateToken,
+    });
+    if (error) throw error;
+    return data as unknown as { public_queue_enabled: boolean; public_queue_token: string };
   }
 }

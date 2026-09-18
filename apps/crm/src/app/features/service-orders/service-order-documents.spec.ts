@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { budgetTotal, latestApprovedBudget, partsTotal, paymentsTotal } from './service-order-documents.models';
+import {
+  budgetTotal,
+  directPartsTotal,
+  latestApprovedBudget,
+  partsTotal,
+  paymentsTotal,
+  serviceOrderTotal,
+} from './service-order-documents.models';
 import type { ServiceOrderDocumentData } from './service-order-documents.models';
 
 const baseData = {
@@ -38,6 +45,21 @@ describe('Service order document totals', () => {
   it('calculates parts, payments and never returns a negative balance input', () => {
     expect(partsTotal([{ quantity: 2, unit_price: 14 } as never])).toBe(28);
     expect(paymentsTotal([{ amount: 30 } as never, { amount: 12.5 } as never])).toBe(42.5);
+  });
+
+  it('calculates direct parts and consolidated total correctly', () => {
+    const directPart = { id: 'p1', quantity: 1, unit_price: 45, budget_id: null } as never;
+    const budgetPart = { id: 'p2', quantity: 1, unit_price: 30, budget_id: 'b1' } as never;
+    expect(directPartsTotal([directPart, budgetPart])).toBe(45);
+
+    const budget = {
+      id: 'b1',
+      status: 'approved',
+      items: [{ id: 'i1', quantity: 1, unit_price: 30 }],
+      total_amount: 30,
+    } as never;
+
+    expect(serviceOrderTotal(budget, [directPart, budgetPart])).toBe(75);
   });
 });
 

@@ -23,15 +23,22 @@ import {
   statusLabel,
   workTypeLabel,
 } from './service-orders.models';
-import type { PaymentMethod, ServiceLocation, ServiceOrderStatus, ServiceOrderWorkType } from './service-orders.models';
+import type { Payment, PaymentMethod, ServiceLocation, ServiceOrderStatus, ServiceOrderWorkType } from './service-orders.models';
+import {
+  buildBillableConcepts,
+  calculatePaymentDistribution,
+  type PaymentDistributionResult,
+  type PaymentItemInput,
+} from './payment-distribution';
 
 interface PaymentFormModel {
   amount: number | null;
   payment_method: PaymentMethod | '';
+  notes: string;
 }
 
 function emptyPaymentForm(): PaymentFormModel {
-  return { amount: null, payment_method: '' };
+  return { amount: null, payment_method: '', notes: '' };
 }
 
 @Component({
@@ -279,6 +286,47 @@ export class ServiceOrderDetail {
     this.payments.value().reduce((sum, payment) => sum + Number(payment.amount), 0),
   );
 
+  protected readonly autoSuggestConcept = signal(true);
+
+  protected readonly billableConcepts = computed<PaymentItemInput[]>(() => {
+    const approvedBudget = this.budgets.value().find((b) => b.status === 'approved');
+    const directParts = (this.orderParts.value() || [])
+      .filter((p) => !p.budget_id)
+      .map((p) => ({
+        id: p.id,
+        name: p.product?.name || 'Repuesto / Accesorio',
+        quantity: p.quantity,
+        unit_price: Number(p.unit_price),
+      }));
+
+    return buildBillableConcepts(
+      directParts,
+      approvedBudget
+        ? {
+            id: approvedBudget.id,
+            folio: approvedBudget.folio,
+            total_amount: Number(approvedBudget.total_amount),
+          }
+        : null,
+    );
+  });
+
+  protected readonly totalOrderAmount = computed(() => {
+    const conceptsTotal = this.billableConcepts().reduce((sum, c) => sum + c.totalAmount, 0);
+    return Math.max(conceptsTotal, this.totalPaid());
+  });
+
+  protected readonly pendingBalance = computed(() => {
+    return Math.max(0, Number((this.totalOrderAmount() - this.totalPaid()).toFixed(2)));
+  });
+
+  protected readonly paymentDistribution = computed<PaymentDistributionResult | null>(() => {
+    const concepts = this.billableConcepts();
+    const amount = Number(this.paymentModel().amount);
+    if (!amount || amount <= 0 || concepts.length === 0) return null;
+    return calculatePaymentDistribution(concepts, this.totalPaid(), amount);
+  });
+
   protected readonly showPaymentForm = signal(false);
   protected readonly paymentModel = signal<PaymentFormModel>(emptyPaymentForm());
   protected readonly paymentForm = form(this.paymentModel, (path) => {
@@ -291,9 +339,53 @@ export class ServiceOrderDetail {
   protected readonly paymentError = signal<string | null>(null);
 
   protected togglePaymentForm(): void {
-    this.showPaymentForm.set(!this.showPaymentForm());
-    this.paymentModel.set(emptyPaymentForm());
+    const willShow = !this.showPaymentForm();
+    this.showPaymentForm.set(willShow);
     this.paymentError.set(null);
+    if (willShow) {
+      this.paymentModel.set(emptyPaymentForm());
+    }
+  }
+
+  protected setPaymentAmount(amount: number, customNote?: string): void {
+    const rounded = Number(amount.toFixed(2));
+    const dist = calculatePaymentDistribution(this.billableConcepts(), this.totalPaid(), rounded);
+    const note = customNote ?? (this.autoSuggestConcept() ? dist.suggestedNote : this.paymentModel().notes);
+
+    this.paymentModel.update((prev) => ({
+      ...prev,
+      amount: rounded,
+      notes: note,
+    }));
+  }
+
+  protected onAmountInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const val = input.value === '' ? null : Number(input.value);
+    if (val === null || isNaN(val) || val <= 0) {
+      this.paymentModel.update((prev) => ({ ...prev, amount: val }));
+      return;
+    }
+    const dist = calculatePaymentDistribution(this.billableConcepts(), this.totalPaid(), val);
+    this.paymentModel.update((prev) => ({
+      ...prev,
+      amount: val,
+      notes: this.autoSuggestConcept() && dist.suggestedNote ? dist.suggestedNote : prev.notes,
+    }));
+  }
+
+  protected toggleAutoSuggestConcept(): void {
+    const next = !this.autoSuggestConcept();
+    this.autoSuggestConcept.set(next);
+    if (next) {
+      const amount = Number(this.paymentModel().amount);
+      if (amount > 0) {
+        const dist = calculatePaymentDistribution(this.billableConcepts(), this.totalPaid(), amount);
+        if (dist.suggestedNote) {
+          this.paymentModel.update((prev) => ({ ...prev, notes: dist.suggestedNote }));
+        }
+      }
+    }
   }
 
   protected async submitPayment(): Promise<void> {
@@ -306,6 +398,7 @@ export class ServiceOrderDetail {
       await this.paymentsService.create(this.orderId, {
         amount: value.amount!,
         payment_method: value.payment_method as PaymentMethod,
+        notes: value.notes?.trim() || null,
       });
       this.paymentModel.set(emptyPaymentForm());
       this.showPaymentForm.set(false);
@@ -314,6 +407,37 @@ export class ServiceOrderDetail {
       this.paymentError.set(err instanceof Error ? err.message : 'Error al registrar el pago');
     } finally {
       this.savingPayment.set(false);
+    }
+  }
+
+  protected readonly paymentToDelete = signal<Payment | null>(null);
+  protected readonly deletingPayment = signal(false);
+  protected readonly deletePaymentError = signal<string | null>(null);
+
+  protected openDeletePaymentModal(payment: Payment): void {
+    this.paymentToDelete.set(payment);
+    this.deletePaymentError.set(null);
+  }
+
+  protected closeDeletePaymentModal(): void {
+    this.paymentToDelete.set(null);
+    this.deletePaymentError.set(null);
+  }
+
+  protected async executeDeletePayment(): Promise<void> {
+    const payment = this.paymentToDelete();
+    if (!payment || this.deletingPayment()) return;
+
+    this.deletingPayment.set(true);
+    this.deletePaymentError.set(null);
+    try {
+      await this.paymentsService.delete(payment.id);
+      this.closeDeletePaymentModal();
+      this.payments.reload();
+    } catch (err) {
+      this.deletePaymentError.set(err instanceof Error ? err.message : 'Error al eliminar el pago');
+    } finally {
+      this.deletingPayment.set(false);
     }
   }
 

@@ -193,11 +193,15 @@ nunca con una URL pública sin autenticar.
 | service_order_id    | uuid          | not null, FK → service_orders(id)                       |
 | amount              | numeric(10,2) | not null, check `> 0`                                   |
 | payment_method      | text          | not null, check `in ('cash', 'transfer', 'card')`        |
+| notes               | text          | nullable — concepto o detalle del pago (repuestos, adelanto, saldo) |
 | created_at          | timestamptz   | default now()                                            |
 | recorded_by         | uuid          | nullable, FK → profiles(id)                              |
 
-Trigger `validate_payment` (mismo patrón de validación cruzada). Tabla inmutable desde el cliente
-(solo `select, insert`). Cada inserción dispara `trg_payments_log_financial_entry`.
+Trigger `validate_payment` (mismo patrón de validación cruzada). Con permisos `select, insert, delete`
+para `authenticated` bajo políticas RLS (`payments_select`, `payments_insert`, `payments_delete`).
+Para subsanar errores de digitación o asignación a órdenes incorrectas, se ofrece el RPC
+`delete_payment(p_payment_id uuid)`, el cual elimina el registro de pago y sincroniza
+automáticamente la eliminación de la entrada de caja en `financial_entries`.
 
 ### `service_order_deliveries`
 | columna             | tipo          | notas                                                   |
@@ -228,6 +232,7 @@ mismos datos y conserva la trazabilidad de quién recibió el equipo.
 |---------------|---------------|------------------------------------------------------|
 | id            | uuid PK       | `gen_random_uuid()`                                  |
 | business_id   | uuid          | not null, FK → businesses(id)                        |
+| payment_id    | uuid          | nullable, FK → payments(id) on delete cascade        |
 | entry_type    | text          | not null, check `in ('income', 'expense')`            |
 | amount        | numeric(10,2) | not null, check `> 0`                                |
 | description   | text          | not null                                              |
@@ -235,9 +240,10 @@ mismos datos y conserva la trazabilidad de quién recibió el equipo.
 
 **Sin GRANT de INSERT para `authenticated`** — la única vía de escritura es el trigger
 `log_payment_to_financial_entries` (`AFTER INSERT` en `payments`, `SECURITY DEFINER`), que genera
-automáticamente una entrada `income` con la descripción `"Pago de Orden #<folio>"`. Por ahora la
-tabla solo recibe `income` desde pagos; un flujo de alta manual de `expense` queda fuera de esta
-fase (evaluar en Fase 2 si hace falta).
+automáticamente una entrada `income` con la descripción `"Pago de Orden #<folio> — <notes>"`. Si no
+se proporcionaron notas, registra `"Pago de Orden #<folio>"`. Gracias a la relación en cascada con
+`payment_id`, la eliminación de un pago erróneo en `payments` remueve automáticamente su entrada en
+caja sin descuadrar los reportes. Los gastos se registran manualmente mediante el RPC `record_expense()`.
 
 ## API Pública y Webhooks (Fase 3)
 - **RPC `get_public_tracking_info(p_token uuid)`:** `SECURITY DEFINER`. Devuelve el comprobante público de una OS filtrado por `tracking_token`: identidad y recepción del equipo (tipo, marca, modelo, serie, accesorios y observaciones), falla reportada, estado, fechas, ítems y total del último presupuesto no-borrador. Cuando ese presupuesto está aprobado, incluye solo los totales de pagos y saldo; nunca métodos de pago ni quién los registró. No devuelve técnico asignado, prioridad, notas internas del historial ni datos de otras órdenes.

@@ -38,6 +38,21 @@ export function partsTotal(parts: ServiceOrderPartWithProduct[]): number {
   return parts.reduce((sum, part) => sum + Number(part.quantity) * Number(part.unit_price), 0);
 }
 
+export function directPartsTotal(parts: ServiceOrderPartWithProduct[]): number {
+  return parts
+    .filter((part) => !part.budget_id)
+    .reduce((sum, part) => sum + Number(part.quantity) * Number(part.unit_price), 0);
+}
+
+export function serviceOrderTotal(
+  approvedBudget: BudgetWithItems | null,
+  parts: ServiceOrderPartWithProduct[],
+): number {
+  const bTotal = budgetTotal(approvedBudget);
+  const dParts = directPartsTotal(parts);
+  return Number((bTotal + dParts).toFixed(2));
+}
+
 export function paymentsTotal(payments: Payment[]): number {
   return payments.reduce((sum, payment) => sum + Number(payment.amount), 0);
 }

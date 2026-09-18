@@ -20,14 +20,16 @@ la BD.
 
 ## Tablas base (Fase 0 — migración `20260619140938_init_tenant_base.sql`)
 ### `businesses` (tenants)
-| columna      | tipo        | notas                                  |
-|--------------|-------------|----------------------------------------|
-| id           | uuid PK     | `gen_random_uuid()`                    |
-| name         | text        | nombre del taller                      |
-| slug         | text unique | identificador legible (subdominio futuro) |
-| active       | boolean     | default true                           |
-| created_at   | timestamptz | default now()                          |
-| updated_at   | timestamptz | default now()                          |
+| columna               | tipo        | notas                                  |
+|-----------------------|-------------|----------------------------------------|
+| id                    | uuid PK     | `gen_random_uuid()`                    |
+| name                  | text        | nombre del taller                      |
+| slug                  | text unique | identificador legible (subdominio futuro) |
+| active                | boolean     | default true                           |
+| public_queue_enabled  | boolean     | not null default false (cola pública de OS) |
+| public_queue_token    | uuid unique | nullable, default gen_random_uuid()    |
+| created_at            | timestamptz | default now()                          |
+| updated_at            | timestamptz | default now()                          |
 
 RLS: un usuario solo ve y edita su propio negocio (`id = auth_business_id()`).
 
@@ -72,38 +74,47 @@ simple según necesidad real, ver migración). RLS estándar (select/insert/upda
 `business_id = auth_business_id()`).
 
 ### `service_orders` (OS — entidad central)
-| columna               | tipo        | notas                                                  |
-|------------------------|-------------|---------------------------------------------------------|
-| id                     | uuid PK     | `gen_random_uuid()`                                     |
-| business_id            | uuid        | not null, FK → businesses(id)                           |
-| folio                  | int         | correlativo legible **por negocio** (p.ej. orden #0042) |
-| customer_id            | uuid        | not null, FK → customers(id)                            |
-| equipment_type         | text        | nullable (laptop, PC, impresora...)                     |
-| brand                  | text        | nullable                                                |
-| model                  | text        | nullable                                                |
-| serial_number          | text        | nullable                                                |
-| accessories            | text        | nullable (cargador, mouse...)                           |
-| reported_issue         | text        | nullable — falla reportada por el cliente               |
-| initial_diagnosis      | text        | nullable — diagnóstico del técnico                      |
-| status                 | text        | enum por check, ver máquina de estados abajo            |
-| priority                | text        | enum: `low` \| `normal` \| `high` \| `urgent`           |
-| work_types              | text[]      | categorías múltiples: `formatting`, `repair`, `parts_replacement`, `warranty` |
-| assigned_to            | uuid        | nullable, FK → profiles(id)                             |
-| received_at            | timestamptz | default now()                                            |
-| estimated_delivery     | date        | nullable                                                 |
-| tracking_token         | uuid        | default gen_random_uuid() (Fase 3: acceso público)       |
-| created_at             | timestamptz | default now()                                            |
-| updated_at             | timestamptz | default now()                                            |
+| columna                      | tipo        | notas                                                  |
+|-------------------------------|-------------|---------------------------------------------------------|
+| id                            | uuid PK     | `gen_random_uuid()`                                     |
+| business_id                   | uuid        | not null, FK → businesses(id)                           |
+| folio                         | int         | correlativo legible **por negocio** (p.ej. orden #0042) |
+| customer_id                   | uuid        | not null, FK → customers(id)                            |
+| equipment_type                | text        | nullable (laptop, PC, impresora...)                     |
+| brand                         | text        | nullable                                                |
+| model                         | text        | nullable                                                |
+| serial_number                 | text        | nullable                                                |
+| accessories                   | text        | nullable (cargador, mouse...)                           |
+| reported_issue                | text        | nullable — falla reportada por el cliente               |
+| initial_diagnosis             | text        | nullable — diagnóstico del técnico                      |
+| status                        | text        | enum por check, ver máquina de estados abajo            |
+| priority                      | text        | enum: `low` \| `normal` \| `high` \| `urgent`           |
+| work_types                    | text[]      | categorías múltiples: `formatting`, `repair`, `parts_replacement`, `warranty`, `maintenance` |
+| assigned_to                   | uuid        | nullable, FK → profiles(id)                             |
+| received_at                   | timestamptz | default now()                                            |
+| estimated_delivery            | date        | nullable                                                 |
+| tracking_token                | uuid        | default gen_random_uuid() (Fase 3: acceso público)       |
+| backup_requested              | boolean     | not null default false (respaldo de datos +60m en cola) |
+| service_location              | text        | not null default `'in_store'`, check in `('in_store', 'external_workshop')` |
+| time_adjustment_minutes       | int         | not null default 0 (ajuste excepcional para cola)       |
+| current_stage                 | text        | nullable, nombre de la etapa activa del servicio        |
+| stage_started_at              | timestamptz | nullable, timestamp de inicio del bloque de tiempo      |
+| accumulated_active_seconds    | int         | not null default 0, tiempo acumulado activo             |
+| created_at                    | timestamptz | default now()                                            |
+| updated_at                    | timestamptz | default now()                                            |
 
 > El equipo se modela embebido en la OS por ahora (no como tabla aparte). Se normaliza a una tabla
 > `equipment` en una fase posterior si hace falta (p.ej. historial de equipos de un mismo cliente).
 
-`work_types` permite combinar las cuatro categorías operativas del tablero (por ejemplo, garantía y
-reparación). No es todavía un catálogo comercial de servicios; ese catálogo se evaluará en Fase 6.
+`work_types` permite combinar las categorías operativas del tablero (`formatting`, `repair`,
+`parts_replacement`, `warranty` y `maintenance`). No es todavía un catálogo comercial de servicios;
+ese catálogo se evaluará en Fase 6.
 
 **Máquina de estados (`status`):**
 `pending → diagnosing → repairing → waiting_parts → ready → delivered`, con `cancelled` alcanzable
-desde cualquier estado no terminal. Ver
+desde cualquier estado no terminal. Permite también la transición directa `pending → repairing`
+para órdenes de mantenimiento preventivo, formateos estándar o derivaciones de taller sin fase
+de diagnóstico exploratorio previa. Ver
 [`decisiones/0003-os-entidad-central.md`](decisiones/0003-os-entidad-central.md).
 
 **Mapeo de etiquetas en UI (español, solo capa de presentación — NUNCA en la BD):**
@@ -136,6 +147,21 @@ otros tenants.
 Se llena **por trigger de BD** al cambiar `service_orders.status` (no por la app), para que el
 historial sea a prueba de manipulación e independiente del cliente que escriba (web, MCP, futuro
 móvil). Ver migración de `service_orders` para el trigger y la validación de transiciones.
+
+### `service_order_location_history` (trazabilidad de derivación a taller externo)
+| columna           | tipo        | notas                                             |
+|-------------------|-------------|---------------------------------------------------|
+| id                | uuid PK     | `gen_random_uuid()`                               |
+| business_id       | uuid        | not null (denormalizado para RLS directa)          |
+| service_order_id  | uuid        | not null, FK → service_orders(id)                  |
+| from_location     | text        | nullable, check in `('in_store', 'external_workshop')` |
+| to_location       | text        | not null, check in `('in_store', 'external_workshop')` |
+| reason            | text        | nullable — motivo de derivación o retorno         |
+| changed_by        | uuid        | nullable, FK → profiles(id)                         |
+| created_at        | timestamptz | default now()                                     |
+
+Registrado a través del RPC `transition_service_location(...)` para auditar cuándo un equipo sale
+de la tienda hacia taller externo o retorna a tienda física. RLS estándar por `business_id`.
 
 ## Tablas de dominio (Fase 1.5)
 
@@ -215,6 +241,11 @@ fase (evaluar en Fase 2 si hace falta).
 
 ## API Pública y Webhooks (Fase 3)
 - **RPC `get_public_tracking_info(p_token uuid)`:** `SECURITY DEFINER`. Devuelve el comprobante público de una OS filtrado por `tracking_token`: identidad y recepción del equipo (tipo, marca, modelo, serie, accesorios y observaciones), falla reportada, estado, fechas, ítems y total del último presupuesto no-borrador. Cuando ese presupuesto está aprobado, incluye solo los totales de pagos y saldo; nunca métodos de pago ni quién los registró. No devuelve técnico asignado, prioridad, notas internas del historial ni datos de otras órdenes.
+- **RPC `get_public_service_queue(p_token uuid)`:** `SECURITY DEFINER` (con GRANT a `anon` y `authenticated`). Devuelve la cola pública y anónima del taller identificada por `public_queue_token` (siempre que `public_queue_enabled = true`). Retorna `business_name`, `summary` (órdenes en espera, activas, derivadas a taller externo, rango de tiempo estimado en minutos con cálculo paralelo de órdenes concurrentes) y lista de `orders` anónimas (folio, categoría general de equipo, tipo de trabajo simplificado, estado, tiempo activo transcurrido en minutos y porcentaje de avance heurístico). **Sin PII:** no expone clientes, marcas ni diagnósticos.
+- **RPCs de gestión operativa de cola:**
+  - `transition_service_location(p_service_order_id uuid, p_target_location text, p_reason text)`: transiciona la ubicación del equipo entre `in_store` y `external_workshop`, pausando la acumulación de tiempo en tienda y registrando en `service_order_location_history`.
+  - `adjust_service_order_time(p_service_order_id uuid, p_additional_minutes int, p_reason text)`: añade holgura de tiempo estimada (+15, +30, +60 min) con trazabilidad interna en `order_status_history`.
+  - `set_public_queue_config(p_enabled boolean, p_rotate_token boolean)` / `get_public_queue_config()`: control del link público y rotación criptográfica del token por el `owner`.
 - **Webhook de Notificaciones (n8n):** Trigger `AFTER UPDATE` en `service_orders`. Detecta cambios en `status` y usa `pg_net` para hacer un `POST` a la URL configurada en `app.settings.n8n_webhook_url`. Payload: `service_order_id, business_id, folio, from_status, to_status, customer_phone, tracking_token`.
 
 ## Tablas de dominio (Fase 2)

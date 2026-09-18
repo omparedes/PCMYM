@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -246,6 +246,8 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          public_queue_enabled: boolean
+          public_queue_token: string
           slug: string
           updated_at: string
         }
@@ -254,6 +256,8 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
+          public_queue_enabled?: boolean
+          public_queue_token?: string
           slug: string
           updated_at?: string
         }
@@ -262,6 +266,8 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          public_queue_enabled?: boolean
+          public_queue_token?: string
           slug?: string
           updated_at?: string
         }
@@ -970,6 +976,74 @@ export type Database = {
           },
         ]
       }
+      service_order_location_history: {
+        Row: {
+          business_id: string
+          created_at: string
+          event_type: string
+          from_location: string | null
+          id: string
+          notes: string | null
+          recorded_by: string | null
+          service_order_id: string
+          time_adjustment_delta: number | null
+          to_location: string | null
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          event_type: string
+          from_location?: string | null
+          id?: string
+          notes?: string | null
+          recorded_by?: string | null
+          service_order_id: string
+          time_adjustment_delta?: number | null
+          to_location?: string | null
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          event_type?: string
+          from_location?: string | null
+          id?: string
+          notes?: string | null
+          recorded_by?: string | null
+          service_order_id?: string
+          time_adjustment_delta?: number | null
+          to_location?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_location_history_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_location_history_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_location_history_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_location_history_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "v_accounts_receivable"
+            referencedColumns: ["service_order_id"]
+          },
+        ]
+      }
       service_order_parts: {
         Row: {
           budget_id: string | null
@@ -1107,10 +1181,13 @@ export type Database = {
       service_orders: {
         Row: {
           accessories: string | null
+          accumulated_active_seconds: number
           assigned_to: string | null
+          backup_requested: boolean
           brand: string | null
           business_id: string
           created_at: string
+          current_stage: string | null
           customer_id: string
           equipment_type: string | null
           estimated_delivery: string | null
@@ -1122,17 +1199,23 @@ export type Database = {
           received_at: string
           reported_issue: string | null
           serial_number: string | null
+          service_location: string
+          stage_started_at: string | null
           status: string
+          time_adjustment_minutes: number
           tracking_token: string
           updated_at: string
           work_types: string[]
         }
         Insert: {
           accessories?: string | null
+          accumulated_active_seconds?: number
           assigned_to?: string | null
+          backup_requested?: boolean
           brand?: string | null
           business_id: string
           created_at?: string
+          current_stage?: string | null
           customer_id: string
           equipment_type?: string | null
           estimated_delivery?: string | null
@@ -1144,17 +1227,23 @@ export type Database = {
           received_at?: string
           reported_issue?: string | null
           serial_number?: string | null
+          service_location?: string
+          stage_started_at?: string | null
           status?: string
+          time_adjustment_minutes?: number
           tracking_token?: string
           updated_at?: string
           work_types?: string[]
         }
         Update: {
           accessories?: string | null
+          accumulated_active_seconds?: number
           assigned_to?: string | null
+          backup_requested?: boolean
           brand?: string | null
           business_id?: string
           created_at?: string
+          current_stage?: string | null
           customer_id?: string
           equipment_type?: string | null
           estimated_delivery?: string | null
@@ -1166,7 +1255,10 @@ export type Database = {
           received_at?: string
           reported_issue?: string | null
           serial_number?: string | null
+          service_location?: string
+          stage_started_at?: string | null
           status?: string
+          time_adjustment_minutes?: number
           tracking_token?: string
           updated_at?: string
           work_types?: string[]
@@ -1558,12 +1650,64 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      adjust_service_order_time: {
+        Args: {
+          p_minutes_delta: number
+          p_reason?: string
+          p_service_order_id: string
+        }
+        Returns: {
+          accessories: string | null
+          accumulated_active_seconds: number
+          assigned_to: string | null
+          backup_requested: boolean
+          brand: string | null
+          business_id: string
+          created_at: string
+          current_stage: string | null
+          customer_id: string
+          equipment_type: string | null
+          estimated_delivery: string | null
+          folio: number | null
+          id: string
+          initial_diagnosis: string | null
+          model: string | null
+          priority: string
+          received_at: string
+          reported_issue: string | null
+          serial_number: string | null
+          service_location: string
+          stage_started_at: string | null
+          status: string
+          time_adjustment_minutes: number
+          tracking_token: string
+          updated_at: string
+          work_types: string[]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "service_orders"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       apply_budget_parts_to_service_order: {
         Args: { p_budget_id: string }
         Returns: Json
       }
       auth_business_id: { Args: never; Returns: string }
       auth_role: { Args: never; Returns: string }
+      calculate_service_order_target_minutes: {
+        Args: {
+          p_backup_requested: boolean
+          p_equipment_type: string
+          p_service_location: string
+          p_status: string
+          p_time_adjustment_minutes?: number
+          p_work_types: string[]
+        }
+        Returns: number
+      }
       change_budget_status: {
         Args: { p_budget_id: string; p_new_status: string }
         Returns: {
@@ -1593,10 +1737,13 @@ export type Database = {
         }
         Returns: {
           accessories: string | null
+          accumulated_active_seconds: number
           assigned_to: string | null
+          backup_requested: boolean
           brand: string | null
           business_id: string
           created_at: string
+          current_stage: string | null
           customer_id: string
           equipment_type: string | null
           estimated_delivery: string | null
@@ -1608,7 +1755,10 @@ export type Database = {
           received_at: string
           reported_issue: string | null
           serial_number: string | null
+          service_location: string
+          stage_started_at: string | null
           status: string
+          time_adjustment_minutes: number
           tracking_token: string
           updated_at: string
           work_types: string[]
@@ -1737,6 +1887,8 @@ export type Database = {
         }
         Returns: string
       }
+      get_public_queue_config: { Args: never; Returns: Json }
+      get_public_service_queue: { Args: { p_token: string }; Returns: Json }
       get_public_tracking_info: { Args: { p_token: string }; Returns: Json }
       infer_supplier_specs: {
         Args: { p_category: string; p_description: string; p_name: string }
@@ -1777,6 +1929,7 @@ export type Database = {
         }
       }
       next_sales_quote_folio: { Args: never; Returns: number }
+      normalize_equipment_type: { Args: { p_raw: string }; Returns: string }
       normalize_supplier_catalog_text: {
         Args: { p_value: string }
         Returns: string
@@ -1854,6 +2007,10 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      set_public_queue_config: {
+        Args: { p_enabled: boolean; p_rotate_token?: boolean }
+        Returns: Json
+      }
       set_supplier_specifications: {
         Args: { p_overrides: Json; p_product_id: string }
         Returns: {
@@ -1903,6 +2060,47 @@ export type Database = {
       supplier_header_classification: {
         Args: { p_category: string }
         Returns: Json
+      }
+      transition_service_location: {
+        Args: {
+          p_notes?: string
+          p_service_order_id: string
+          p_target_location: string
+        }
+        Returns: {
+          accessories: string | null
+          accumulated_active_seconds: number
+          assigned_to: string | null
+          backup_requested: boolean
+          brand: string | null
+          business_id: string
+          created_at: string
+          current_stage: string | null
+          customer_id: string
+          equipment_type: string | null
+          estimated_delivery: string | null
+          folio: number | null
+          id: string
+          initial_diagnosis: string | null
+          model: string | null
+          priority: string
+          received_at: string
+          reported_issue: string | null
+          serial_number: string | null
+          service_location: string
+          stage_started_at: string | null
+          status: string
+          time_adjustment_minutes: number
+          tracking_token: string
+          updated_at: string
+          work_types: string[]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "service_orders"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       update_sales_quote_draft: {
         Args: {

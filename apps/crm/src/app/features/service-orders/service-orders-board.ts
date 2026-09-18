@@ -35,6 +35,13 @@ export class ServiceOrdersBoard {
   protected readonly selectedWorkType = signal<ServiceOrderWorkType | null>(null);
   protected readonly attentionOnly = signal(false);
 
+  protected readonly showQueueConfigModal = signal(false);
+  protected readonly queueConfig = resource({
+    loader: () => this.service.getQueueConfig(),
+  });
+  protected readonly savingQueueConfig = signal(false);
+  protected readonly queueLinkCopied = signal(false);
+
   protected readonly orders = resource({ loader: () => this.service.listActive(), defaultValue: [] as ServiceOrderWithCustomer[] });
   protected readonly activeCount = computed(() => this.orders.value().filter((order) => !['delivered', 'cancelled'].includes(order.status)).length);
 
@@ -120,4 +127,50 @@ export class ServiceOrdersBoard {
   private startOfToday(): Date {
     return new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate());
   }
+
+  protected openQueueConfig(): void {
+    this.queueConfig.reload();
+    this.showQueueConfigModal.set(true);
+  }
+
+  protected closeQueueConfig(): void {
+    this.showQueueConfigModal.set(false);
+  }
+
+  protected getQueueUrl(): string {
+    const token = this.queueConfig.value()?.public_queue_token;
+    if (!token) return '';
+    return `${window.location.origin}/cola/${token}`;
+  }
+
+  protected async toggleQueueEnabled(enabled: boolean): Promise<void> {
+    this.savingQueueConfig.set(true);
+    try {
+      await this.service.setQueueConfig(enabled, false);
+      this.queueConfig.reload();
+    } finally {
+      this.savingQueueConfig.set(false);
+    }
+  }
+
+  protected async rotateQueueToken(): Promise<void> {
+    if (!confirm('¿Deseas generar un nuevo enlace público? El enlace anterior dejará de funcionar inmediatamente.')) return;
+    this.savingQueueConfig.set(true);
+    try {
+      await this.service.setQueueConfig(this.queueConfig.value()?.public_queue_enabled ?? false, true);
+      this.queueConfig.reload();
+    } finally {
+      this.savingQueueConfig.set(false);
+    }
+  }
+
+  protected copyQueueLink(): void {
+    const url = this.getQueueUrl();
+    if (!url) return;
+    navigator.clipboard.writeText(url).then(() => {
+      this.queueLinkCopied.set(true);
+      setTimeout(() => this.queueLinkCopied.set(false), 2000);
+    });
+  }
 }
+

@@ -11,6 +11,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/tracking/tracking-status').then((m) => m.TrackingStatus),
   },
   {
+    path: 'cola/:token',
+    loadComponent: () => import('./features/public-queue/public-queue').then((m) => m.PublicQueue),
+  },
+  {
     path: 'service-orders/:id/print/:kind',
     canActivate: [authGuard],
     loadComponent: () => import('./features/service-orders/service-order-print').then((m) => m.ServiceOrderPrint),

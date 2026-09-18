@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, resource, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, resource, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormField, form } from '@angular/forms/signals';
 
@@ -7,6 +7,7 @@ import {
   PRIORITY_LABELS,
   WORK_TYPE_LABELS,
   WORK_TYPE_OPTIONS,
+  calculateEstimatedMinutes,
   type ServiceOrderPriority,
   type ServiceOrderWorkType,
 } from './service-orders.models';
@@ -64,6 +65,18 @@ export class ServiceOrderForm {
   protected readonly accessoryInput = signal('');
   protected readonly accessories = signal<string[]>([]);
   protected readonly selectedWorkTypes = signal<ServiceOrderWorkType[]>([]);
+  protected readonly backupRequested = signal(false);
+
+  protected readonly estimatedMinutes = computed(() => {
+    return calculateEstimatedMinutes(
+      this.model().equipment_type,
+      this.selectedWorkTypes(),
+      this.backupRequested(),
+      'pending',
+      'in_store',
+      0,
+    );
+  });
 
   protected readonly matchingCustomers = resource({
     params: () => ({ search: this.customerSearch().trim() }),
@@ -108,9 +121,15 @@ export class ServiceOrderForm {
   }
 
   protected toggleWorkType(workType: ServiceOrderWorkType): void {
-    this.selectedWorkTypes.update((current) => current.includes(workType)
-      ? current.filter((item) => item !== workType)
-      : [...current, workType]);
+    this.selectedWorkTypes.update((current) => {
+      const next = current.includes(workType)
+        ? current.filter((item) => item !== workType)
+        : [...current, workType];
+      if (!next.includes('formatting')) {
+        this.backupRequested.set(false);
+      }
+      return next;
+    });
   }
 
   protected addAccessory(value = this.accessoryInput()): void {
@@ -170,6 +189,7 @@ export class ServiceOrderForm {
         assigned_to: value.assigned_to || null,
         estimated_delivery: value.estimated_delivery || null,
         work_types: this.selectedWorkTypes(),
+        backup_requested: this.backupRequested(),
       });
       await this.router.navigate(['/service-orders', order.id]);
     } catch (err) {

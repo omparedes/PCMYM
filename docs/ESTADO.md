@@ -1,21 +1,59 @@
 # ESTADO DEL PROYECTO
-Última actualización: 2026-09-17 por Codex — estación Oscar/Windows
+Última actualización: 2026-09-17 por Antigravity — estación Oscar/Windows
 
 > Protocolo de handoff: **todo agente actualiza este archivo al cerrar sesión.** Es lo que permite
 > cambiar de estación o de agente sin perder el hilo. Mantén el formato de abajo.
 
 ## Fase actual
-**Próximo trabajo preparado para Luna:** cola pública automática a partir de OS. Plan ejecutable
-en `docs/06-PLAN-COLA-PUBLICA-LUNA.md`; contiene tiempos, etapas, privacidad y aceptación.
-En esta sesión solo se preparó documentación, sin modificar código, migraciones ni Supabase.
-La automatización de Deltron queda pospuesta; Oscar continuará importando manualmente.
+**Cola pública automática de órdenes de servicio (Completada):**
+Implementada en su totalidad en la rama `feat/public-service-queue` siguiendo estrictamente
+`docs/06-PLAN-COLA-PUBLICA-LUNA.md`.
+Migraciones aplicadas en el Supabase remoto enlazado (`20260917193000_add_public_service_queue.sql` y
+`20260917193500_clean_public_queue_lint.sql`), tipos TypeScript regenerados, 39 pruebas Vitest en verde,
+`npm run lint` en verde, y build de producción validado (755.70 kB inicial < 800 kB presupuesto).
+Los cotizadores, Deltron, proformas y módulos de inventario permanecen intactos y funcionando.
 
-**Cotizador Deltron: clasificación por encabezados y armado asistido implementados.**
-Los cinco puntos aprobados están en `feat/deltron-compatible-builder`. Las migraciones están
-aplicadas en Supabase; los cambios de frontend están verificados y listos para publicarse desde
-esta rama.
-El motor usa reglas deterministas, sin IA. Datos ausentes y soporte BIOS no verificado quedan
-en revisión: no se promete compatibilidad integral a partir del socket.
+## Cola pública automática de órdenes de servicio (2026-09-17)
+- **Base de datos y modelo de datos:**
+  - Migración aplicada en Supabase remoto: `20260917193000_add_public_service_queue.sql` y ajuste de linter `20260917193500_clean_public_queue_lint.sql`.
+  - Ampliación de `service_orders.work_types` para incluir `'maintenance'`.
+  - Nuevas columnas en `service_orders`: `backup_requested` (boolean default false), `service_location` (`in_store` | `external_workshop`), `time_adjustment_minutes` (int default 0), `current_stage` (text), `stage_started_at` (timestamptz), `accumulated_active_seconds` (int default 0).
+  - Nueva tabla multi-tenant auditada `service_order_location_history` con RLS estricto.
+  - Máquina de estados actualizada: validación de transiciones en PostgreSQL permite ahora `pending → repairing` para mantenimientos, formateos o derivaciones directas.
+  - Triggers y funciones deterministas en PostgreSQL:
+    - `calculate_service_order_target_minutes`: cálculo heurístico según categoría de equipo (laptop, PC, otro) y combinación de trabajos. Mantenimiento laptop: 60m; PC: 120m. Formateo: 60m (+60m si hay respaldo). Reparación pura: 20m de diagnóstico inicial. Taller externo o estados terminales: 0m.
+    - `sync_service_order_time_tracking`: sincronización atómica de tiempos activos, pausas automáticas al derivar a taller externo o pasar a espera de repuestos, y derivación automática de reparaciones directas hacia diagnóstico/reparación según corresponda.
+    - `normalize_equipment_type`: clasificación normalizada y robusta.
+  - Nuevas columnas en `businesses`: `public_queue_enabled` (boolean default false) y `public_queue_token` (uuid unique nullable default gen_random_uuid()).
+  - RPCs atómicos con RLS y SECURITY DEFINER:
+    - `transition_service_location`: derivación y retorno entre tienda y taller externo con auditoría.
+    - `adjust_service_order_time`: ajuste de holgura (+15, +30, +60 min) con nota en historial.
+    - `set_public_queue_config` / `get_public_queue_config`: activación/desactivación y rotación criptográfica de token por el `owner`.
+    - `get_public_service_queue(p_token uuid)`: acceso anónimo de solo lectura con grant a `anon` y `authenticated`.
+- **Privacidad y Seguridad (Zero PII):**
+  - La proyección pública no expone clientes, marcas exactas, números de serie, fallas descritas ni técnicos. Solo folio, tipo general de equipo, tipo de trabajo simplificado, badge de ubicación, tiempo transcurrido en minutos y avance heurístico.
+  - El tiempo estimado público no se calcula sumando tiempos en serie; utiliza la banda heurística `[max(activas), max(activas) + sum(espera)]` con paralelismo de atenciones concurrentes. Si hay órdenes excedidas o tiempos indeterminados, oculta la banda y reporta "Tiempo por confirmar".
+- **Frontend Angular 22 (Signal-First & Zoneless):**
+  - Formulario de alta de OS (`/service-orders/new`): chip de **Mantenimiento**, checkbox reactivo para **Respaldo de información (+60 min)**, y visor de tiempo base estimado.
+  - Detalle de OS (`/service-orders/:id`):
+    - Badge de ubicación de servicio ("En tienda" / "Taller externo") con acción de derivación/retorno.
+    - Tarjeta de Tiempos y Ubicación: tiempo activo acumulado, tiempo estimado, indicador de atraso.
+    - Modal de ajuste de tiempo excepcional (+15, +30, +60 min).
+    - Checkbox para alternar respaldo de información desde el diagnóstico.
+  - Tablero Kanban (`/service-orders`):
+    - Botón y modal de gestión de **Cola Pública** en la cabecera (activar/desactivar, copiar link `/cola/:token`, rotar token público).
+    - Filtros y tarjetas con soporte completo para la categoría **Mantenimiento**.
+  - Módulo y vista pública móvil (`/cola/:token`):
+    - Vista limpia, responsiva y adaptable a móviles o pantallas de sala de espera.
+    - Polling silencioso cada 60s usando Resource API condicionado a visibilidad de la pestaña (`document.visibilityState`).
+    - Desglose por etapas: En atención (en tienda), Derivados (taller externo) y En espera.
+    - Aviso legal visible sobre tiempos de estimación técnica aproximada sujeta a diagnóstico.
+- **Verificación:**
+  - `supabase/tests/public_service_queue.sql`: Ejecutado contra el Supabase remoto enlazado con transacción y rollback; todos los asserts y accesos anon/multi-tenant pasaron exitosamente.
+  - `npx supabase db lint --linked`: 0 errores, 0 advertencias.
+  - `npm run lint`: 0 errores en todos los archivos de `apps/crm/`.
+  - `npm test -- --watch=false`: 39/39 pruebas pasando (incluye 10 nuevas pruebas en `service-orders.models.spec.ts`).
+  - `npm run build`: Compilación exitosa, bundle inicial 755.70 kB (< 800 kB), chunk lazy público en 11.13 kB (3.33 kB transfer).
 
 ## Armado asistido y fichas técnicas (2026-09-08)
 - Clasificación centralizada en PostgreSQL por grupo Deltron: excepciones para refrigeración,

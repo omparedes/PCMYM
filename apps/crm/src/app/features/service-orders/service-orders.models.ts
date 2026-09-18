@@ -32,19 +32,30 @@ export type ServiceOrderStatus =
   | 'cancelled';
 
 export type ServiceOrderPriority = 'low' | 'normal' | 'high' | 'urgent';
-export type ServiceOrderWorkType = 'formatting' | 'repair' | 'parts_replacement' | 'warranty';
+export type ServiceOrderWorkType = 'formatting' | 'repair' | 'parts_replacement' | 'warranty' | 'maintenance';
+export type ServiceLocation = 'in_store' | 'external_workshop';
 
 export const WORK_TYPE_LABELS: Record<ServiceOrderWorkType, string> = {
   formatting: 'Formateo',
   repair: 'Reparación',
   parts_replacement: 'Cambio de repuesto',
   warranty: 'Garantía',
+  maintenance: 'Mantenimiento',
 };
 
 export const WORK_TYPE_OPTIONS = Object.keys(WORK_TYPE_LABELS) as ServiceOrderWorkType[];
 
 export function workTypeLabel(type: string): string {
   return WORK_TYPE_LABELS[type as ServiceOrderWorkType] ?? type;
+}
+
+export const SERVICE_LOCATION_LABELS: Record<ServiceLocation, string> = {
+  in_store: 'En tienda',
+  external_workshop: 'Taller externo',
+};
+
+export function serviceLocationLabel(location: string): string {
+  return SERVICE_LOCATION_LABELS[location as ServiceLocation] ?? location;
 }
 
 export const ORDERED_STATUSES: ServiceOrderStatus[] = [
@@ -76,7 +87,7 @@ export const PRIORITY_LABELS: Record<ServiceOrderPriority, string> = {
 
 // Mirrors public.is_valid_service_order_transition() — the DB is the source of truth.
 const STATUS_TRANSITIONS: Record<ServiceOrderStatus, ServiceOrderStatus[]> = {
-  pending: ['diagnosing', 'cancelled'],
+  pending: ['diagnosing', 'repairing', 'cancelled'],
   diagnosing: ['repairing', 'waiting_parts', 'cancelled'],
   repairing: ['waiting_parts', 'ready', 'cancelled'],
   waiting_parts: ['repairing', 'ready', 'cancelled'],
@@ -114,6 +125,7 @@ export interface NewServiceOrder {
   assigned_to: string | null;
   estimated_delivery: string | null;
   work_types: ServiceOrderWorkType[];
+  backup_requested?: boolean;
 }
 
 export interface ServiceOrderDeliveryInput {
@@ -139,5 +151,91 @@ export function emptyNewServiceOrder(): NewServiceOrder {
     assigned_to: null,
     estimated_delivery: null,
     work_types: [],
+    backup_requested: false,
   };
+}
+
+export function normalizeEquipmentType(raw: string | null): 'laptop' | 'pc' | 'other' {
+  if (!raw) return 'other';
+  const clean = raw.toLowerCase().trim();
+  if (/(laptop|notebook|portatil|portátil|macbook)/i.test(clean)) return 'laptop';
+  if (/(pc|desktop|escritorio|computadora|torre|all in one|aio|ordenador)/i.test(clean)) return 'pc';
+  return 'other';
+}
+
+export function calculateEstimatedMinutes(
+  equipmentType: string | null,
+  workTypes: ServiceOrderWorkType[] | null | undefined,
+  backupRequested: boolean,
+  status: ServiceOrderStatus,
+  serviceLocation: ServiceLocation = 'in_store',
+  timeAdjustment = 0,
+): number | null {
+  if (status === 'diagnosing') {
+    return Math.max(1, 20 + (timeAdjustment || 0));
+  }
+
+  if (
+    status === 'waiting_parts' ||
+    status === 'ready' ||
+    status === 'delivered' ||
+    status === 'cancelled' ||
+    serviceLocation === 'external_workshop'
+  ) {
+    return 0;
+  }
+
+  if (!workTypes || workTypes.length === 0) {
+    return null;
+  }
+
+  const hasLocalWork = workTypes.some((wt) => wt === 'formatting' || wt === 'maintenance' || wt === 'parts_replacement');
+
+  if (status === 'pending' && workTypes.includes('repair') && !hasLocalWork) {
+    return Math.max(1, 20 + (timeAdjustment || 0));
+  }
+
+  let minutes = 0;
+  let hasLocal = false;
+  let unknownLocal = false;
+  const normEq = normalizeEquipmentType(equipmentType);
+
+  if (workTypes.includes('formatting')) {
+    hasLocal = true;
+    minutes += backupRequested ? 120 : 60;
+  }
+
+  if (workTypes.includes('maintenance')) {
+    hasLocal = true;
+    if (normEq === 'laptop') {
+      minutes += 60;
+    } else if (normEq === 'pc') {
+      minutes += 120;
+    } else {
+      unknownLocal = true;
+    }
+  }
+
+  if (workTypes.includes('parts_replacement')) {
+    hasLocal = true;
+    minutes += 60;
+  }
+
+  if (status === 'pending' && workTypes.includes('repair')) {
+    minutes += 20;
+  }
+
+  if (!hasLocal && workTypes.includes('warranty')) {
+    return null;
+  }
+
+  if (unknownLocal) {
+    return null;
+  }
+
+  if (!hasLocal && !workTypes.includes('repair')) {
+    return null;
+  }
+
+  return Math.max(1, minutes + (timeAdjustment || 0));
 }

@@ -13,8 +13,17 @@ import { ServiceOrderDeliveryModalComponent } from './components/service-order-d
 import type { ServiceOrderPartWithProduct } from '../inventory/inventory.models';
 import { BudgetsService } from '../budgets/budgets.service';
 import { budgetStatusLabel } from '../budgets/budgets.models';
-import { WORK_TYPE_OPTIONS, nextValidStatuses, paymentMethodLabel, priorityLabel, statusLabel, workTypeLabel } from './service-orders.models';
-import type { PaymentMethod, ServiceOrderWorkType } from './service-orders.models';
+import {
+  WORK_TYPE_OPTIONS,
+  calculateEstimatedMinutes,
+  nextValidStatuses,
+  paymentMethodLabel,
+  priorityLabel,
+  serviceLocationLabel,
+  statusLabel,
+  workTypeLabel,
+} from './service-orders.models';
+import type { PaymentMethod, ServiceLocation, ServiceOrderStatus, ServiceOrderWorkType } from './service-orders.models';
 
 interface PaymentFormModel {
   amount: number | null;
@@ -56,6 +65,7 @@ export class ServiceOrderDetail {
   protected readonly budgetStatusLabel = budgetStatusLabel;
   protected readonly workTypeLabel = workTypeLabel;
   protected readonly workTypeOptions = WORK_TYPE_OPTIONS;
+  protected readonly serviceLocationLabel = serviceLocationLabel;
 
   protected readonly budgets = resource({
     params: () => ({ id: this.orderId }),
@@ -86,6 +96,46 @@ export class ServiceOrderDetail {
   protected readonly linkCopied = signal(false);
   protected readonly updatingWorkTypes = signal(false);
   protected readonly isDeliveryModalOpen = signal(false);
+  protected readonly togglingLocation = signal(false);
+  protected readonly showTimeAdjustModal = signal(false);
+  protected readonly timeAdjustMinutes = signal(30);
+  protected readonly timeAdjustReason = signal('');
+  protected readonly adjustingTime = signal(false);
+
+  protected readonly targetMinutes = computed(() => {
+    const o = this.order.value();
+    if (!o) return null;
+    return calculateEstimatedMinutes(
+      o.equipment_type,
+      o.work_types as ServiceOrderWorkType[],
+      o.backup_requested,
+      o.status as ServiceOrderStatus,
+      o.service_location as ServiceLocation,
+      o.time_adjustment_minutes,
+    );
+  });
+
+  protected readonly elapsedMinutes = computed(() => {
+    const o = this.order.value();
+    if (!o) return 0;
+    const accumulated = o.accumulated_active_seconds ?? 0;
+    if (!o.stage_started_at) return Math.floor(accumulated / 60);
+    const started = new Date(o.stage_started_at).getTime();
+    const sessionSeconds = Math.max(0, Math.floor((Date.now() - started) / 1000));
+    return Math.floor((accumulated + sessionSeconds) / 60);
+  });
+
+  protected readonly isOverdue = computed(() => {
+    const target = this.targetMinutes();
+    if (target === null || target <= 0) return false;
+    return this.elapsedMinutes() >= target;
+  });
+
+  protected readonly remainingMinutes = computed(() => {
+    const target = this.targetMinutes();
+    if (target === null) return null;
+    return Math.max(0, target - this.elapsedMinutes());
+  });
 
   protected workTypes(): ServiceOrderWorkType[] {
     return (this.order.value()?.work_types ?? []).filter((type): type is ServiceOrderWorkType =>
@@ -95,18 +145,77 @@ export class ServiceOrderDetail {
 
   protected async toggleWorkType(workType: ServiceOrderWorkType): Promise<void> {
     if (this.updatingWorkTypes()) return;
+    const o = this.order.value();
     const current = this.workTypes();
     const next = current.includes(workType)
       ? current.filter((item) => item !== workType)
       : [...current, workType];
     this.updatingWorkTypes.set(true);
     try {
-      await this.service.updateWorkTypes(this.orderId, next);
+      await this.service.updateWorkTypes(this.orderId, next, o?.backup_requested ?? false);
       this.order.reload();
     } catch (err) {
       this.errorMsg.set(err instanceof Error ? err.message : 'Error al actualizar los tipos de trabajo');
     } finally {
       this.updatingWorkTypes.set(false);
+    }
+  }
+
+  protected async toggleBackupRequested(): Promise<void> {
+    const o = this.order.value();
+    if (!o) return;
+    this.updatingWorkTypes.set(true);
+    try {
+      await this.service.updateWorkTypes(this.orderId, o.work_types ?? [], !o.backup_requested);
+      this.order.reload();
+    } catch (err) {
+      this.errorMsg.set(err instanceof Error ? err.message : 'Error al cambiar opción de respaldo');
+    } finally {
+      this.updatingWorkTypes.set(false);
+    }
+  }
+
+  protected async toggleLocation(): Promise<void> {
+    const o = this.order.value();
+    if (!o || this.togglingLocation()) return;
+    const targetLocation: ServiceLocation = o.service_location === 'in_store' ? 'external_workshop' : 'in_store';
+    const notes = targetLocation === 'external_workshop' ? 'Derivado a taller externo' : 'Retornado a tienda';
+    this.togglingLocation.set(true);
+    try {
+      await this.service.transitionLocation(this.orderId, targetLocation, notes);
+      this.order.reload();
+      this.history.reload();
+    } catch (err) {
+      this.errorMsg.set(err instanceof Error ? err.message : 'Error al cambiar ubicación de servicio');
+    } finally {
+      this.togglingLocation.set(false);
+    }
+  }
+
+  protected openTimeAdjustModal(): void {
+    this.timeAdjustMinutes.set(30);
+    this.timeAdjustReason.set('');
+    this.showTimeAdjustModal.set(true);
+  }
+
+  protected closeTimeAdjustModal(): void {
+    this.showTimeAdjustModal.set(false);
+  }
+
+  protected async submitTimeAdjustment(): Promise<void> {
+    if (this.adjustingTime()) return;
+    const delta = Number(this.timeAdjustMinutes());
+    if (isNaN(delta) || delta === 0) return;
+    this.adjustingTime.set(true);
+    try {
+      await this.service.adjustTime(this.orderId, delta, this.timeAdjustReason().trim() || undefined);
+      this.showTimeAdjustModal.set(false);
+      this.order.reload();
+      this.history.reload();
+    } catch (err) {
+      this.errorMsg.set(err instanceof Error ? err.message : 'Error al ajustar tiempo');
+    } finally {
+      this.adjustingTime.set(false);
     }
   }
 

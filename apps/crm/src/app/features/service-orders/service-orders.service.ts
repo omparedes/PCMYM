@@ -129,4 +129,3 @@ export class ServiceOrdersService {
     return data as unknown as { public_queue_enabled: boolean; public_queue_token: string };
   }
 }
-

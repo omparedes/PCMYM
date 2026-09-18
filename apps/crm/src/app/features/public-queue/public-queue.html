@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-slate-100 text-slate-900 flex flex-col items-center p-4 sm:p-6 md:p-8">
   <div class="w-full max-w-xl mx-auto space-y-5">
-    
+
     @if (queue.isLoading() && !queue.value()) {
       <div class="bg-white rounded-3xl p-10 border border-slate-200 text-center shadow-sm">
         <div class="w-8 h-8 border-3 border-slate-200 border-t-red-600 rounded-full animate-spin mx-auto mb-4"></div>
@@ -57,7 +57,7 @@
       <!-- HERO WAIT BAND CARD -->
       <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-6 shadow-md">
         <div class="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2">Espera estimada</div>
-        
+
         @if (isQueueEmpty()) {
           <div class="text-2xl font-black text-emerald-400 mb-1">Sin trabajos locales en cola</div>
           <p class="text-xs text-slate-300 m-0">No hay órdenes pendientes en este momento.</p>
